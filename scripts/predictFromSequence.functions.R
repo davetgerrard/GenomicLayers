@@ -79,6 +79,33 @@ modifyLayerByBindingFactor <- function(layerSet, position, bindingFactor) {
   return(newLayerSet)
 }
 
+# as modifyLayerByBindingFactor but modify in multiple places with the same patterning.
+modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, bindingFactor) {
+  
+  newLayerSet <- layerSet
+  for(thisLayer in names(bindingFactor$mods))  {
+    seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
+    thisState <- bindingFactor$mods[[thisLayer]]$state
+    stateWidth <- bindingFactor$mods[[thisLayer]]$stateWidth
+    thisOffset <- bindingFactor$mods[[thisLayer]]$offset
+    thisStart.vec <- position.vec - floor(stateWidth/2) + thisOffset   # using midpoint of state
+    mod.vec <- integer()
+    for(thisStart in thisStart.vec) {
+      thisEnd <- thisStart + stateWidth
+      thisStart <- truncateValueWithinRange(seqRange, thisStart)
+      thisEnd <- truncateValueWithinRange(seqRange, thisEnd)
+      mod.vec <- c(mod.vec, thisStart:thisEnd)
+    }
+    # TODO: design decisions on whether to encode modifications as strings or dimensions: e.g. '111111111' or paste(rep('1', 8), collapse="")
+    #     currently using the former
+    # DECISION FORCED by having to deal with negative ranges after offset. 
+    # need to have state as single value
+    #thisPosition  <- position + thisOffset
+    # TODO: add code for using centre/left/right for adjustment
+    newLayerSet <- modifyLayer(layerSet=newLayerSet, position=mod.vec, layer=thisLayer, state =thisState)
+  }
+  return(newLayerSet)
+}
 
 # might want this to store some metrics along the way. 
 # perhaps the layerSet class should carry some of these?
@@ -115,6 +142,43 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   return(newLayerList)
 }
 
+
+# might want this to store some metrics along the way. 
+# perhaps the layerSet class should carry some of these?
+runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2)  {
+  #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
+  bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
+  newLayerList <- layerList
+  
+  if(collect.stats) {
+    stats.table <- data.frame()
+  } else {
+    stats.table <- NULL
+  }  
+  max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
+  for(thisBF in bindingOrder)  {
+    theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]])  
+    #print(length(theseHits))
+    if(length(theseHits) < 1) { next ;}
+
+    # how many of the potential hits to mark? 
+    # iterations/n.factors (rounded up).
+    
+    thisHit <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
+    thisHitPosition <- start(thisHit) + floor(width(thisHit)/2)
+    
+    newLayerList$layerSet <-  modifyLayerByBindingFactor.multiHits(newLayerList$layerSet, position=thisHitPosition, bindingFactor=factorSet[[thisBF]])
+    watch.function(newLayerList$layerSet)
+    if(collect.stats) {
+      thisRow <- data.frame(bf=thisBF,position=thisHitPosition , target.coverage=as.numeric(letterFrequency(newLayerList$layerSet[[target.layer]], letters="1")))
+      stats.table <- rbind(stats.table, thisRow)
+    }
+    #print(as.numeric(letterFrequency(newLayerSet$LAYER.1, letters= "1")))
+  }
+  newLayerList$history <- stats.table
+  #print(letterFrequency(newLayerSet$LAYER.1, letters= "1"))   # how many of layer.1 were set to 1
+  return(newLayerList)
+}
 
 print.bfSet <- function(factorSet) {
   print("A list of binding factors:-")
@@ -271,14 +335,20 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
 #createRandomBindingFactor("testRandom", layerSet, type="DNA_motif", test.layer0.binding=FALSE, test.mismatch.rate=.1 ) 
 
 
-optimiseFactorSet <- function(layerSet, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,test.layer0.binding=FALSE)  {
+optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,test.layer0.binding=FALSE, method="fast")  {
   
   
   currentFactorSet <- factorSet
   scores.vector <- numeric()
   print("Calculating initial scores")
-  initialModLayer <- runLayerBinding(layerSet=layerSet, factorSet = factorSet, iterations=modsPerCycle)
-  
+  if(method =="fast") {
+    print("using fast algorithm")
+    initialModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = factorSet, iterations=modsPerCycle)
+  } else {
+    print("using slow algorithm")
+    initialModLayer <- runLayerBinding(layerList=layerList, factorSet = factorSet, iterations=modsPerCycle)
+  }
+    
   initialScore <- testing.function(initialModLayer, targetLayer=target.layer, target.vec=target.vec)
   if(is.na(initialScore )) {
     stop("initialScore was NA")
@@ -290,8 +360,14 @@ optimiseFactorSet <- function(layerSet, factorSet, testing.function, target.laye
   
   for(i in 1:n.iter) {
     better <- FALSE
-    newFactorSet <- mutateFactorSet(currentFactorSet, layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding)
-    newModLayer <- runLayerBinding(layerSet=layerSet, factorSet = newFactorSet, iterations=modsPerCycle)
+    newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding)
+    if(method =="fast") {
+      #print("using fast algorithm")
+      newModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle)
+    } else {
+      #print("using slow algorithm")
+      newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle)
+    }
     newScore <- test_function(newModLayer, targetLayer=target.layer, target.vec=target.vec)
     scores.vector[i] <- newScore
     print(paste("Round", i, "oldScore", currentBestScore, "newScore", newScore, "Better?"))
@@ -333,3 +409,17 @@ mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.
   
   return(newFactorSet)
 }
+
+
+# measure correlation between tow binary layers
+
+cor.layers <- function(x,y,method="pearson")  {
+  require(Biostrings)
+  layer.vector.x  <- as.numeric(strsplit(as.character(x),"")[[1]]) 
+  layer.vector.y  <- as.numeric(strsplit(as.character(y),"")[[1]]) 
+  stopifnot(length(layer.vector.x) == length(layer.vector.y))
+  cor(layer.vector.x, layer.vector.y)
+}
+
+
+
