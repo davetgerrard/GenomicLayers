@@ -335,9 +335,12 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
 #createRandomBindingFactor("testRandom", layerSet, type="DNA_motif", test.layer0.binding=FALSE, test.mismatch.rate=.1 ) 
 
 
-optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,test.layer0.binding=FALSE, method="fast")  {
+# logFile
+# logCycle record scores every 'logCycle' iterations
+optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,
+                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter)  {
   
-  
+  if(logFile != "")  write.table(cbind("iter", "best.score"), row.names=F, col.names=F, sep="\t", quote=F,file=logFile)
   currentFactorSet <- factorSet
   scores.vector <- numeric()
   print("Calculating initial scores")
@@ -356,11 +359,21 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
   }
   
   currentBestScore <- initialScore
-  
+  iSinceLastImprovement <- 0  # use to break from following loop if very many rounds without improvement
   
   for(i in 1:n.iter) {
+    # write to log file if appropriate
+    if((i %% logCycle ) == 0  & logFile != "") {
+      write.table(cbind(i, currentBestScore), row.names=F, col.names=F, quote=F,sep="\t",file=logFile, append=TRUE)
+      # could also save the current best factor set at this point.
+      save(currentFactorSet, file=paste(dirname(logFile), "/", "currentFactorSet.",i,".Rdata",sep=""))
+    }
+    if(iSinceLastImprovement > maxNoChange)  {
+      print(paste("No improvement in ", iSinceLastImprovement, " iterations, exiting!", sep=""))
+      break ; 
+    }
     better <- FALSE
-    newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding)
+    newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
     if(method =="fast") {
       #print("using fast algorithm")
       newModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle)
@@ -392,14 +405,15 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
 
 
 
-
-mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.muts=1, verbose=FALSE, test.layer0.binding=FALSE){
+# name.prefix # give new factors a new name beginning with this name 
+mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.muts=1, verbose=FALSE, test.layer0.binding=FALSE,  name.prefix=""){
   newFactorSet <- factorSet
   if(mut_type== "subRandomFactor")  {
     index <- sample(1:length(factorSet), n.muts)
     for(i in index) {
       thisName <- names(factorSet)[i]
-      newFactorSet[[thisName]] <-  createRandomBindingFactor(thisName,layerSet, type=factorSet[[i]]$type, test.layer0.binding=test.layer0.binding, test.mismatch.rate=.1 ) 
+      newName <- ifelse(name.prefix == "", thisName, paste(name.prefix, i, sep="."))
+      newFactorSet[[thisName]] <-  createRandomBindingFactor(newName,layerSet, type=factorSet[[i]]$type, test.layer0.binding=test.layer0.binding, test.mismatch.rate=.1 ) 
       if(verbose)  {
         print(paste("Factor", i ,"substituted"))
       }

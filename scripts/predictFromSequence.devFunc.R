@@ -145,19 +145,25 @@ for(i in 1:reps) {
 
 plot(tss.vector* 1.05, xlim=c(50000, 60000))
 points(result.vector/reps, col="blue")
+points(which(tss.vector == 1), (result.vector/reps)[tss.vector == 1], col="green")
+
 
 plot(tss.vector* 1.05)
 points(result.vector/reps, col="blue")
+points(which(tss.vector == 1), (result.vector/reps)[tss.vector == 1], col="green")
 
 plot(tss.vector* 1.05, xlim=c(100000, 120000))
 points(result.vector/reps, col="blue")
+points(which(tss.vector == 1), (result.vector/reps)[tss.vector == 1], col="green")
 
-plot(tss.vector* 1.05, xlim=c(80000, 150000))
+plot(which(tss.vector == 1), rep(1.05, sum(tss.vector)), xlim=c(80000, 150000), ylim=c(0,1.1))
 points(result.vector/reps, col="blue")
+points(which(tss.vector == 1), (result.vector/reps)[tss.vector == 1], col="green")
 
-pdf(paste("figures/run.fast", n.iter,"pdf", sep="."), width=20, height=8)
-plot(tss.vector* 1.05)
+png(paste("figures/run.fast", n.iter,"png", sep="."), width=4000, height=1000, res=150)
+plot(which(tss.vector == 1), rep(1.05, sum(tss.vector)), xlim=c(0, length(tss.vector)), ylim=c(0,1.1), xlab="position", ylab="Proportion of mods base is altered")
 points(result.vector/reps, col="blue")
+points(which(tss.vector == 1), (result.vector/reps)[tss.vector == 1], col="green")
 dev.off()
 
 # can use the summed values to re-score the factors
@@ -183,3 +189,13 @@ pdf(paste("figures/run.fast", n.iter,"correlation.threshold.pdf", sep="."), widt
 plot(threshes,cor.scores, xlab="Threshold for proportion of runs picked", ylab="Correlation")
 abline(h=cor(tss.vector, result.vector/reps), lty=2)
 dev.off()
+
+print.bfSet(factorSetRandom)
+
+# test that logfiles work
+
+n.iter <- 20
+system.time(testResult <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.1", target.vec=tss.vector, n.iter=n.iter, mut.rate=0.1, modsPerCycle=10000, logFile="results/test.log", logCycle=5))
+
+
+

@@ -1,7 +1,5 @@
 ## predictFromSequence
 
-Some info on the project here.
-
 
 Predict transcription (or any positional mark) from genome sequence by modelling the factors that can bind to DNA and add or remove states. 
 
