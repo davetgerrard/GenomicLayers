@@ -6,9 +6,9 @@
 
 
 require(Biostrings)
-setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+#setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
 #source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
-source('scripts/predictFromSequence.functions.R')
+source('/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/predictfromsequence/scripts/predictFromSequence.functions.R')
 
 
 
@@ -17,23 +17,26 @@ source('scripts/predictFromSequence.functions.R')
 ## Try some alternative algorithms for running a series of mods over a sequence.
 # Main target is improved speed.
 
-targetSeq <- readDNAStringSet("C:/Users/Dave/Dropbox/Temp/hg19.HOXA.fa")[[1]]
-transcriptTable <- read.delim("data/hg19.HOXA.transcripts.tab")
+targetSeq <- readDNAStringSet("/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/data/hg19.HOXA.fa")[[1]]
+transcriptTable <- read.delim("/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/data/hg19.HOXA.transcripts.tab")
 base.0 <- 27106375 
 n.layers <- 1
 n.factors <- 30
 upstream.prom <- 200
 downstream.prom <- 200
-n.iter <- 1000
+n.iter <- 10000
 mut.rate <- 0.1
 modsPerCycle <- 10000
-logCycle<- 100 
+logCycle<- 20 
 maxNoChange<- 1000
-outPutDir <- "."
-runName <- "test"
+runName <- "auto10k"
+outputDir <- paste("/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/results/",runName, sep="")
 logFile <- paste(outputDir, "/" , runName, ".out.tab", sep="")
+outputFile <-  paste(outputDir, "/" , runName, ".final.Rdata", sep="")
 
-
+if(!file.exists(outputDir)) {
+	dir.create(outputDir, recursive=TRUE)
+}
 
 emptyLayer <-  BString(paste(rep(0,length(targetSeq)), collapse=""))
 
@@ -91,7 +94,7 @@ system.time(result <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, 
                                         target.layer="LAYER.1", target.vec=tss.vector, n.iter=n.iter, mut.rate=mut.rate, 
                                         modsPerCycle=modsPerCycle,logFile=logFile,logCycle=logCycle, maxNoChange=maxNoChange))
 
-plot(result$optimScores)
+#plot(result$optimScores)
 
-save(factorSetRandom, result, file=paste("results/run.fast", n.iter,"Rdata", sep="."))
+save(factorSetRandom, result, file= outputFile)
 
