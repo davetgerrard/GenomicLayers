@@ -439,4 +439,56 @@ cor.layers <- function(x,y,method="pearson")  {
 }
 
 
+# create table from a factor set.
+table.factorSet <- function(factorSet, classes="",patternTrimLength=20)  {
+  #type.table <- data.frame(factor.name=names(factorSet))
+  type.table <- data.frame()
+  for(i in 1:length(factorSet)) {
+    thisFactor <- names(factorSet)[i]
+    thisType <- factorSet[[thisFactor]]$type
+    thisName <- factorSet[[thisFactor]]$name
+    names(factorSet[[thisFactor]]$profile)
+    for(thisLayer in names(factorSet[[thisFactor]]$profile)) {
+      mismatchRate <- factorSet[[thisFactor]]$profile[[thisLayer]]$mismatch.rate
+      raw.pattern <- factorSet[[thisFactor]]$profile[[thisLayer]]$pattern
+      if(nchar(raw.pattern) > patternTrimLength) {
+        pattern <- paste(as.character(raw.pattern[1:patternTrimLength]), "...", sep="")
+      } else {
+        pattern <- as.character(raw.pattern)
+      }
+      thisRow <- data.frame(id=thisFactor, name=thisName,type=thisType, group="target",layer=thisLayer, pattern=pattern, mm.rate=mismatchRate, state=NA, width=nchar(raw.pattern), offset=NA, align=NA )
+      type.table <- rbind(type.table, thisRow)
+    }
+    
+    for(thisLayer in names(factorSet[[thisFactor]]$mods)) {
+      thisState <- factorSet[[thisFactor]]$mods[[thisLayer]]$state
+      thisStateWidth <- factorSet[[thisFactor]]$mods[[thisLayer]]$stateWidth
+      thisOffset <- factorSet[[thisFactor]]$mods[[thisLayer]]$offset
+      thisAlign <- factorSet[[thisFactor]]$mods[[thisLayer]]$align
+      thisRow <- data.frame(id=thisFactor, name=thisName,type=thisType, group="mod",layer=thisLayer, pattern=NA, mm.rate=NA, state=thisState, width=thisStateWidth, offset=thisOffset, align=thisAlign )
+      type.table <- rbind(type.table, thisRow)
+    }
+  }
+  return(type.table)
+}
 
+# following table.factorSet(), create a matrix with one column per target/mod and layer
+# can be used to classify factor, group similar and to produce eulerGrids.
+type.patterns <- function(df, id.col=1) {
+  layers <- unique(df[,'layer'])
+  groups <- unique(df[,'group'])
+  colNames <- character()
+  for(thisGroup in groups) {
+    for(thisLayer in layers) {
+      colNames <- c(colNames, paste(thisGroup, thisLayer, sep="_"))
+    }
+  }
+  pattern.table <- matrix(0, nrow=length(unique(df[,id.col])), ncol=length(colNames), dimnames=list(unique(df[,id.col]), colNames))
+  for(thisGroup in groups) {
+    for(thisLayer in layers) {
+      factors <- as.character(subset(df, group==thisGroup & layer==thisLayer)[,id.col])
+      pattern.table[factors,paste(thisGroup, thisLayer, sep="_")] <- 1
+    }
+  }
+  return(pattern.table)
+}

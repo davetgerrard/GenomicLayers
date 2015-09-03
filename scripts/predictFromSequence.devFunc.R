@@ -201,3 +201,34 @@ system.time(testResult <- optimiseFactorSet(layerList=layerList.1, factorSetRand
 system.time(testResult <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.1", target.vec=tss.vector, n.iter=n.iter, mut.rate=0.1, modsPerCycle=10000, logFile="results/test.log", logCycle=5,maxNoChange=2))
 
 
+########## need better characterisation of the resulting factor set
+# Would like tale of which layers are targets and which are mods.
+# Many to may relationship - each factor could recognise multiple layers and modify multiple.
+# Maybe a eulergrid, scoring each factor for both its motif targets and mod targets (and it's type?).
+
+
+factorSet <- factorSetRandom
+
+
+
+type.table <- table.factorSet(factorSetRandom)
+
+
+table(type.table$group, type.table$layer)
+
+
+
+type.patterns(type.table)
+type.patterns(table.factorSet(factorSetRandom))
+type.patterns(table.factorSet(result[1:30]))
+type.patterns(table.factorSet(currentFactorSet))
+
+
+# plot a euler grid of the mod and target combinations to see what they look like.
+source("c:/users/dave/utilsGerrardDT/dataToEulerGrid.R")
+type.pattern.table <- as.data.frame(type.patterns(table.factorSet(currentFactorSet)))
+type.pattern.table <- type.pattern.table[, sort(names(type.pattern.table))]
+euler.table <- scoreCardinalities(type.pattern.table)
+par(mar=c(3,10,3,3))
+plotEuler(subset(euler.table, select=- count), counts=euler.table$count)
+
