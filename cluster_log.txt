@@ -1,0 +1,11 @@
+# first attempt at a script using hard-coded parameters and file paths.
+# 10000 iterations (with setting to exit if no change for 1000)
+# Logging every 20 iterations (a little too frequent) - logfile of best score and a set of factors (500 files)
+# On HYDRA
+module load libs/bioconductor/2.14/gcc-4.4.7+R-3.1.1
+cd $SCRATCH/seqPredict
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N auto10k -b y -pe smp.pe 2 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.autoRun.R
+
+# another run using 5 layers instead of one.  #layer 1 is still the target.layer. May just see dilution of signal and slowing of progression
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_10k -b y -pe smp.pe 2 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.autoRun.5_layer.R
+
