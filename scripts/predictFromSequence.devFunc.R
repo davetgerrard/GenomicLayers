@@ -221,6 +221,7 @@ table(type.table$group, type.table$layer)
 type.patterns(type.table)
 type.patterns(table.factorSet(factorSetRandom))
 type.patterns(table.factorSet(result[1:30]))
+table.factorSet(currentFactorSet)
 type.patterns(table.factorSet(currentFactorSet))
 
 
@@ -229,6 +230,7 @@ source("c:/users/dave/utilsGerrardDT/dataToEulerGrid.R")
 type.pattern.table <- as.data.frame(type.patterns(table.factorSet(currentFactorSet)))
 type.pattern.table <- type.pattern.table[, sort(names(type.pattern.table))]
 euler.table <- scoreCardinalities(type.pattern.table)
+png("figures/test.euler.layer5_partial.png")
 par(mar=c(3,10,3,3))
 plotEuler(subset(euler.table, select=- count), counts=euler.table$count)
-
+dev.off()
