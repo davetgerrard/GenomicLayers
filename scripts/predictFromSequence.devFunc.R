@@ -197,5 +197,7 @@ print.bfSet(factorSetRandom)
 n.iter <- 20
 system.time(testResult <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.1", target.vec=tss.vector, n.iter=n.iter, mut.rate=0.1, modsPerCycle=10000, logFile="results/test.log", logCycle=5))
 
+# test whether 'maxNoChange' working
+system.time(testResult <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.1", target.vec=tss.vector, n.iter=n.iter, mut.rate=0.1, modsPerCycle=10000, logFile="results/test.log", logCycle=5,maxNoChange=2))
 
 

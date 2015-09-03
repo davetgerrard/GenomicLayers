@@ -359,6 +359,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
   }
   
   currentBestScore <- initialScore
+  if(logFile != "") write.table(cbind(0, currentBestScore), row.names=F, col.names=F, quote=F,sep="\t",file=logFile, append=TRUE)
   iSinceLastImprovement <- 0  # use to break from following loop if very many rounds without improvement
   
   for(i in 1:n.iter) {
@@ -392,8 +393,10 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       better <- TRUE
       currentBestScore <- newScore
       currentFactorSet <- newFactorSet
+      iSinceLastImprovement <- 0 
       print("Yes!")
     } else {
+      iSinceLastImprovement <- iSinceLastImprovement + 1 
       print("No!")
     }
     #print(paste("Round", i, "oldScore", currentBestScore, "newScore", newScore, "Better?",better))
