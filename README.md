@@ -47,6 +47,17 @@ If this is 'working', need to start doing proper training and testing on differe
 - sort out stochastisity of tests
 - add in multi-sequence training and testing sets, with cross-validation.
 
+Should probably also look at prior art
+
+- [list of softwares](http://molbiol-tools.ca/Promoters.htm)
+- [a larger list of softwares](http://www.genetools.us/genomics/Promoter%20databases%20and%20prediction%20tools.htm)
+- [An even larger list at geneprediction.org](http://www.geneprediction.org/software.html)
+- [Fruitfly](http://www.fruitfly.org/seq_tools/promoter.html)
+
+>Training set:
+Our training and test sets of human and Drosophila melanogaster promoter sequences are available to the community for testing transcription start site predictors. These sites also contain our representative, standardized data sets of human and Drosophila melanogaster genes.
+
+
 
 __2015-09-02__:  [predictFromSequence.devFunc.R](scripts/predictFromSequence.devFunc.R) Wrote alternative to runLayerBinding() called runLayerBinding.fast() that does not apply mods in random order and re-calculate, it just does them all for a single factor at a time. This breaks the idea of sequential mods creating pattern matches for other factors. The point was to increase speed enough to see if the system could find any TSS reliably. I also widened the goalposts by extending the TSS to a promoter with 200bp upstream and 200bp downstream. I created a random set of factors and a 1-layer LayerSet (layerList) and ran optimiseFactorSet() [n.iter=1000, mut.rate=0.1, modsPerCycle=10000].  This quickly scored above 1% and then to 3% (c.f. ~ 0.1%, previously), which is not too surprising with the widening of the targets.  The best score achieved was 12% and the plot of scores (by iteration index) showed a step-change around iteration 700.  Due to the stochastic nature of runLayerBinding.fast(), the set of factors does not produce the same result each time (range 3% - 12%). I therefore re-ran runLayerBinding.fast() 100 times without modifying the factor set, counting for each base the number of times it was marked. This gave a very nice set of peaks and troughs, some of the peaks being directly below TSS/promoters. The cor score for the summed vector and the tss vector was 12%. Using a threshold to divide the summed scores into bound/unbound did not help the cor score, possibly because the zeros are informative - in the test vector (HOXA cluster), one obvious pattern is the absense of prediction in the large gene desert to the left (chromosomal view) to the left of the HOXA cluster.
 
@@ -84,3 +95,4 @@ Write parallel version of optimiseFactorSet to use scores from a range of sequen
 
 Are the factorSets strand specific? Could program to make searches on both strands.
 
+Memory. The multi-layer objects take up lots of memory and can be a bit slow to work with.  Is there a way to use 'views'. Also, instead of retaining very long binary vectors, is it possible to use GRanges and set operations to flip ranges between 1 and 0? I think that might be a lot quicker than altering ranges of a BString. 
