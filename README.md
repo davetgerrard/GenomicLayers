@@ -13,6 +13,13 @@ The ability of factors to bind changes through this series so that the number an
 
 
 ### Notes (reverse chronological)
+
+__2015-09-11__: Reading Irie2011Predicting (promoter prediction using all TFBS).  There is lots of data out there on TSS activity profiles (transcriptomes). They claim high predictive power (>80% just using TFBS sites).  For this project, would need to show that cell-lineage memory (through layer marking) can improve on simple knowledge of TFBS.
+
+__2015-09-08__: Reading a review on promoters (Lenhard et al., NRG, 2012) detailing different clases of mammalian promoters (or perception thereof) e.g. tissue-specific, ubiquitous, developmentally regulated. It might be 'novel' to skip these distinctions and just generate transcriptomes from sequence. First for ES cell (or progenitor gut cell?) then with that as baseline (marking and/or factors) develop coding for distinct tissues. Hope to see silencing of many tissue-specific genes in non-specific tissues.
+
+What about ribosomal promoters and other 'high-performance' promoters (e.g. translation initiation). The above review suggests they may have distinct pattern too. If I use RNA-seq data to create model of expression, then these genes may have been depleted prior to sequencing and have artificially deflated counts - impacts on model testing. Same goes for mitochondria?
+
 __2015-09-04__: Downloaded HOXD sequence and GENCODE genes in region (chr2:176893697-177091402) from UCSC (table browser for latter).
 I ran runLayerBinding() ten times using the original and final factorSets for the 5_layer set run.
 	> cor(tss.vector, result.vector.initial/reps)
@@ -31,6 +38,29 @@ I wonder if can simulate a maximal coverage finder?
 
 P.S. the final score from yesterday's run was 0.24! (N.B. it successfully self-exited after 1000 iterations without improvement)
 
+Should probably also look at prior art
+
+- [list of softwares](http://molbiol-tools.ca/Promoters.htm)
+- [a larger list of softwares](http://www.genetools.us/genomics/Promoter%20databases%20and%20prediction%20tools.htm)
+- [An even larger list at geneprediction.org](http://www.geneprediction.org/software.html)
+- [Fruitfly](http://www.fruitfly.org/seq_tools/promoter.html)
+
+>Training set:
+Our training and test sets of human and Drosophila melanogaster promoter sequences are available to the community for testing transcription start site predictors. These sites also contain our representative, standardized data sets of human and Drosophila melanogaster genes.
+
+- [Ohler lab](https://ohlerlab.mdc-berlin.de/software/)
+
+
+Looks like I'm 15 years too late!  However, most of these focus on small patterns over a few 100 bps. They (mostly) don't model a populatin of large DNA binding factors over the 100kb scale. I suspect they don't model availability of binding sites (genome- or region- wide) to influence lieklihood of bindng.
+
+Things that may still be novel:-
+
+- any part of the genome can be a tss! Need to predict not only where active tss are, but also where they are not.
+- model regional and/or genome-wide competition for binding sites
+- model 'memory' of system provided by marks placed on the sequence (histone marks, dna-methylation, nucleosome presence, compaction, competitive binding, etc).
+- predict __when__ promoters are active.
+
+
 __2015-09-03__: Ran first script on the cluster for 10,000 iterations. No better than the first 1000 run a day earlier. May have been a bit of luck involved there. Still progressed up from 4% (iter 20) to ~9.5%  (although most achieved in first 1000 iters). Mostly just a requirement test for such a script. Parsing the resulting factors is still not very easy, may need better summarisation scripts. Also noted that many of the factors were to bind anywhere and set the target layer to 0 - not a bad strategy when the target size is a relatively small proportion of the full sequence. 
 
 Also started a 5-layer test today (10,000 iters). Despite expectation that this might slow the progression, early inications are that it is already scoring high!
@@ -46,16 +76,6 @@ If this is 'working', need to start doing proper training and testing on differe
 
 - sort out stochastisity of tests
 - add in multi-sequence training and testing sets, with cross-validation.
-
-Should probably also look at prior art
-
-- [list of softwares](http://molbiol-tools.ca/Promoters.htm)
-- [a larger list of softwares](http://www.genetools.us/genomics/Promoter%20databases%20and%20prediction%20tools.htm)
-- [An even larger list at geneprediction.org](http://www.geneprediction.org/software.html)
-- [Fruitfly](http://www.fruitfly.org/seq_tools/promoter.html)
-
->Training set:
-Our training and test sets of human and Drosophila melanogaster promoter sequences are available to the community for testing transcription start site predictors. These sites also contain our representative, standardized data sets of human and Drosophila melanogaster genes.
 
 
 

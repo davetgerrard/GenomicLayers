@@ -81,15 +81,22 @@ for(i in 1:reps) {
   result.vector.final <- result.vector.final + this.result.vector
 }  
   
-  
+save(result.vector.initial, result.vector.final, file="results/layer_5_test.100modsSummed.Rdata")
+
+png("figures/layer.5.train.HOXA.test.HOXD.png", width=2000, height=2000, res=150)
+par(mfrow=c(2,1))
 # plot them 
 plot(which(tss.vector == 1), rep(1.05, sum(tss.vector)), xlim=c(0, length(tss.vector)), ylim=c(0,1.1), xlab="position", ylab="Proportion of mods base is altered")
 points(result.vector.initial/reps, col="blue")
 points(which(tss.vector == 1), (result.vector.initial/reps)[tss.vector == 1], col="green")
+title(paste("Initial factorSet against HOXD, (cor=", round(cor(tss.vector, result.vector.initial/reps), digits=3), ")"))
 
 plot(which(tss.vector == 1), rep(1.05, sum(tss.vector)), xlim=c(0, length(tss.vector)), ylim=c(0,1.1), xlab="position", ylab="Proportion of mods base is altered")
 points(result.vector.final/reps, col="blue")
 points(which(tss.vector == 1), (result.vector.final/reps)[tss.vector == 1], col="green")
+title(paste("HOXA-trained factorSet against HOXD, (cor=", round(cor(tss.vector, result.vector.final/reps), digits=3), ")"))
+
+dev.off()
 
 # scores
 cor(tss.vector, result.vector.initial/reps)
@@ -97,6 +104,6 @@ cor(tss.vector, result.vector.final/reps)
 # any improvement?   - yes
   
 
-save(result.vector.initial, result.vector.final, file="results/layer_5_test.100modsSummed.Rdata")
+
   
   
