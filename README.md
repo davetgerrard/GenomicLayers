@@ -14,6 +14,8 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+__2015-09-14__: Need a set of targets to aim for. Can demonstrate learning of TSS. Might be good to have set of broadly expressed TSS and optimise first for these. Then bring in tissue-specific or developmental TSS and add more factors to explain tissue-specific expression. Alternatively, could train against all of them, expecting it to perform better for broad TSS. Show that it trains to TSS but also that it is better at predicting the broad promoters. Perhaps get lists from other papers on TSS classes. OR just use expression data across a set of tissues. CAGE data may be best as based on speicifc TSS. 
+
 __2015-09-11__: Reading Irie2011Predicting (promoter prediction using all TFBS).  There is lots of data out there on TSS activity profiles (transcriptomes). They claim high predictive power (>80% just using TFBS sites).  For this project, would need to show that cell-lineage memory (through layer marking) can improve on simple knowledge of TFBS.
 
 __2015-09-08__: Reading a review on promoters (Lenhard et al., NRG, 2012) detailing different clases of mammalian promoters (or perception thereof) e.g. tissue-specific, ubiquitous, developmentally regulated. It might be 'novel' to skip these distinctions and just generate transcriptomes from sequence. First for ES cell (or progenitor gut cell?) then with that as baseline (marking and/or factors) develop coding for distinct tissues. Hope to see silencing of many tissue-specific genes in non-specific tissues.
@@ -116,3 +118,10 @@ Write parallel version of optimiseFactorSet to use scores from a range of sequen
 Are the factorSets strand specific? Could program to make searches on both strands.
 
 Memory. The multi-layer objects take up lots of memory and can be a bit slow to work with.  Is there a way to use 'views'. Also, instead of retaining very long binary vectors, is it possible to use GRanges and set operations to flip ranges between 1 and 0? I think that might be a lot quicker than altering ranges of a BString. 
+
+How to 'train' the system?  
+	Divide into bins? Training Set, Testing Set and Validation set?
+What about tissue/stage specific expression? Also want to 
+
+
+
