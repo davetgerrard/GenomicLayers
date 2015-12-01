@@ -81,7 +81,7 @@ modifyLayerByBindingFactor <- function(layerSet, position, bindingFactor, verbos
 
 # as modifyLayerByBindingFactor but modify in multiple places with the same patterning.
 modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, bindingFactor, verbose=FALSE) {
-  
+  require(Biostrings)
   newLayerSet <- layerSet
   for(thisLayer in names(bindingFactor$mods))  {
     seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
@@ -89,20 +89,32 @@ modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, binding
     stateWidth <- bindingFactor$mods[[thisLayer]]$stateWidth
     thisOffset <- bindingFactor$mods[[thisLayer]]$offset
     thisStart.vec <- position.vec - floor(stateWidth/2) + thisOffset   # using midpoint of state
-    mod.vec <- integer()
-    for(thisStart in thisStart.vec) {
-      thisEnd <- thisStart + stateWidth
-      thisStart <- truncateValueWithinRange(seqRange, thisStart)
-      thisEnd <- truncateValueWithinRange(seqRange, thisEnd)
-      mod.vec <- c(mod.vec, thisStart:thisEnd)
-    }
+    
+    #TRY-new# mod.vec <- integer()
+    #TRY-new# for(thisStart in thisStart.vec) {
+    #TRY-new#   thisEnd <- thisStart + stateWidth
+    #TRY-new#   thisStart <- truncateValueWithinRange(seqRange, thisStart)
+    #TRY-new#   thisEnd <- truncateValueWithinRange(seqRange, thisEnd)
+    #TRY-new#   mod.vec <- c(mod.vec, thisStart:thisEnd)
+    #TRY-new# }
+    
     # TODO: design decisions on whether to encode modifications as strings or dimensions: e.g. '111111111' or paste(rep('1', 8), collapse="")
     #     currently using the former
     # DECISION FORCED by having to deal with negative ranges after offset. 
     # need to have state as single value
     #thisPosition  <- position + thisOffset
     # TODO: add code for using centre/left/right for adjustment
-    newLayerSet <- modifyLayer(layerSet=newLayerSet, position=mod.vec, layer=thisLayer, state =thisState)
+    #TRY-new# newLayerSet <- modifyLayer(layerSet=newLayerSet, position=mod.vec, layer=thisLayer, state =thisState)
+    
+    # should be faster
+    thisEnd.vec <- thisStart.vec + stateWidth
+    
+    rr <- IRanges(start=pmax(thisStart.vec,seqRange[1] ), end=pmin(thisEnd.vec, seqRange[2]))  # create ranges, truncating to range.
+    #sum(width(rr))
+    redr <- reduce(rr)  #reduce to non-overlapping set
+    #sum(width(redr))
+        
+    newLayerSet[[thisLayer]][redr]  <- thisState
   }
   return(newLayerSet)
 }

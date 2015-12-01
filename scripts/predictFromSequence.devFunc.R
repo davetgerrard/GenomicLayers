@@ -1,6 +1,72 @@
 ## Scratchbox to test the latest version of the functions.
 
 
+# improving speed in modifyLayers... --------------------------
+
+require(Biostrings)
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+#source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
+source('scripts/predictFromSequence.functions.R')
+
+
+
+
+
+## Try some alternative algorithms for running a series of mods over a sequence.
+# Main target is improved speed.
+
+targetSeq <- readDNAStringSet("C:/Users/Dave/Dropbox/Temp/hg19.HOXA.fa")[[1]]
+emptyLayer <-  BString(paste(rep(0,length(targetSeq)), collapse=""))
+
+
+
+n.layers <- 1
+
+layerSet.1 <- list(LAYER.0 = targetSeq)
+for(i in 1:n.layers) {
+  layerSet.1[[paste('LAYER.', i , sep="")]] <- emptyLayer
+}
+
+layerList.1 <- list(layerSet=layerSet.1, history=NULL)
+
+n.factors <- 30
+
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region"), n.factors, replace=T) 
+bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T)
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T, prob=c(10,10,2,2))
+factorSetRandom <- list()
+for(i in 1:n.factors) {
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), layerSet.1, type=bindingFactorTypes[i], test.layer0.binding=FALSE, test.mismatch.rate=.1 ) 
+  
+}
+
+print.bfSet(factorSetRandom)
+
+
+#system.time(modLayerSet <- runLayerBinding.fast(layerList=layerList.1, factorSet = factorSetRandom))   # 10secs
+
+x <- sample(1:10000, 50)
+
+y <- pmin(x + 500, 10000)   # truncate to max value
+y
+
+#ll <- Views(layerSet.1$LAYER.1, start=x, end=y)
+# need to create set of ranges 
+# then reduce() to get non-overlapping range
+# use this to change state of layer.
+
+rr <- IRanges(start=x, end=y)
+sum(width(rr))
+
+redr <- reduce(rr)
+sum(width(redr))
+
+layerSet.1$LAYER.1[redr] <- BString('1')
+
+
+# --------------------------------------------------------------
+
+
 require(Biostrings)
 setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
 #source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
