@@ -99,10 +99,12 @@ test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
 print("beginning optimisation")
 #stopifnot(FALSE)
 
+try(
 system.time(result <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, 
                                         target.layer=target.layer, target.vec=tss.vector, n.iter=n.iter, mut.rate=mut.rate, 
                                         modsPerCycle=modsPerCycle,logFile=logFile,logCycle=logCycle, maxNoChange=maxNoChange))
-
+)
+print(.Last.value)  
 #plot(result$optimScores)
 
 save(factorSetRandom, result, file= outputFile)
