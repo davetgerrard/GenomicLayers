@@ -111,7 +111,7 @@ modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, binding
 # perhaps the layerSet class should carry some of these?
 runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
   
-  if(verbose) print(paste(Sys.time, "runLayerBinding pos 1", sep="\t"))
+  if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep="\t"))
   bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   newLayerList <- layerList
   
@@ -122,7 +122,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
 	}  
 
   for(thisBF in bindingOrder)  {
-    if(verbose) print(paste(Sys.time, "runLayerBinding thisBF =", thisBF, sep="\t"))
+    if(verbose) print(paste(Sys.time(), "runLayerBinding thisBF =", thisBF, sep="\t"))
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]])  
     #print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
@@ -142,7 +142,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   }
 	newLayerList$history <- stats.table
   #print(letterFrequency(newLayerSet$LAYER.1, letters= "1"))   # how many of layer.1 were set to 1
-  if(verbose) print(paste(Sys.time, "runLayerBinding pos 2", sep="\t"))
+  if(verbose) print(paste(Sys.time(), "runLayerBinding pos 2", sep="\t"))
   return(newLayerList)
 }
 
@@ -150,7 +150,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
 # might want this to store some metrics along the way. 
 # perhaps the layerSet class should carry some of these?
 runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
-  if(verbose) print(paste(Sys.time, "runLayerBinding.fast pos 1", sep="\t"))
+  if(verbose) print(paste(Sys.time(), "runLayerBinding.fast pos 1", sep="\t"))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
   newLayerList <- layerList
@@ -162,7 +162,7 @@ runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFact
   }  
   max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
   for(thisBF in bindingOrder)  {
-    if(verbose) print(paste(Sys.time, "runLayerBinding.fast thisBF =", thisBF, sep="\t"))
+    if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, sep="\t"))
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]])  
     #print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
@@ -183,7 +183,7 @@ runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFact
   }
   newLayerList$history <- stats.table
   #print(letterFrequency(newLayerSet$LAYER.1, letters= "1"))   # how many of layer.1 were set to 1
-  if(verbose) print(paste(Sys.time, "runLayerBinding.fast pos 2", sep="\t"))
+  if(verbose) print(paste(Sys.time(), "runLayerBinding.fast pos 2", sep="\t"))
   return(newLayerList)
 }
 
