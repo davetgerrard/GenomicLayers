@@ -56,7 +56,7 @@ modifyLayer <- function(layerSet, position, layer, state="1", offset=0, align="c
   return(layerSet)
 }
 
-modifyLayerByBindingFactor <- function(layerSet, position, bindingFactor) {
+modifyLayerByBindingFactor <- function(layerSet, position, bindingFactor, verbose=FALSE) {
   
   newLayerSet <- layerSet
   for(thisLayer in names(bindingFactor$mods))  {
@@ -80,7 +80,7 @@ modifyLayerByBindingFactor <- function(layerSet, position, bindingFactor) {
 }
 
 # as modifyLayerByBindingFactor but modify in multiple places with the same patterning.
-modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, bindingFactor) {
+modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, bindingFactor, verbose=FALSE) {
   
   newLayerSet <- layerSet
   for(thisLayer in names(bindingFactor$mods))  {
@@ -109,7 +109,9 @@ modifyLayerByBindingFactor.multiHits <- function(layerSet, position.vec, binding
 
 # might want this to store some metrics along the way. 
 # perhaps the layerSet class should carry some of these?
-runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2)  {
+runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
+  
+  if(verbose) print(paste(Sys.time, "runLayerBinding pos 1", sep="\t"))
   bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   newLayerList <- layerList
   
@@ -120,6 +122,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
 	}  
 
   for(thisBF in bindingOrder)  {
+    if(verbose) print(paste(Sys.time, "runLayerBinding thisBF =", thisBF, sep="\t"))
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]])  
     #print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
@@ -139,13 +142,15 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   }
 	newLayerList$history <- stats.table
   #print(letterFrequency(newLayerSet$LAYER.1, letters= "1"))   # how many of layer.1 were set to 1
+  if(verbose) print(paste(Sys.time, "runLayerBinding pos 2", sep="\t"))
   return(newLayerList)
 }
 
 
 # might want this to store some metrics along the way. 
 # perhaps the layerSet class should carry some of these?
-runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2)  {
+runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
+  if(verbose) print(paste(Sys.time, "runLayerBinding.fast pos 1", sep="\t"))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
   newLayerList <- layerList
@@ -157,6 +162,7 @@ runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFact
   }  
   max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
   for(thisBF in bindingOrder)  {
+    if(verbose) print(paste(Sys.time, "runLayerBinding.fast thisBF =", thisBF, sep="\t"))
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]])  
     #print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
@@ -177,6 +183,7 @@ runLayerBinding.fast <- function(layerList, factorSet, iterations=1, bindingFact
   }
   newLayerList$history <- stats.table
   #print(letterFrequency(newLayerSet$LAYER.1, letters= "1"))   # how many of layer.1 were set to 1
+  if(verbose) print(paste(Sys.time, "runLayerBinding.fast pos 2", sep="\t"))
   return(newLayerList)
 }
 
@@ -338,7 +345,7 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
 # logFile
 # logCycle record scores every 'logCycle' iterations
 optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,
-                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter)  {
+                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE)  {
   
   if(logFile != "")  write.table(cbind("iter", "best.score"), row.names=F, col.names=F, sep="\t", quote=F,file=logFile)
   currentFactorSet <- factorSet
@@ -346,10 +353,10 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
   print("Calculating initial scores")
   if(method =="fast") {
     print("using fast algorithm")
-    initialModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = factorSet, iterations=modsPerCycle)
+    initialModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = factorSet, iterations=modsPerCycle, verbose=verbose)
   } else {
     print("using slow algorithm")
-    initialModLayer <- runLayerBinding(layerList=layerList, factorSet = factorSet, iterations=modsPerCycle)
+    initialModLayer <- runLayerBinding(layerList=layerList, factorSet = factorSet, iterations=modsPerCycle, verbose=verbose)
   }
     
   initialScore <- testing.function(initialModLayer, targetLayer=target.layer, target.vec=target.vec)
@@ -377,10 +384,10 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
     if(method =="fast") {
       #print("using fast algorithm")
-      newModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle)
+      newModLayer <- runLayerBinding.fast(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
     } else {
       #print("using slow algorithm")
-      newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle)
+      newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
     }
     newScore <- test_function(newModLayer, targetLayer=target.layer, target.vec=target.vec)
     scores.vector[i] <- newScore
