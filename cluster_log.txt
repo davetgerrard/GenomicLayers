@@ -9,3 +9,8 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N auto10k -b y -pe smp.pe 2
 # another run using 5 layers instead of one.  #layer 1 is still the target.layer. May just see dilution of signal and slowing of progression
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_10k -b y -pe smp.pe 2 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.autoRun.5_layer.R
 
+
+#  awk '{ if($1 == "chr7" && $3 == "transcript") print $0 }' /mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chr7.transcript.gtf
+#qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_chr7 -b y -pe smp.pe 8 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr7.R
+# failed with core dump "memory not mapped"
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_chr7 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr7.R
