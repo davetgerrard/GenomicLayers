@@ -14,6 +14,17 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+
+__2015-12-02__: The chr7 runs were failing on a Hydra full node (512Gb) without an error message. I scaled down to chr22 and got this error message:-
+
+	[1] "2015-12-01 21:54:21\trunLayerBinding.fast thisBF =\tbf.9"
+	Timing stopped at: 429.981 33.544 463.486
+	[1] "Error in .Call2(fun, object@ptr, ..., PACKAGE = \"IRanges\") : \n  cannot allocate memory block of size 67108864 Tb\n"
+	attr(,"class")
+	[1] "try-error"
+
+Hmmm. Something is very wrong if trying to use 67 million terabytes of memory!
+
 __2015-12-01__: Just trying to do something with this, not sure what. Set off a training/optimsiation run against the whole of chromosome7 ([script](../scripts/predictFromSequence.chr7.R)). This is approx. x1000 the size of previous regions so I upped the number of mods from 1,000 to 1,000,000. The first attempt on Hydra failed after about 4 hours with a core dump. That was using 8 cores (~256Gb RAM). It also only managed about 3 iterations in that time. This morning I re-started with 16 cores. May need to re-write the modifyLayerBinding again to make it __MUCH__ faster
 
 Should probabably accept mutations that are no worse than a given % (rather than only accepting muts that are better).

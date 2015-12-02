@@ -14,3 +14,14 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_10k -b y -pe smp.p
 #qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_chr7 -b y -pe smp.pe 8 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr7.R
 # failed with core dump "memory not mapped"
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Layer5_chr7 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr7.R
+
+# I added verbose as a parameter to several functions to get more detailed output.
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr7v -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr7.verbose.R
+
+# I also re-wrote modifyLayerByBindingFactor.multiHits() to use IRanges and speed up the layer modification, but it didn't make much difference.
+# Kept failing even with 16 cores. No error messages despite using try()
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr7v -b y -pe smp.pe 32 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr7.verbose.R
+
+# let's try a smaller chromosome
+awk '{ if($1 == "chr22" && $3 == "transcript") print $0 }' /mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chr22.transcript.gtf
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22v -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/predictFromSequence.chr22.verbose.R
