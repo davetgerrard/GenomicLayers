@@ -4,6 +4,7 @@
 # Log results every x iterations.
 # THIS VERSION:  5 layers
 
+Rprof(tmp <- tempfile())    # begin profiling
 
 require(Biostrings)
 #setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
@@ -110,3 +111,9 @@ print(.Last.value)
 
 save(factorSetRandom, result, file= outputFile)
 print("ended optimisation")
+Rprof()
+print("R code profile")
+summaryRprof(tmp)
+unlink(tmp)
+print("end of script")
+
