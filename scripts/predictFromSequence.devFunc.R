@@ -56,8 +56,29 @@ for(i in 1:length(factorSetRandom)) {
 }
 
 
+
 sum(width(new.LayerSet$LAYER.1))
-# TODO #system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.1, factorSet = factorSetRandom))  
+system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.1, factorSet = factorSetRandom))  
+
+#layerList.m <- list(layerSet=modLayerSet.fast, history=NULL)
+
+
+# set up for optimisation
+# target.vec is now an IRanges
+target.IR <- IRanges(start=c(3000, 5500), end=c(3500, 6000))
+test_function <- function(layerList, targetLayer="Layer.1", target.vec)  {
+  inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
+  union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
+  #layer.vec <- as.numeric(strsplit(as.character(layerList$layerSet[[targetLayer]]),"")[[1]])
+  return(inter.size/ union.size)
+}
+test_function(layerList=modLayerSet.fast, targetLayer="LAYER.1", target.vec=target.IR)
+
+
+
+
+n.iter <- 10
+system.time(result <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.1", target.vec=target.IR, n.iter=n.iter, mut.rate=0.1, modsPerCycle=1000))
 
 
 
