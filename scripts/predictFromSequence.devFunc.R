@@ -1,6 +1,68 @@
 ## Scratchbox to test the latest version of the functions.
 
 
+# complete re-write to use Views or Iranges as layer matches (e.g. on BSgenome)   ---------------------------------------------
+# functions in pfs.functions.R
+require(Biostrings)
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+#source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
+source('scripts/predictFromSequence.functions.R')
+source('scripts/pfs.functions.R')   # overwrites some of the above. TODO - remove this dependency.
+
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+#available.genomes()
+
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chrM"]] 
+
+z <- Views(thisChrom)
+
+n.layers <- 1
+
+layerSet.1 <- list(LAYER.0 = thisChrom)
+for(i in 1:n.layers) {
+  layerSet.1[[paste('LAYER.', i , sep="")]] <- IRanges()    # use IRanges to store state of layers. TODO limit to chrom length
+}
+
+layerList.1 <- list(layerSet=layerSet.1, history=NULL)
+
+n.factors <- 30
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region"), n.factors, replace=T) 
+bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T)
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T, prob=c(10,10,2,2))
+factorSetRandom <- list()
+for(i in 1:n.factors) {
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), layerSet.1, type=bindingFactorTypes[i], test.layer0.binding=FALSE, test.mismatch.rate=.1 ) 
+  
+}
+
+print.bfSet(factorSetRandom)
+
+
+hits <- matchBindingFactor(layerSet=layerSet.1, bindingFactor=factorSetRandom[[4]])   ## TODO - get this working. 
+hits <- as(hits, "IRanges")  # needed to use reduce, setDiff etc TODO fix matchBindingFactor to return this?
+
+new.LayerSet <- modifyLayerByBindingFactor.Views(layerSet.1, hits=hits, bindingFactor=factorSetRandom[[4]])
+
+new.LayerSet <- layerSet.1
+for(i in 1:length(factorSetRandom)) {
+  print(i)
+  hits <- matchBindingFactor(layerSet=new.LayerSet, bindingFactor=factorSetRandom[[i]])   ## TODO - get this working. 
+  #hits <- as(hits, "IRanges")  # needed to use reduce, setDiff etc TODO fix matchBindingFactor to return this?
+  print( paste(factorSetRandom[[i]]$type,length(hits), class(hits), "hits"))
+  #print(hits)
+  new.LayerSet <- modifyLayerByBindingFactor.Views(new.LayerSet, hits=hits, bindingFactor=factorSetRandom[[i]])
+  print(new.LayerSet)
+}
+
+
+sum(width(new.LayerSet$LAYER.1))
+# TODO #system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.1, factorSet = factorSetRandom))  
+
+
+
+
+
 # improving speed in modifyLayers... --------------------------
 
 require(Biostrings)
@@ -62,6 +124,66 @@ redr <- reduce(rr)
 sum(width(redr))
 
 layerSet.1$LAYER.1[redr] <- BString('1')
+
+
+
+# having problems with chromosome level mapping
+# try BSgenome
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+available.genomes()
+
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chr22"]] 
+pattern <- DNAString("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+
+hits <- matchPattern(pattern, thisChrom, fixed=F) # a few seconds. 
+
+
+targetSeq <- thisChrom
+layerSet.x <- list(LAYER.0 = targetSeq)
+emptyLayer <-  BString(paste(rep(0,length(targetSeq)), collapse=""))  # this is slow for whole chrom. Uses quite a bit of memory.
+for(i in 1) {
+  layerSet.x[[paste('LAYER.', i , sep="")]] <- emptyLayer
+}
+
+
+thisBf <- createRandomBindingFactor(layerSet=layerSet.x, name="test", type="DNA_region")
+thisBf$profile$LAYER.0$pattern <- pattern
+# the following line is probably why scripts on chr7 and chr22 were crashing out so hard. 
+#hits.2 <- matchBindingFactor(layerSet=layerSet.x, bindingFactor=thisBf, clusterGap=10)   # MEMORY MONSTER!
+
+# TODO: use BSgenome and views for pattern matching on the sequence
+# TODO: find an alternative to BString for pattern matching and modification on the layers.
+#         BSgenome?  rle? or views/hits 
+#     Views/hits may work if just record regions that are marked or not. 
+#           Except when trying to match islands (but how common is that anyway?) and could be done with setdiff() or gaps().
+#           views/hits would be very easy to modify.
+
+# from ?IRanges
+IRanges()  # IRanges instance of length zero
+## With logical input:
+x <- IRanges(c(FALSE, TRUE, TRUE, FALSE, TRUE))  # logical vector input
+isNormal(x)  # TRUE
+x <- IRanges(Rle(1:30) %% 5 <= 2)  # logical Rle input   # how does that work?
+isNormal(x)  # TRUE
+
+
+# to match a certain width on IRanges
+# for match to postiive (1) values
+x <- IRanges(start=c(100, 200, 500), width=c(75,10,50))
+x[width(x) > 20]
+gaps(x)
+# for match to negative (0) values
+gaps(x)[width(gaps(x)) > 50]    # really need to specify upper end of range
+x
+
+# to match an island...
+# one positive match adjacent to two gap matches
+pos <- x[width(x) > 8]
+neg <- gaps(x)[width(gaps(x)) > 20] 
+countOverlaps(pos,neg, maxgap = 1)   # values of 2 are positive regions overlapping two negative regions by 1 bp (i.e. on either side).
+# would need to be inverted for negative islands.
+
 
 
 # --------------------------------------------------------------

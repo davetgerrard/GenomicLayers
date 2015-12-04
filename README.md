@@ -25,6 +25,13 @@ __2015-12-02__: The chr7 runs were failing on a Hydra full node (512Gb) without 
 
 Hmmm. Something is very wrong if trying to use 67 million terabytes of memory!
 
+Speed up/ memory down options:
+	matchBindingFactor() I think could be faster. It might also be possible to return a list of potential modifications rather than a list of hits. This would then remove the need work out what the mods are. It depends on whether it's faster to (a) work out all the hits but only calculate a subset of mods, or whether calculate all the hits and their mods in one go and apply a sample (probably still the former?).
+
+I added in Rprof() to try and profile the code, but it didn't give any output (even in logging file).
+
+With extra verbosity, I was able to see that the script failed when trying to matchBindingFactor() for factors with long strings of degenerate bases (e.g. TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT). This may be a case where BSgenome works better than loading a chromosome as a DNAstring set? I did a test and found that searching whole chromosomes was extremely slow for this, mostly because of the emptyLayer matching. Decided to re-code into just using HITS objects and maybe remove island types? (though IRanges are rle objects..). One problem is that I wanted to allow mismatches. 
+
 __2015-12-01__: Just trying to do something with this, not sure what. Set off a training/optimsiation run against the whole of chromosome7 ([script](../scripts/predictFromSequence.chr7.R)). This is approx. x1000 the size of previous regions so I upped the number of mods from 1,000 to 1,000,000. The first attempt on Hydra failed after about 4 hours with a core dump. That was using 8 cores (~256Gb RAM). It also only managed about 3 iterations in that time. This morning I re-started with 16 cores. May need to re-write the modifyLayerBinding again to make it __MUCH__ faster
 
 Should probabably accept mutations that are no worse than a given % (rather than only accepting muts that are better).
