@@ -149,7 +149,7 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
 
 
 #
-matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000)  {
+matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
   require(Biostrings)
   seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
   max.window <- min(max.window, seqRange[2])
@@ -170,11 +170,12 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
         win.ends <- c(seq(max.window, seqRange[2], by=max.window), seqRange[2])
         if(length(win.starts) ==1)  win.ends <- win.ends[1]
         stopifnot(length(win.starts) == length(win.ends))
+        if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
         all.hits <- IRanges()
         for(i in 1:length(win.starts)) {
-          win.hits <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]][win.starts[i]: win.ends[i]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges")
+          win.hits <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]][win.starts[i]: win.ends[i]], fixed='subject', max.mismatch= max.mismatches), "IRanges")   # fixed='subject' ignores NNNs in subject (e.g. telomeres). See ?`lowlevel-matching` for more information.
           win.hits <- shift(win.hits , win.starts[i] - 1)
-          print(win.hits)
+          #print(win.hits)
           all.hits <- c(all.hits, win.hits)
         }
         hitList[[thisLayer]] <- reduce(all.hits)
@@ -301,7 +302,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
   for(thisBF in bindingOrder)  {
     if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
-    theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]])  
+    theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]], verbose=verbose)  
     if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
     #print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
@@ -313,7 +314,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
     if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits.used =", length(hits.sample), sep=" "))
     #thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)
     
-    newLayerList$layerSet <-  modifyLayerByBindingFactor.Views(newLayerList$layerSet, hits=hits.sample, bindingFactor=factorSet[[thisBF]])
+    newLayerList$layerSet <-  modifyLayerByBindingFactor.Views(newLayerList$layerSet, hits=hits.sample, bindingFactor=factorSet[[thisBF]], verbose=verbose)
     watch.function(newLayerList$layerSet)
     if(collect.stats) {
       thisRow <- data.frame(bf=thisBF,hits=length(hits.sample) , target.coverage=sum(width(hits.sample)))

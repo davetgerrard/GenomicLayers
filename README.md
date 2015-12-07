@@ -13,6 +13,27 @@ The ability of factors to bind changes through this series so that the number an
 
 
 ### Notes (reverse chronological)
+__2015-12-07__: The new windowing approach was successful on chr22 (DNA-motif in 25 seconds with 5Mb window, 17 secs with 10Mb window) but revealed 'matches' across the first 16Mb of the chromosome (the telomere is NNNs).  DESIGN DECISION: whether to allow matches to Ns?  I think not, because the telomeres and centromeres are a relatively small proportion of the genome but could suck up a large number of hits, when there is no evidence there should be hits there.
+
+DONE filter out Ns from telomeres etc. (or don't match to them).   Solved using fixed='subject'
+
+TODO Window size against a single layer layerSet seemed ok up to 10Mb. Need to test on 5 layer system.
+
+Ran 1 layer chr22 with 30 binding factors in 3m 20secs. No strain on memory on my PC.
+
+Also attempted short optimisation, noticed that many factors giving exactly one hit:-
+
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast thisBF = bf.10 N"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast n.hits = 1"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast n.hits.used = 1"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast thisBF = bf.11 N"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast n.hits = 1"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast n.hits.used = 1"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast thisBF = bf.12 N"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast n.hits = 1"
+	[1] "2015-12-07 17:02:48 runLayerBinding.fast n.hits.used = 1"
+
+
 __2015-12-04__: I spent quite a few hours re-writing functions to use IRanges() objects instead of vectors of 0/1 to mark the layers (see pfs.functions.R). I developed using chrM but as soon as I tried an optimisation with chr22, I hit the same memory problems as before. One thing to appease it was to return a single IRanges spanning the whole sequence for "layer_region" and "layer_island" matches. But the main problem is that DNA matches take a lot of memory. Maybe, split the sequence into segments of a given size (e.g. 100kb), create the IRanges for each and then concatenate them (parallel jobs?). Make sure the splits overlap by more than patternLength. Then re-combine the IRanges with reduce().
 
 I did that, I added max.window parameter to matchBindingFactor. Left it running on chr22. Need to use as large a window as possible (e.g. 1-10Mb).
