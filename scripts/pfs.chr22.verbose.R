@@ -8,16 +8,27 @@ require(Biostrings)
 #setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
 #source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
 source('/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/predictfromsequence/scripts/predictFromSequence.functions.R')
+source('/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/predictfromsequence/scripts/pfs.functions.R')
 
 
-fasta.file <- '/mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/fasta/chr22.fa'
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+#available.genomes()
+
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chr22"]] 
+
+
+#fasta.file <- '/mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/fasta/chr22.fa'
 transcript.file <- '/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/data/hg19.G19.chr22.transcript.gtf'
 
 ## Try some alternative algorithms for running a series of mods over a sequence.
 # Main target is improved speed.
 
-targetSeq <- readDNAStringSet(fasta.file)[[1]]
+#targetSeq <- readDNAStringSet(fasta.file)[[1]]
 transcriptTable <- read.delim(transcript.file)
+
+
+
 
 names(transcriptTable)[c(4,5,7)] <- c("txStart", "txEnd", "strand")
 
@@ -32,7 +43,7 @@ mut.rate <- 0.1
 modsPerCycle <- 1000000 # scaled up so ~ 1/200bp
 logCycle<- 100 
 maxNoChange<- 1000
-runName <- "layer5_chr22_verbose"
+runName <- "pfs_layer5_chr22_verbose"
 outputDir <- paste("/mnt/fls01-home01/mqbssdgb/scratch/seqPredict/results/",runName, sep="")
 logFile <- paste(outputDir, "/" , runName, ".out.tab", sep="")
 outputFile <-  paste(outputDir, "/" , runName, ".final.Rdata", sep="")
@@ -42,18 +53,18 @@ if(!file.exists(outputDir)) {
 	dir.create(outputDir, recursive=TRUE)
 }
 
-print(paste(" code profiling in ", profFile))
-Rprof(profFile)    # begin profiling
+#print(paste(" code profiling in ", profFile))
+#Rprof(profFile)    # begin profiling
 
 
 print("creating empty layer")
-emptyLayer <-  BString(paste(rep(0,length(targetSeq)), collapse=""))
+#emptyLayer <-  BString(paste(rep(0,length(targetSeq)), collapse=""))
 
 
 print("creating all layers")
-layerSet.1 <- list(LAYER.0 = targetSeq)
+layerSet.1 <- list(LAYER.0 = thisChrom)
 for(i in 1:n.layers) {
-  layerSet.1[[paste('LAYER.', i , sep="")]] <- emptyLayer
+  layerSet.1[[paste('LAYER.', i , sep="")]] <- IRanges()
 }
 
 layerList.1 <- list(layerSet=layerSet.1, history=NULL)
@@ -70,7 +81,7 @@ for(i in 1:n.factors) {
   
 }
 
-
+print.bfSet(factorSetRandom)
 
 head(transcriptTable)
   # one before the start co-ordinate used to get this DNA sequence.
@@ -79,32 +90,33 @@ head(transcriptTable)
 tss.positions <- ifelse(transcriptTable$strand == "+", transcriptTable$txStart, transcriptTable$txEnd)
 tss.positions <- unique(tss.positions - base.0)    # only want unique values.
 
-tss.vector <- rep(0, nchar(targetSeq))
-tss.vector[tss.positions] <- 1
+#tss.vector <- rep(0, nchar(targetSeq))
+#tss.vector[tss.positions] <- 1
+print(paste(sum(is.na(tss.positions)), "NAs in tss positions"))
+
+tss.positions <- na.omit(tss.positions)
+#tss.IR <- IRanges(start=tss.positions, width=1)
+#tss.IR <- resize(tss.IR, fix="center", width="200")
+tss.IR <- IRanges(start=tss.positions-99, end=tss.positions+100)   # this version of IRanges, resize not working right.
 
 # widen the tss positions to simulate promoters?
 
-for(i in 1:nrow(transcriptTable)) {
-  tss.position <- ifelse(transcriptTable$strand[i] == "+", transcriptTable$txStart[i], transcriptTable$txEnd[i]) - base.0
-  prom.start <- ifelse(transcriptTable$strand[i] == "+", tss.position - upstream.prom, tss.position - downstream.prom)
-  prom.end <- ifelse(transcriptTable$strand[i] == "-", tss.position + upstream.prom, tss.position + downstream.prom)
-  tss.vector[prom.start:prom.end] <- 1
-}
-sum(tss.vector)
-length(tss.vector)
-
 
 test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
-  layer.vec <- as.numeric(strsplit(as.character(layerList$layerSet[[targetLayer]]),"")[[1]])
-  return(cor(target.vec, layer.vec))
+  inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
+  union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
+  #layer.vec <- as.numeric(strsplit(as.character(layerList$layerSet[[targetLayer]]),"")[[1]])
+  return(inter.size/ union.size)
 }
+
+
 
 print("beginning optimisation")
 #stopifnot(FALSE)
 
 try(
 system.time(result <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, 
-                                        target.layer=target.layer, target.vec=tss.vector, n.iter=n.iter, mut.rate=mut.rate, 
+                                        target.layer=target.layer, target.vec=tss.IR, n.iter=n.iter, mut.rate=mut.rate, 
                                         modsPerCycle=modsPerCycle,logFile=logFile,logCycle=logCycle, maxNoChange=maxNoChange,
 					verbose=TRUE))
 )
@@ -113,9 +125,9 @@ print(.Last.value)
 
 save(factorSetRandom, result, file= outputFile)
 print("ended optimisation")
-Rprof(NULL)
-print("R code profile")
-print(summaryRprof(profFile))
+#Rprof(NULL)
+#print("R code profile")
+#print(summaryRprof(profFile))
 #unlink(tmp)
 print("end of script")
 

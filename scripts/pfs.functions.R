@@ -301,18 +301,19 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   }  
   max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
   for(thisBF in bindingOrder)  {
-    if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
+    #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]], verbose=verbose)  
-    if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
-    #print(length(theseHits))
+    #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
+	#print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
     
     # how many of the potential hits to mark? 
     # iterations/n.factors (rounded up).
     
     hits.sample <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
-    if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits.used =", length(hits.sample), sep=" "))
-    #thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)
+    #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits.used =", length(hits.sample), sep=" "))
+    if(verbose) cat(paste(thisBF, length(theseHits), length(hits.sample)))
+	#thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)
     
     newLayerList$layerSet <-  modifyLayerByBindingFactor.Views(newLayerList$layerSet, hits=hits.sample, bindingFactor=factorSet[[thisBF]], verbose=verbose)
     watch.function(newLayerList$layerSet)
