@@ -149,9 +149,10 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
 
 
 #
-matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10)  {
+matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000)  {
   require(Biostrings)
   seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
+  max.window <- min(max.window, seqRange[2])
   hitList <- list()
   #validHits <- 
   for(thisLayer in names(bindingFactor$profile)) {
@@ -159,9 +160,26 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10)  {
     max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
     if(thisLayer == "LAYER.0") {  
       patternLength <- bindingFactor$profile[[thisLayer]]$length
-      # currently DNA matches using fixed length string with IUPAC codes (adapt later for pwm matching)
-      hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
-      
+      if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
+        hitList[[thisLayer]] <- IRanges(start=seqRange[1], end=seqRange[2])
+      } else {
+        # currently DNA matches using fixed length string with IUPAC codes (adapt later for pwm matching)
+        #TODO add in WINDOWING for long searches here.
+        # for very long sequences >100k, need to break the sequence into sections, get results and concatenate them.
+        win.starts <- seq(1, seqRange[2]-patternLength, by=max.window-patternLength)
+        win.ends <- c(seq(max.window, seqRange[2], by=max.window), seqRange[2])
+        if(length(win.starts) ==1)  win.ends <- win.ends[1]
+        stopifnot(length(win.starts) == length(win.ends))
+        all.hits <- IRanges()
+        for(i in 1:length(win.starts)) {
+          win.hits <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]][win.starts[i]: win.ends[i]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges")
+          win.hits <- shift(win.hits , win.starts[i] - 1)
+          print(win.hits)
+          all.hits <- c(all.hits, win.hits)
+        }
+        hitList[[thisLayer]] <- reduce(all.hits)
+        #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
+      }
       #validHits <- hitList[[thisLayer]]
     } else {
       # with binary patterns, take ranges that have value 0 (gaps) 1 (IRanges)
@@ -204,7 +222,7 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10)  {
     hitList[[thisLayer]] <- as(hitList[[thisLayer]], "IRanges")
     hitList[[thisLayer]] <- restrict(hitList[[thisLayer]] , start=seqRange[1], end=seqRange[2])
     # remove those shorter than patternLength (those overlapping the edges.
-    hitList[[thisLayer]] <- hitList[[thisLayer]][width(hitList[[thisLayer]]) == patternLength]
+    hitList[[thisLayer]] <- hitList[[thisLayer]][width(hitList[[thisLayer]]) >= patternLength]
     
   }
   

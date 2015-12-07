@@ -14,6 +14,7 @@ library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
 
 genome <- BSgenome.Hsapiens.UCSC.hg19
 thisChrom <- genome[["chrM"]] 
+#thisChrom <- genome[["chr22"]]   # BEWARE, memory usage.
 
 z <- Views(thisChrom)
 
@@ -38,9 +39,13 @@ for(i in 1:n.factors) {
 
 print.bfSet(factorSetRandom)
 
-
+# this is where MEMORY problems begin
 hits <- matchBindingFactor(layerSet=layerSet.1, bindingFactor=factorSetRandom[[4]])   ## TODO - get this working. 
-hits <- as(hits, "IRanges")  # needed to use reduce, setDiff etc TODO fix matchBindingFactor to return this?
+#hits <- as(hits, "IRanges")  # needed to use reduce, setDiff etc TODO fix matchBindingFactor to return this?
+rm(hits)
+hits <- matchBindingFactor(layerSet=layerSet.1, bindingFactor=factorSetRandom[[3]], max.window=1000000)
+
+tail(sort(width(hits))) # using max.window seems to produce a small number of very long hits. Weird.  Could remove them with a width filter but nnot ure how they are made
 
 new.LayerSet <- modifyLayerByBindingFactor.Views(layerSet.1, hits=hits, bindingFactor=factorSetRandom[[4]])
 
@@ -65,7 +70,8 @@ system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.1, factorSet
 
 # set up for optimisation
 # target.vec is now an IRanges
-target.IR <- IRanges(start=c(3000, 5500), end=c(3500, 6000))
+#target.IR <- IRanges(start=c(3000, 5500), end=c(3500, 6000))
+target.IR <- new.LayerSet$LAYER.1[sample(1:length(new.LayerSet$LAYER.1), 20)]
 test_function <- function(layerList, targetLayer="Layer.1", target.vec)  {
   inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
   union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
@@ -80,8 +86,8 @@ test_function(layerList=modLayerSet.fast, targetLayer="LAYER.1", target.vec=targ
 n.iter <- 10
 system.time(result <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.1", target.vec=target.IR, n.iter=n.iter, mut.rate=0.1, modsPerCycle=1000))
 
-
-
+modLayerSet.result <- runLayerBinding(layerList=layerList.1, factorSet = result[1:30])
+test_function(layerList=modLayerSet.result, targetLayer="LAYER.1", target.vec=target.IR)
 
 
 # improving speed in modifyLayers... --------------------------

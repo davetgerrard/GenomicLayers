@@ -13,6 +13,10 @@ The ability of factors to bind changes through this series so that the number an
 
 
 ### Notes (reverse chronological)
+__2015-12-04__: I spent quite a few hours re-writing functions to use IRanges() objects instead of vectors of 0/1 to mark the layers (see pfs.functions.R). I developed using chrM but as soon as I tried an optimisation with chr22, I hit the same memory problems as before. One thing to appease it was to return a single IRanges spanning the whole sequence for "layer_region" and "layer_island" matches. But the main problem is that DNA matches take a lot of memory. Maybe, split the sequence into segments of a given size (e.g. 100kb), create the IRanges for each and then concatenate them (parallel jobs?). Make sure the splits overlap by more than patternLength. Then re-combine the IRanges with reduce().
+
+I did that, I added max.window parameter to matchBindingFactor. Left it running on chr22. Need to use as large a window as possible (e.g. 1-10Mb).
+
 
 
 __2015-12-02__: The chr7 runs were failing on a Hydra full node (512Gb) without an error message. I scaled down to chr22 and got this error message:-
