@@ -29,7 +29,7 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
       pattern <- paste(sample(names(IUPAC_CODE_MAP), patternLength, replace=T), collapse="")
       max.mismatches <- round(test.mismatch.rate * patternLength )
       if(test.layer0.binding)  {
-        matches.length <- length( matchPattern(pattern, layerSet[['LAYER.0']], max.mismatch=max.mismatches, fixed=FALSE ))
+        matches.length <- length( matchPattern(pattern, layerSet[['LAYER.0']], max.mismatch=max.mismatches, fixed="subject" ))
         
       }else {
         matches.length <- 1

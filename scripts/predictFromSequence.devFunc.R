@@ -33,7 +33,8 @@ bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_i
 #bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T, prob=c(10,10,2,2))
 factorSetRandom <- list()
 for(i in 1:n.factors) {
-  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), layerSet.1, type=bindingFactorTypes[i], test.layer0.binding=FALSE, test.mismatch.rate=.1 ) 
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), 
+                            layerSet.1, type=bindingFactorTypes[i], test.layer0.binding=TRUE, test.mismatch.rate=.1 ) 
   
 }
 
