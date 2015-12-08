@@ -2,15 +2,23 @@
 # Decided that base objects are not use-able for whole chromosomes.
 # Need to re-write using hits objects
 
-createBindingFactor <-  function()  {
-  bindingFactor <- list(name=name, type=type, 
-                        profile=profileList, 
-                        mods=modList)
-  
-  return(bindingFactor)
-}
+# function 
+# description
+# Parameters:-
+# factorSet
+#createBindingFactor <-  function()  {
+#  bindingFactor <- list(name=name, type=type, 
+#                        profile=profileList, 
+ #                       mods=modList)
+#  
+#  return(bindingFactor)
+#}
 
-# name, layerSet, 
+# createRandomBindingFactor 
+# description
+# Parameters:-
+# name, 
+# layerSet, 
 # type=c("DNA_motif", "DNA_region","layer_region","layer_island"),
 # test.layer0.binding=FALSE, 
 # test.mismatch.rate=.1 , 
@@ -148,7 +156,28 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
 }
 
 
-#
+# print.bfSet 
+# description
+# Parameters:-
+# factorSet 
+print.bfSet <- function(factorSet) {
+  print("A list of binding factors:-")
+  bf.names <- names(factorSet)
+  types <- lapply(factorSet, FUN=function(x) x$type)
+  dna.patterns <- unlist(lapply(factorSet, FUN=function(x) as.character(x$profile$LAYER.0$pattern)))
+  layer.patterns <- unlist(lapply(lapply(factorSet, FUN=function(x) as.character(names(x$profile))), paste, collapse=","))
+  layer.mods <- unlist(lapply(lapply(factorSet, FUN=function(x) as.character(names(x$mods))), paste, collapse=","))
+  as.data.frame(cbind(bf.names, types,dna.patterns, layer.patterns, layer.mods) )
+}
+
+# matchBindingFactor 
+# description
+# Parameters:-
+# layerSet, 
+# bindingFactor, 
+# clusterGap=10, 
+# max.window=10000000, 
+# verbose=FALSE
 matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
   require(Biostrings)
   seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
@@ -259,6 +288,13 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
 # Layers are now Views or Iranges objects. marks (1) are contiguous ranges, absence of marks (0) are gaps between.
 # hits is now a Views object
 # TODO, edit to alter layerset IN-PLACE i.e. modifyLayerByBindingFactor.Views(layerSet, position.vec,bindingFactor)
+# function 
+# description
+# Parameters:-
+# layerSet, 
+# hits, 
+# bindingFactor, 
+# verbose=FALSE
 modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
   require(Biostrings)
   newLayerSet <- layerSet
@@ -288,6 +324,18 @@ modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verb
 
 
 #runLayerBinding <- function() {
+
+# runLayerBinding 
+# description
+# Parameters:-
+# layerList, 
+# factorSet, 
+# iterations=1, 
+# bindingFactorFreqs=rep(1, length(factorSet)), 
+# watch.function=function(x){}, 
+# collect.stats=FALSE, 
+# target.layer=2, 
+# verbose=FALSE
 runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
   if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
@@ -329,7 +377,16 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   return(newLayerList)
 }
 
-# name.prefix # give new factors a new name beginning with this name 
+# mutateFactorSet 
+# description
+# Parameters:-
+# factorSet, 
+# layerSet , 
+# mut_type="subRandomFactor", 
+# n.muts=1, 
+# verbose=FALSE, 
+# test.layer0.binding=FALSE,  
+# name.prefix=""    give new factors a new name beginning with this name 
 mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.muts=1, verbose=FALSE, test.layer0.binding=FALSE,  name.prefix=""){
   newFactorSet <- factorSet
   if(mut_type== "subRandomFactor")  {
@@ -348,10 +405,28 @@ mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.
   return(newFactorSet)
 }
 
-#}
 
-# logFile
-# logCycle record scores every 'logCycle' iterations
+
+# optimiseFactorSet 
+# description
+# Parameters:-
+# layerList, 
+# factorSet, 
+# testing.function, 
+# target.layer, 
+# target.vec, 
+# n.iter=10, 
+# target.score=1, 
+# mut.rate=0.1, 
+# modsPerCycle=100,
+# test.layer0.binding=FALSE, 
+# method="fast", 
+# logFile="",
+# logCycle=10, record scores every 'logCycle' iterations
+# maxNoChange=n.iter, 
+# verbose=FALSE, 
+# use.parallel=FALSE, 
+# n.cores=1
 optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,
                               test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE, use.parallel=FALSE, n.cores=1)  {
   
