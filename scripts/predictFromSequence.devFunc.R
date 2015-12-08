@@ -1,5 +1,207 @@
 ## Scratchbox to test the latest version of the functions.
 
+
+
+# attempt optimisation using parallel runs on different mutant sets --------------------------
+require(Biostrings)
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+#source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
+source('scripts/predictFromSequence.functions.R')
+source('scripts/pfs.functions.R')   # overwrites some of the above. TODO - remove this dependency.
+
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+#available.genomes()
+
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chrM"]] 
+transcript.file <- 'data/hg19.G19.chrM.transcript.gtf'
+base.0 <- 0
+n.layers <- 5
+target.layer <- "LAYER.5"
+n.factors <- 30
+upstream.prom <- 200
+downstream.prom <- 200
+n.iter <- 10000
+mut.rate <- 0.1
+modsPerCycle <- 1000000 # scaled up so ~ 1/200bp
+logCycle<- 100
+maxNoChange<- 1000
+runName <- "pfs_layer5_chr22_1kb_verbose"
+
+
+
+layerSet.5 <- list(LAYER.0 = thisChrom)
+for(i in 1:n.layers) {
+  layerSet.5[[paste('LAYER.', i , sep="")]] <- IRanges()    # use IRanges to store state of layers. TODO limit to chrom length
+}
+
+layerList.5 <- list(layerSet=layerSet.5, history=NULL)
+
+n.factors <- 30
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region"), n.factors, replace=T) 
+bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T)
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T, prob=c(10,10,2,2))
+factorSetRandom <- list()
+for(i in 1:n.factors) {
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), 
+                                                                         layerSet.5, type=bindingFactorTypes[i], test.layer0.binding=TRUE, test.mismatch.rate=.1 ) 
+  
+}
+
+print.bfSet(factorSetRandom)
+
+## Try some alternative algorithms for running a series of mods over a sequence.
+# Main target is improved speed.
+
+#targetSeq <- readDNAStringSet(fasta.file)[[1]]
+transcriptTable <- read.delim(transcript.file)
+names(transcriptTable)[c(4,5,7)] <- c("txStart", "txEnd", "strand")
+
+# set up for optimisation
+# target.vec is now an IRanges
+tss.positions <- ifelse(transcriptTable$strand == "+", transcriptTable$txStart, transcriptTable$txEnd)
+tss.positions <- unique(tss.positions)    # only want unique values.
+
+#tss.vector <- rep(0, nchar(targetSeq))
+#tss.vector[tss.positions] <- 1
+print(paste(sum(is.na(tss.positions)), "NAs in tss positions"))
+
+tss.positions <- na.omit(tss.positions)
+#tss.IR <- IRanges(start=tss.positions, width=1)
+#tss.IR <- resize(tss.IR, fix="center", width="200")
+tss.IR <- IRanges(start=tss.positions-99, end=tss.positions+100)   # this version of IRanges, resize not working right.
+
+# widen the tss positions to simulate promoters?
+
+
+test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
+  inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
+  union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
+  #layer.vec <- as.numeric(strsplit(as.character(layerList$layerSet[[targetLayer]]),"")[[1]])
+  return(inter.size/ union.size)
+}
+
+# TODO : get these object back into aligment.
+
+# test the Layer binding
+system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.5, factorSet = factorSetRandom, verbose=TRUE))  
+
+
+n.iter <- 100
+#system.time(result <- optimiseFactorSet(layerList=layerList.1, factorSetRandom, testing.function=test_function, target.layer="LAYER.5", target.vec=tss.IR, n.iter=n.iter, mut.rate=0.1, modsPerCycle=10000, verbose=TRUE))
+
+try(
+  system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
+                                          target.layer=target.layer, target.vec=tss.IR, n.iter=n.iter, mut.rate=mut.rate,
+                                          modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
+                                          verbose=TRUE))
+)
+
+
+#mutateAndLayerBindFactorSet <- function(factorSet, layerList, mut.rate =0.1,  verbose=TRUE, test.layer0.binding=FALSE, name.prefix="m", modsPercyle=100)  {
+#  n.muts=floor(length(currentFactorSet) * mut.rate)
+#  
+#  newFactorSet <- mutateFactorSet(factorSet, layerList$layerSet,n.muts=n.muts, verbose=verbose, test.layer0.binding=test.layer0.binding, name.prefix=name.prefix)
+#    
+#  newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
+#  return(newModLayer)#
+#}
+
+#mutateAndLayerBindFactorSet(factorSet, layerList, mut.rate =0.1,  verbose=TRUE, test.layer0.binding=TRUE, name.prefix=paste("m",i,sep=""), modsPercyle=100)
+
+#newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
+#newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
+
+# NO, need it to return the newModLayer AND keep track of which factorSet went in.
+# So, create the N factor sets
+# then do runLayerBinding in parallel
+
+factorSet.list <- list()
+
+#mutateFactorSet(factorSetRandom, layerList.5$layerSet,n.muts=floor(length(factorSetRandom) * mut.rate), verbose=T, test.layer0.binding=T, name.prefix=paste("m",i,sep=""))
+
+
+# create 10 new factorSet by mutating the currentSet.
+factorSet.list <- replicate(10, mutateFactorSet(factorSetRandom, layerList.5$layerSet,n.muts=floor(length(factorSetRandom) * mut.rate), verbose=T, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
+
+#length(factorSet.list)
+#length(factorSet.list[[1]])
+#print.bfSet(factorSet.list[[1]])
+
+#sapply(factorSet.list, print.bfSet, simplify=F)
+
+# attempt at parallel runs
+require(parallel)
+
+cl <- makeCluster(mc <- getOption("cl.cores", 3))
+## to make this reproducible
+#clusterSetRNGStream(cl, 123)
+
+clusterExport(cl, c("runLayerBinding", "matchBindingFactor","modifyLayerByBindingFactor.Views", "layerList.5", "modsPerCycle", "verbose"))
+n.tries <- 10  # VERY WEIRDLY , the below command sometimes fails on first call but works on second (or later).  TODO: fix this!
+tries=0
+while(tries <= n.tries)  {
+  
+  worked <- try(mod.list <- parLapply(cl, factorSet.list, fun=function(x) runLayerBinding(layerList=layerList.5, factorSet = x, iterations=modsPerCycle, verbose=verbose) ), TRUE)
+  tries <- tries +1
+  if(class(worked) != "try-error") {
+    if(verbose) print(paste("parallel mod list tries: " , tries))
+    break;
+  }
+}
+clusterExport(cl, c("test_function", "target.layer","tss.IR"))
+score.vec <- parSapply(cl, mod.list, FUN=function(x) test_function(layerList=x, targetLayer=target.layer, target.vec=tss.IR))
+stopCluster(cl)
+
+
+
+
+# TESTING
+# simple 60 iters
+try(
+  system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
+                                          target.layer=target.layer, target.vec=tss.IR, n.iter=60, mut.rate=mut.rate,
+                                          modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
+                                          verbose=TRUE))
+)
+# RUN1
+# [1] "Round 60 oldScore 0.0622369878183832 newScore 0.0321151716500554 Better?"
+# [1] "No!"
+# user  system elapsed 
+# 94.13    0.07   95.19 
+# RUN2
+#[1] "Round 60 oldScore 0.1828125 newScore 0.154369440083726 Better?"
+#[1] "No!"
+#user  system elapsed 
+#112.56    0.02  113.17 
+
+# source('scripts/pfs.functions.R')  
+# 20 iters using 3 cores
+try(
+  system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
+                                          target.layer=target.layer, target.vec=tss.IR, n.iter=20, mut.rate=mut.rate,
+                                          modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
+                                          verbose=F, use.parallel=TRUE, n.cores=3))
+)
+# RUN1
+#[1] "Round 20 oldScore 0.175549322113137 newScore 0.175722947761194 Better?"
+#[1] "Yes!"
+#user  system elapsed 
+#3.71    0.46   52.28 
+# RUN2
+# [1] "Round 20 oldScore 0.184375399565273 newScore 0.175470239628962 Better?"
+# [1] "No!"
+# user  system elapsed 
+# 4.26    0.39   61.65 
+# RUN3
+# [1] "Round 20 oldScore 0.0680616740088106 newScore 0.0680616740088106 Better?"
+# [1] "No!"
+# user  system elapsed 
+# 3.84    0.49   54.04
+
+
+# Three cores on my PC is faster and at least as good.
+
 # Test binding of multi-layers ---------------------------
 require(Biostrings)
 setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
@@ -262,7 +464,7 @@ countOverlaps(pos,neg, maxgap = 1)   # values of 2 are positive regions overlapp
 
 
 
-# --------------------------------------------------------------
+# what was this? -----------------------------------------------------
 
 
 require(Biostrings)

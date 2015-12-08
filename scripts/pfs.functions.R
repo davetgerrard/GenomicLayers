@@ -289,7 +289,7 @@ modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verb
 
 #runLayerBinding <- function() {
 runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
-  if(verbose) print(paste(Sys.time(), "runLayerBinding.fast pos 1", sep=" "))
+  if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
   newLayerList <- layerList
@@ -301,9 +301,9 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   }  
   max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
   for(thisBF in bindingOrder)  {
-    if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
+    if(verbose) print(paste(Sys.time(), "runLayerBinding thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]], verbose=verbose)  
-    if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
+    if(verbose) print(paste(Sys.time(), "runLayerBinding n.hits =", length(theseHits), sep=" "))
     #print(length(theseHits))
     if(length(theseHits) < 1) { next ;}
     
@@ -352,7 +352,7 @@ mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.
 # logFile
 # logCycle record scores every 'logCycle' iterations
 optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,
-                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE)  {
+                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE, use.parallel=FALSE, n.cores=1)  {
   
   if(logFile != "")  write.table(cbind("iter", "best.score"), row.names=F, col.names=F, sep="\t", quote=F,file=logFile)
   currentFactorSet <- factorSet
@@ -375,6 +375,20 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
   currentBestScore <- initialScore
   if(logFile != "") write.table(cbind(0, currentBestScore), row.names=F, col.names=F, quote=F,sep="\t",file=logFile, append=TRUE)
   iSinceLastImprovement <- 0  # use to break from following loop if very many rounds without improvement
+ 
+  if(use.parallel) {
+    # attempt at parallel runs
+    require(parallel)
+    mc <- getOption("cl.cores", n.cores)
+    if(verbose) print(paste("Cores to use:" ,mc))
+    
+    cl <- makeCluster(mc)
+    clusterExport(cl, c("runLayerBinding", "matchBindingFactor","modifyLayerByBindingFactor.Views", "layerList", 
+                        "modsPerCycle", "verbose", "test_function", "target.layer","target.vec"), envir = environment())
+    n.tries <- 10
+    
+  }
+  
   
   for(i in 1:n.iter) {
     # write to log file if appropriate
@@ -388,15 +402,44 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       break ; 
     }
     better <- FALSE
-    newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
-    if(method =="fast") {
-      #print("using fast algorithm")
-      newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
+    if(use.parallel) {
+      # create n.cores new factorSet by mutating the currentSet.
+      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
+      
+      # list(...) added when cluster not picking up layerList
+      #n.tries <- 10  # VERY WEIRDLY , the below command sometimes fails on first call but works on second (or later).  TODO: fix this!
+      tries=0
+      while(tries <= n.tries)  {   
+        worked <- try(mod.list <- parLapply(cl, factorSet.list, fun=function(x) runLayerBinding(layerList=layerList, factorSet = x, iterations=modsPerCycle, verbose=verbose)), TRUE)
+        tries <- tries +1
+        if(class(worked) != "try-error") {
+          if(verbose) print(paste("parallel mod list tries: " , tries))
+          break;
+        }
+      }
+      if(verbose) print(paste(tries, "of", n.tries, "attempted"))
+      #clusterExport(cl, "mod.list", envir = environment())
+      par.scores <- parSapply(cl, mod.list, FUN=function(x) test_function(layerList=x, targetLayer=target.layer, target.vec=target.vec))
+
+      
+      
+      best.index <- which.max(par.scores)
+      newFactorSet <- factorSet.list[[best.index]]
+      newModLayer <- mod.list[[best.index]]
+      newScore <- par.scores[best.index]
     } else {
-      #print("using slow algorithm")
-      newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
+      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
+      if(method =="fast") {
+        #print("using fast algorithm")
+        newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
+      } else {
+        #print("using slow algorithm")
+        newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
+      }
+      newScore <- test_function(newModLayer, targetLayer=target.layer, target.vec=target.vec)
+      
     }
-    newScore <- test_function(newModLayer, targetLayer=target.layer, target.vec=target.vec)
+    
     scores.vector[i] <- newScore
     print(paste("Round", i, "oldScore", currentBestScore, "newScore", newScore, "Better?"))
     if(is.na(newScore)) {
@@ -416,6 +459,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     #print(paste("Round", i, "oldScore", currentBestScore, "newScore", newScore, "Better?",better))
     
   }
+  if(use.parallel)   stopCluster(cl)
   currentFactorSet$optimScores <- scores.vector
   return(currentFactorSet)
 }

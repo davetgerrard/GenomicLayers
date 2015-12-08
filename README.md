@@ -18,7 +18,8 @@ __2015-12-08__: Last night began the first long optimisations (10,000 iters) usi
 
 TODO more speed up (parallelise optimisation: mutate each accepted set 10 times and run each independently, keep the best.
 
-The two runs were for 200bp centred on TSS and 1kb centred on TSS. The 200bp is slow to improve (<4% after 500i), the 1kb started slow, scoring 0.0 for most of the early runs but jumped to 7% within the first 100i and then is still <9% after >300i. One positive is that the scores seem quite robust, most failed runs are very close to the current optimum. 
+The two runs were for 200bp centred on TSS and 1kb centred on TSS. The 200bp is slow to improve (<4% after 500i), the 1kb started slow, scoring 0.0 for most of the early runs but jumped to 7% within the first 100i and then is still <9% after >300i. One positive is that the scores seem quite robust, most failed runs are very close to the current optimum. Similar code run on chrM ran 100 iterations in 3 minutes and achieved 18% (of only 36 TSS).
+
 
 __N.B.__ I added the strict ordering to make computation tractable. I wonder if ordered regulation in biology is adaptive because of robustness (?). 
 

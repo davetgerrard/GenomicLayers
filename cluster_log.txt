@@ -31,3 +31,7 @@ module load libs/bioconductor/2.14/gcc-4.4.7+R-3.1.1
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22v -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.verbose.R
 
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22.1kb -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.1kb.verbose.R
+
+
+
+awk '{ if($1 == "chrM" && $3 == "transcript") print $0 }' /mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chrM.transcript.gtf
