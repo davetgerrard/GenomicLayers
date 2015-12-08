@@ -6,7 +6,7 @@
 require(Biostrings)
 setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
 #source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
-source('scripts/predictFromSequence.functions.R')
+#source('scripts/predictFromSequence.functions.R')
 source('scripts/pfs.functions.R')   # overwrites some of the above. TODO - remove this dependency.
 
 library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
@@ -244,7 +244,7 @@ for(i in 1:length(factorSetRandom)) {
   print( paste(factorSetRandom[[i]]$type,length(hits), class(hits), "hits"))
   #print(hits)
   new.LayerSet <- modifyLayerByBindingFactor.Views(new.LayerSet, hits=hits, bindingFactor=factorSetRandom[[i]])
-  print(new.LayerSet)
+  #print(new.LayerSet)
 }
 
 #  won't find very matches with 5 layers very easily.
