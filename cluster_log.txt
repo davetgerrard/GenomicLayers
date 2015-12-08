@@ -33,5 +33,9 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22v -b y -pe smp.
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22.1kb -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.1kb.verbose.R
 
 
+# get chrM transcripts for testing
+#awk '{ if($1 == "chrM" && $3 == "transcript") print $0 }' /mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chrM.transcript.gtf
 
-awk '{ if($1 == "chrM" && $3 == "transcript") print $0 }' /mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chrM.transcript.gtf
+# attempt a parallel job:-
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr22.par -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.1kb.par.R
+
