@@ -38,4 +38,5 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22.1kb -b y -pe s
 
 # attempt a parallel job:-
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr22.par -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.1kb.par.R
-
+# and while waiting in queue, set off a chr7 job with fewer cores (8) to see how things have improved
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr7.par -b y -pe smp.pe 8 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr7.1kb.par.R
