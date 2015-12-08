@@ -13,6 +13,22 @@ The ability of factors to bind changes through this series so that the number an
 
 
 ### Notes (reverse chronological)
+
+__2015-12-08__: Last night began the first long optimisations (10,000 iters) using pfs code on whole of chr22. The first set-off @ >500 iters by morning (approx 40/hr). Will take 20 days (so will probably be killed).
+
+TODO more speed up (parallelise optimisation: mutate each accepted set 10 times and run each independently, keep the best.
+
+The two runs were for 200bp centred on TSS and 1kb centred on TSS. The 200bp is slow to improve (<4% after 500i), the 1kb started slow, scoring 0.0 for most of the early runs but jumped to 7% within the first 100i and then is still <9% after >300i. One positive is that the scores seem quite robust, most failed runs are very close to the current optimum. 
+
+__N.B.__ I added the strict ordering to make computation tractable. I wonder if ordered regulation in biology is adaptive because of robustness (?). 
+
+Is there a theory of gene regulation that suggests how wide a promoter would be good to aim for. 
+
+The current system has many flaws:-
+- no long range in-cis effect (TODO could be added in by enabling offset parameter in bindingFactor)
+- improper control over the numbers of each bindingFactor (currently an equal number of each (or fewer).
+- It is very slow to get started because factors binding higher layers won't in the initial state. (unless they bind to empty state).
+
 __2015-12-07__: The new windowing approach was successful on chr22 (DNA-motif in 25 seconds with 5Mb window, 17 secs with 10Mb window) but revealed 'matches' across the first 16Mb of the chromosome (the telomere is NNNs).  DESIGN DECISION: whether to allow matches to Ns?  I think not, because the telomeres and centromeres are a relatively small proportion of the genome but could suck up a large number of hits, when there is no evidence there should be hits there.
 
 DONE filter out Ns from telomeres etc. (or don't match to them).   Solved using fixed='subject'

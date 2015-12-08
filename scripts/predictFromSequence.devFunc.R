@@ -1,5 +1,53 @@
 ## Scratchbox to test the latest version of the functions.
 
+# Test binding of multi-layers ---------------------------
+require(Biostrings)
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+#source('C:/Users/Dave/Dropbox/Temp/predictFromSequence.functions.R')
+source('scripts/predictFromSequence.functions.R')
+source('scripts/pfs.functions.R')   # overwrites some of the above. TODO - remove this dependency.
+
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+#available.genomes()
+
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chrM"]] 
+n.layers <- 5
+
+layerSet.5 <- list(LAYER.0 = thisChrom)
+for(i in 1:n.layers) {
+  layerSet.5[[paste('LAYER.', i , sep="")]] <- IRanges()    # use IRanges to store state of layers. TODO limit to chrom length
+}
+
+layerList.5 <- list(layerSet=layerSet.5, history=NULL)
+
+n.factors <- 30
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region"), n.factors, replace=T) 
+bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T)
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T, prob=c(10,10,2,2))
+factorSetRandom <- list()
+for(i in 1:n.factors) {
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), 
+                                                                         layerSet.5, type=bindingFactorTypes[i], test.layer0.binding=TRUE, test.mismatch.rate=.1 ) 
+  
+}
+
+print.bfSet(factorSetRandom)
+
+new.LayerSet <- layerSet.5
+for(i in 1:length(factorSetRandom)) {
+  print(i)
+  hits <- matchBindingFactor(layerSet=new.LayerSet, bindingFactor=factorSetRandom[[i]], verbose=T)   ## TODO - get this working. 
+  #hits <- as(hits, "IRanges")  # needed to use reduce, setDiff etc TODO fix matchBindingFactor to return this?
+  print( paste(factorSetRandom[[i]]$type,length(hits), class(hits), "hits"))
+  #print(hits)
+  new.LayerSet <- modifyLayerByBindingFactor.Views(new.LayerSet, hits=hits, bindingFactor=factorSetRandom[[i]])
+  print(new.LayerSet)
+}
+
+#  won't find very matches with 5 layers very easily.
+
+
 
 # complete re-write to use Views or Iranges as layer matches (e.g. on BSgenome)   ---------------------------------------------
 # functions in pfs.functions.R
