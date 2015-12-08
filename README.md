@@ -33,9 +33,9 @@ The current system has many flaws:-
 
 __2015-12-07__: The new windowing approach was successful on chr22 (DNA-motif in 25 seconds with 5Mb window, 17 secs with 10Mb window) but revealed 'matches' across the first 16Mb of the chromosome (the telomere is NNNs).  DESIGN DECISION: whether to allow matches to Ns?  I think not, because the telomeres and centromeres are a relatively small proportion of the genome but could suck up a large number of hits, when there is no evidence there should be hits there.
 
-DONE filter out Ns from telomeres etc. (or don't match to them).   Solved using fixed='subject'
+[DONE 2015-12-07] filter out Ns from telomeres etc. (or don't match to them).   Solved using fixed='subject'
 
-TODO Window size against a single layer layerSet seemed ok up to 10Mb. Need to test on 5 layer system.
+[DONE 2015-12-07] Window size against a single layer layerSet seemed ok up to 10Mb. Need to test on 5 layer system.
 
 Ran 1 layer chr22 with 30 binding factors in 3m 20secs. No strain on memory on my PC.
 
