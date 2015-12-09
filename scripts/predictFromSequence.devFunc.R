@@ -199,8 +199,18 @@ try(
 # user  system elapsed 
 # 3.84    0.49   54.04
 
-
 # Three cores on my PC is faster and at least as good.
+
+# overnight run, just to see how far it will go on chrM
+try(
+  system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
+                                          target.layer=target.layer, target.vec=tss.IR, n.iter=10000, mut.rate=mut.rate,
+                                          modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
+                                          verbose=F, use.parallel=TRUE, n.cores=3))
+)
+
+
+
 
 # Test binding of multi-layers ---------------------------
 require(Biostrings)

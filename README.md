@@ -14,6 +14,13 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+__2015-12-09__:  I left the chrM job running with 10,000 iterations. The computer rebooted itself to install updates but it looks like the script properly exited after 1000 iterations without improvement in about 2hours (it reached 33% (~12 of 36 TSS) by 2000 iterations ).
+
+I stopped the original pfs run on chr22 after 34hrs/1600 iters. It was stalling on 4% for 500iters and I wanted to get a parallel job started on the server. chr22:  47 iters/hr. Be careful when comparing this with parallel jobs because the scripts currently generate and test 16 (n.cores) mutated sets PER ITERATION. The parallel chr22 completed 6 iters in 30mins but this represents testing 6*16=96 factorSets.
+
+TODO remove verbosity from factor mutation, it is all I can see in the logs.
+TODO with parallel jobs, log scores more often (because many more factors are tested).
+
 __2015-12-08__: Last night began the first long optimisations (10,000 iters) using pfs code on whole of chr22. The first set-off @ >500 iters by morning (approx 40/hr). Will take 20 days (so will probably be killed).
 
 [DONE 2015-12-08 ] more speed up (parallelise optimisation: mutate each accepted set 10 times and run each independently, keep the best.
