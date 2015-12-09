@@ -33,7 +33,7 @@ transcriptTable <- read.delim(transcript.file)
 
 names(transcriptTable)[c(4,5,7)] <- c("txStart", "txEnd", "strand")
 
-n.cores <- 8
+n.cores <- 16
 base.0 <- 0 
 n.layers <- 5
 target.layer <- "LAYER.5"
