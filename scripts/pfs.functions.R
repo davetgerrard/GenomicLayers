@@ -26,7 +26,7 @@
 # min.DM.length=2, 
 # min.DR.length=10
 createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_region","layer_region","layer_island"),
-                                      test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, min.DM.length=2, min.DR.length=10) {
+                                      test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, min.DM.length=2, min.DR.length=10, verbose=FALSE) {
   
   if(!test.layer0.binding) max.pattern.tries <- 1  # only try one pattern.
   
@@ -48,7 +48,7 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
       }
       
     }
-    if(test.layer0.binding) print(paste(pattern , "matches training sequence" , matches.length, "times"))    
+    if(test.layer0.binding & verbose) print(paste(pattern , "matches training sequence" , matches.length, "times"))    
     
     profileList <- list(LAYER.0=list(pattern=DNAString(pattern) , mismatch.rate=0, length=patternLength))
     
@@ -84,7 +84,7 @@ createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_r
       }
       
     }
-    if(test.layer0.binding) print(paste(pattern , "matches training sequence" , matches.length, "times"))    
+    if(test.layer0.binding & verbose) print(paste(pattern , "matches training sequence" , matches.length, "times"))    
     
     profileList <- list(LAYER.0=list(pattern=DNAString(pattern) , mismatch.rate=0.1, length=patternLength))
     
@@ -361,7 +361,9 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
     
     hits.sample <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits.used =", length(hits.sample), sep=" "))
-    if(verbose) cat(paste(thisBF, length(theseHits), length(hits.sample)))
+    
+    if(verbose) {cat(paste(thisBF, length(theseHits), length(hits.sample)))
+    } else { cat( ".")}
 	#thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)
     
     newLayerList$layerSet <-  modifyLayerByBindingFactor.Views(newLayerList$layerSet, hits=hits.sample, bindingFactor=factorSet[[thisBF]], verbose=verbose)
@@ -374,7 +376,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   }
   newLayerList$history <- stats.table
   #print(letterFrequency(newLayerSet$LAYER.1, letters= "1"))   # how many of layer.1 were set to 1
-  if(verbose) print(paste(Sys.time(), "runLayerBinding.fast pos 2", sep=" "))
+  if(verbose) {print(paste(Sys.time(), "runLayerBinding.fast pos 2", sep=" ")) } else {print("")}
   return(newLayerList)
 }
 
@@ -387,21 +389,46 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
 # n.muts=1, 
 # verbose=FALSE, 
 # test.layer0.binding=FALSE,  
+# type_list = c("subRandomFactor" , "duplicate", "switch"), 
+# prob=rep(1/length(type_list), length(type_list))
+# fix.set.size= TRUE,   Keep the factor set the same size. 
 # name.prefix=""    give new factors a new name beginning with this name 
-mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.muts=1, verbose=FALSE, test.layer0.binding=FALSE,  name.prefix=""){
+mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.muts=1, verbose=FALSE, test.layer0.binding=FALSE,  
+                            type_list = c("subRandomFactor" , "duplicate", "switch"), prob=rep(1/length(type_list), length(type_list)), fix.set.size= TRUE, name.prefix=""){
+  
   newFactorSet <- factorSet
+  if(mut_type == "random")  {
+   mut_type <- sample( type_list, 1, prob=prob)
+  }
+  
+  
   if(mut_type== "subRandomFactor")  {
     index <- sample(1:length(factorSet), n.muts)
     for(i in index) {
       thisName <- names(factorSet)[i]
       newName <- ifelse(name.prefix == "", thisName, paste(name.prefix, i, sep="."))
-      newFactorSet[[thisName]] <-  createRandomBindingFactor(newName,layerSet, type=factorSet[[i]]$type, test.layer0.binding=test.layer0.binding, test.mismatch.rate=.1 ) 
+      newFactorSet[[thisName]] <-  createRandomBindingFactor(newName,layerSet, type=factorSet[[i]]$type, test.layer0.binding=test.layer0.binding, test.mismatch.rate=.1, verbose=verbose ) 
       if(verbose)  {
         print(paste("Factor", i ,"substituted"))
       }
     }
     
   }
+  
+  if(mut_type =="switch")  {  # switch a factor with another from the set
+    index <- sample(1:length(factorSet), n.muts)
+    for(i in index) {
+      partner <- sample(setdiff(1:length(factorSet), i), 1)
+      new.index <- 1:length(factorSet)
+      new.index[c(i, partner)] <- c(partner, i)
+      newFactorSet <- newFactorSet[new.index]
+      if(verbose)  {
+        print(paste("Factors", i ,"and", partner, "switched"))
+      }
+    }
+    
+  }
+  
   
   return(newFactorSet)
 }
@@ -481,7 +508,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     better <- FALSE
     if(use.parallel) {
       # create n.cores new factorSet by mutating the currentSet.
-      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
+      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
       
       # list(...) added when cluster not picking up layerList
       #n.tries <- 10  # VERY WEIRDLY , the below command sometimes fails on first call but works on second (or later).  TODO: fix this!
@@ -494,10 +521,10 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
           break;
         }
       }
-      if(verbose) print(paste(tries, "of", n.tries, "attempted"))
+      #if(verbose) print(paste(tries, "of", n.tries, "attempted"))
       #clusterExport(cl, "mod.list", envir = environment())
       par.scores <- parSapply(cl, mod.list, FUN=function(x) test_function(layerList=x, targetLayer=target.layer, target.vec=target.vec))
-
+      print(paste("x", mc, sep=""))
       
       
       best.index <- which.max(par.scores)
@@ -505,7 +532,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       newModLayer <- mod.list[[best.index]]
       newScore <- par.scores[best.index]
     } else {
-      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=T, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
+      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
       if(method =="fast") {
         #print("using fast algorithm")
         newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
@@ -517,8 +544,12 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       
     }
     
+    n.regions <- length(newModLayer$layerSet[[target.layer]])
+    coverage <- sum(width(newModLayer$layerSet[[target.layer]]))
+    
     scores.vector[i] <- newScore
-    print(paste("Round", i, "oldScore", currentBestScore, "newScore", newScore, "Better?"))
+    print(paste("Round", i, ". Marks on target layer:", n.regions, ", Coverage:", coverage))
+    print(paste("Round", i, ". OldScore", currentBestScore, "NewScore", newScore, "Better?"))
     if(is.na(newScore)) {
       print("Newscore = NA, skipping to next")
       next ;

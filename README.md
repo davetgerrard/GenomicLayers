@@ -20,6 +20,8 @@ I stopped the original pfs run on chr22 after 34hrs/1600 iters. It was stalling 
 
 TODO remove verbosity from factor mutation, it is all I can see in the logs.
 TODO with parallel jobs, log scores more often (because many more factors are tested).
+TODO better reporting on optimisation e.g. score, size of seq, width of target regions, width of target seq modified, number of regions.
+TODO more liberal mutations: duplications (limited?), switching, quantity/proportion of each factor
 
 __2015-12-08__: Last night began the first long optimisations (10,000 iters) using pfs code on whole of chr22. The first set-off @ >500 iters by morning (approx 40/hr). Will take 20 days (so will probably be killed).
 
