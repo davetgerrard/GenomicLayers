@@ -14,6 +14,28 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+__2015-12-11__: Progress on long runs 08:50
+L5_chr7.par.o91126	Round 86	0.0645244973393824	12/10/2015 11:17:31	~22hrs
+L5_chr22.par	Round 616	0.0885717943907263	~47hrs
+
+What is being optimised?
+On chr22, there are ~4500 transcripts and the chrom is ~51Mb long. When extending the targets to 1kb, the total target area is 4.5Mb. 4.5/51 = 0.08823529
+Certainly need to collect more stats on coverage of target.layer during optimisation.
+
+Current test function:-
+	test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
+	  inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
+	  union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
+	  return(inter.size/ union.size)
+	}
+
+__2015-12-10__: Progress on long runs. 11am
+
+Lay5_chr22.1kb	Round 2122	0.0885956837508925	12/07/2015 22:33:35	~ 61 hrs, looks like no improvement for 900 iters, expect to terminate today.
+L5_chr22.par	Round 370	0.0874762103883457	12/09/2015 10:03:18	~ 25 hrs
+
+I wonder if this is limited simply by the proportion of the target that can be covered. If so, increasing the number of marks that occur duing layerBinding may improve the fit.
+
 __2015-12-09__:  I left the chrM job running with 10,000 iterations. The computer rebooted itself to install updates but it looks like the script properly exited after 1000 iterations without improvement in about 2hours (it reached 33% (~12 of 36 TSS) by 2000 iterations ).
 
 I stopped the original pfs run on chr22 after 34hrs/1600 iters. It was stalling on 4% for 500iters and I wanted to get a parallel job started on the server. chr22:  47 iters/hr. Be careful when comparing this with parallel jobs because the scripts currently generate and test 16 (n.cores) mutated sets PER ITERATION. The parallel chr22 completed 6 iters in 30mins but this represents testing 6*16=96 factorSets.
