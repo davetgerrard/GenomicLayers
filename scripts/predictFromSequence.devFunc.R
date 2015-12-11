@@ -1,6 +1,68 @@
 ## Scratchbox to test the latest version of the functions.
 
 
+# Investigating low coverage on optimisation --------------------
+# Increase coverage of modifications?
+require(Biostrings)
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+source('scripts/pfs.functions.R')   
+
+
+# What to do about overlapping targets (after expansion)?
+
+# How to increase coverage? 
+
+# Could allow optimisation to choose coverage based on bindingFactor lengths
+
+# Check that they are binding as much as they could... e.g.
+#   bf.2 6878 1bf.3 1 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+# bf.4 17615 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+# bf.7 37536 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+#available.genomes()
+
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chrM"]] 
+n.layers <- 5
+
+layerSet.5 <- list(LAYER.0 = thisChrom)
+for(i in 1:n.layers) {
+  layerSet.5[[paste('LAYER.', i , sep="")]] <- IRanges()    # use IRanges to store state of layers. TODO limit to chrom length
+}
+
+layerList.5 <- list(layerSet=layerSet.5, history=NULL)
+
+# generate a factor set and test how many alter the target layer and by how much.
+
+n.factors <- 30
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region"), n.factors, replace=T) 
+bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T)
+#bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T, prob=c(10,10,2,2))
+factorSetRandom <- list()
+for(i in 1:n.factors) {
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), 
+                                                                         layerSet.5, type=bindingFactorTypes[i], test.layer0.binding=TRUE, test.mismatch.rate=.1 ) 
+  
+}
+
+print.bfSet(factorSetRandom)
+
+# create a simple binding factor that binds anywhere and convert the target layer (LAYER.5) to state 1
+testFactor <-  list(name="test", type="layer_region", 
+                                   profile=list(LAYER.0=list(pattern=DNAString("N"), mismatch.rate=0.1, length=250)), 
+                                   mods=list(LAYER.5=list(state="1", stateWidth=250, offset=0, align="centre")))
+
+# get hits for a specific factor
+
+hits <- matchBindingFactor(layerSet=layerSet.5, bindingFactor=testFactor, verbose=T)   ## TODO - get this working. 
+#hits <- as(hits, "IRanges")  # needed to use reduce, setDiff etc TODO fix matchBindingFactor to return this?
+print( paste(testFactor$type,length(hits), class(hits), "hits"))
+#print(hits)
+new.LayerSet <- modifyLayerByBindingFactor.Views(layerSet.5, hits=hits, bindingFactor=testFactor)
+
+
+modLayerSet <- runLayerBinding(layerList=layerList.5, factorSet = list(A=testFactor), iterations = 10000, verbose=TRUE)
 
 # attempt optimisation using parallel runs on different mutant sets --------------------------
 require(Biostrings)

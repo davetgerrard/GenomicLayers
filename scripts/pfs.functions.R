@@ -342,7 +342,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
   newLayerList <- layerList
-  
+  seqRange <- c(start(layerList$layerSet[['LAYER.0']])[1], end(layerList$layerSet[['LAYER.0']])[1])
   if(collect.stats) {
     stats.table <- data.frame()
   } else {
@@ -358,10 +358,17 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
     
     # how many of the potential hits to mark? 
     # iterations/n.factors (rounded up).
-    
-    hits.sample <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
+    # need to check if hits object is a single hit spanning whole chrom (e.g. for DNA_region matching 'N' and nothing else)
+    # TODO: if so, need to make pseudo-hits that can be sampled.
+    if(identical(theseHits, IRanges(start=seqRange[1], end=seqRange[2]))) {
+      if(verbose) print("Hits match whole chromosome")
+      hit.width <- factorSet[[thisBF]]$profile$LAYER.0$length
+      starts <- sample(1:(seqRange[2]-hit.width), max.hits, replace=FALSE)
+      hits.sample <- IRanges(starts, starts+hit.width)
+    } else {
+      hits.sample <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits.used =", length(hits.sample), sep=" "))
-    
+    }
     if(verbose) {cat(paste(thisBF, length(theseHits), length(hits.sample)))
     } else { cat( ".")}
 	#thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)

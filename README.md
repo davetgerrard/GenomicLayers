@@ -31,6 +31,50 @@ Current test function:-
 	  return(inter.size/ union.size)
 	}
 
+
+I re-load the current best factorSet from results/pfs_layer5_chr22_1kb_par/currentFactorSet.600.Rdata (manually but commands stored in scripts/pfs.reloadResultOnHydra.R).
+
+I ran runLayerBinding a couple of times. Each time, Layer 5 (target) had only (and exactly) 716 bp coverage in 10 regions (c.f. 4070000 for target). 
+
+I don't think it is marking as much of the chromosome as I expected and there may be a clue in output from runLayerBinding():-
+
+	> modLayerSet2 <- runLayerBinding(layerList=layerList.1, factorSet = currentFactorSet, verbose=TRUE)
+	[1] "2015-12-11 10:32:43 runLayerBinding pos 1"
+	[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+	bf.1 25885 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+	bf.2 6878 1bf.3 1 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+	bf.4 17615 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+	bf.7 37536 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+	bf.8 287 1[1] "Sequence of length  51304566 , using  6 windows of length 1e+07"
+
+I don't think it is marking as much of the chromosome as I expected and there may be a clue in output from runLayerBinding():-
+
+The tss may not be unique 
+	
+	> sum(width(intersect(tss.IR, tss.IR)))
+	[1] 2287192
+	> sum(width(tss.IR))
+	[1] 4070000
+
+NO, checked that and they are made unique. The problem is that using 1kb, they overlap each other
+
+	> sum(width(tss.IR))
+	[1] 4070000
+	> sum(width(reduce(tss.IR)))
+	[1] 2287192
+
+
+The layer_region types are only marking a single central hit. Because:-
+
+    stateWidth <- bindingFactor$mods[[thisLayer]]$stateWidth
+    hits <- resize(hits, width=stateWidth, fix="center")    # adjust the width
+
+For a layer_region matching 'N' and no other layers, matchBindingFactor returns an IRanges spanning whole chrom. Resize converts this to a small span (stateWidth) in the centre of the chromosome.
+
+Should such bindingfactors be allowed?  If so, need to preserve number of hits (e.g. 1:N for length(chrom)). May add to memory/time requirements (probably why I cut it down to a single region in the first place).
+
+I added an edge-case to runLayerBinding such that if the hits object is an IRanges object spanning the whole chromosome, then it will generate max.hits hits randomly across the chromosome. 
+
 __2015-12-10__: Progress on long runs. 11am
 
 	Lay5_chr22.1kb	Round 2122	0.0885956837508925	12/07/2015 22:33:35	~ 61 hrs, looks like no improvement for 900 iters, expect to terminate today.
