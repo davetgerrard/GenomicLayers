@@ -15,14 +15,16 @@ The ability of factors to bind changes through this series so that the number an
 ### Notes (reverse chronological)
 
 __2015-12-11__: Progress on long runs 08:50
-L5_chr7.par.o91126	Round 86	0.0645244973393824	12/10/2015 11:17:31	~22hrs
-L5_chr22.par	Round 616	0.0885717943907263	~47hrs
+
+	L5_chr7.par.o91126	Round 86	0.0645244973393824	12/10/2015 11:17:31	~22hrs
+	L5_chr22.par	Round 616	0.0885717943907263	~47hrs
 
 What is being optimised?
 On chr22, there are ~4500 transcripts and the chrom is ~51Mb long. When extending the targets to 1kb, the total target area is 4.5Mb. 4.5/51 = 0.08823529
 Certainly need to collect more stats on coverage of target.layer during optimisation.
 
 Current test function:-
+
 	test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
 	  inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
 	  union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
@@ -31,8 +33,8 @@ Current test function:-
 
 __2015-12-10__: Progress on long runs. 11am
 
-Lay5_chr22.1kb	Round 2122	0.0885956837508925	12/07/2015 22:33:35	~ 61 hrs, looks like no improvement for 900 iters, expect to terminate today.
-L5_chr22.par	Round 370	0.0874762103883457	12/09/2015 10:03:18	~ 25 hrs
+	Lay5_chr22.1kb	Round 2122	0.0885956837508925	12/07/2015 22:33:35	~ 61 hrs, looks like no improvement for 900 iters, expect to terminate today.
+	L5_chr22.par	Round 370	0.0874762103883457	12/09/2015 10:03:18	~ 25 hrs
 
 I wonder if this is limited simply by the proportion of the target that can be covered. If so, increasing the number of marks that occur duing layerBinding may improve the fit.
 
