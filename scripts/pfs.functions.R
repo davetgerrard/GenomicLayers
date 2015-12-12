@@ -400,6 +400,8 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
 # prob=rep(1/length(type_list), length(type_list))
 # fix.set.size= TRUE,   Keep the factor set the same size. 
 # name.prefix=""    give new factors a new name beginning with this name 
+#
+# TODO re-write this so that a mixed set of mutation types can be generated.
 mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.muts=1, verbose=FALSE, test.layer0.binding=FALSE,  
                             type_list = c("subRandomFactor" , "duplicate", "switch"), prob=rep(1/length(type_list), length(type_list)), fix.set.size= TRUE, name.prefix=""){
   
@@ -519,7 +521,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     better <- FALSE
     if(use.parallel) {
       # create n.cores new factorSet by mutating the currentSet.
-      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
+      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,type_list = c("subRandomFactor" ,  "switch"), mut_type= "random", n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
       
       # list(...) added when cluster not picking up layerList
       #n.tries <- 10  # VERY WEIRDLY , the below command sometimes fails on first call but works on second (or later).  TODO: fix this!
@@ -543,7 +545,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       newModLayer <- mod.list[[best.index]]
       newScore <- par.scores[best.index]
     } else {
-      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
+      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate),type_list = c("subRandomFactor" ,  "switch"), mut_type= "random",  verbose=verbose, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
       if(method =="fast") {
         #print("using fast algorithm")
         newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
