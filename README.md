@@ -14,6 +14,18 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+__2015-12-11__
+
+Progress on latest run
+
+L5_chr19.p mqbssdgb     r     12/12/2015 03:23:05	17 hrs
+ "Round 213 . Marks on target layer: 120589 , Coverage: 8123230"
+[1] "Round 213 . OldScore 0.127049312140155 NewScore 0.126935690792474 Better?"
+[1] "No!"
+
+# Started with a score of 6%, quickly attained 12.7%.  Need more output on number of TSS with ANY overlap and # of regions with a TSS target overlap.
+
+
 __2015-12-11__: Progress on long runs 08:50
 
 	L5_chr7.par.o91126	Round 86	0.0645244973393824	12/10/2015 11:17:31	~22hrs

@@ -363,7 +363,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
     if(identical(theseHits, IRanges(start=seqRange[1], end=seqRange[2]))) {
       if(verbose) print("Hits match whole chromosome")
       hit.width <- factorSet[[thisBF]]$profile$LAYER.0$length
-      starts <- sample(1:(seqRange[2]-hit.width), max.hits, replace=FALSE)
+      starts <- sample(1:(seqRange[2]-hit.width), min(max.hits,seqRange[2]-hit.width), replace=FALSE)
       hits.sample <- IRanges(starts, starts+hit.width)
     } else {
       hits.sample <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
@@ -466,6 +466,10 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
                               test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE, use.parallel=FALSE, n.cores=1)  {
   
   if(logFile != "")  write.table(cbind("iter", "best.score"), row.names=F, col.names=F, sep="\t", quote=F,file=logFile)
+  
+  target.count <- length(target.vec)
+  target.coverage <- sum(width(target.vec))
+  chrom.size <- nchar(layerList$layerSet$LAYER.0)
   currentFactorSet <- factorSet
   scores.vector <- numeric()
   print("Calculating initial scores")
@@ -553,9 +557,13 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     
     n.regions <- length(newModLayer$layerSet[[target.layer]])
     coverage <- sum(width(newModLayer$layerSet[[target.layer]]))
+    regionsWithHit <- sum(overlapsAny(newModLayer$layerSet[[target.layer]], target.vec))
+    targetsWithHit <- sum(overlapsAny(target.vec, newModLayer$layerSet[[target.layer]]))                      
+    
     
     scores.vector[i] <- newScore
-    print(paste("Round", i, ". Marks on target layer:", n.regions, ", Coverage:", coverage))
+    print(paste("Round", i, ". Marks on target layer:", n.regions, ", Coverage:", coverage, ", Regions with a hit:", regionsWithHit,
+                ", Targets Hit:", targetsWithHit, ", Chrom size:", chrom.size, ", Target count:", target.count, ", Target coverage:", target.coverage))
     print(paste("Round", i, ". OldScore", currentBestScore, "NewScore", newScore, "Better?"))
     if(is.na(newScore)) {
       print("Newscore = NA, skipping to next")
