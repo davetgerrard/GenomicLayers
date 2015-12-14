@@ -45,3 +45,5 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr7.par -b y -pe smp.
 # create a chr19 job to test new runLayerBinding.
 awk '{ if($1 == "chr19" && $3 == "transcript") print $0 }' /mnt/genome-shared-data/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chr19.transcript.gtf
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr19.par -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr19.1kb.par.R
+# and another for smaller regions.
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr19.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr19.400bp.par.R

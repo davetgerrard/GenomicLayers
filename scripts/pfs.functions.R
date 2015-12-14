@@ -337,7 +337,7 @@ modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verb
 # collect.stats=FALSE, 
 # target.layer=2, 
 # verbose=FALSE
-runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE)  {
+runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE, ...)  {
   if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
@@ -374,7 +374,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
 	#thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)
     
     newLayerList$layerSet <-  modifyLayerByBindingFactor.Views(newLayerList$layerSet, hits=hits.sample, bindingFactor=factorSet[[thisBF]], verbose=verbose)
-    watch.function(newLayerList$layerSet)
+    watch.function(x= newLayerList$layerSet, ...)
     if(collect.stats) {
       thisRow <- data.frame(bf=thisBF,hits=length(hits.sample) , target.coverage=sum(width(hits.sample)))
       stats.table <- rbind(stats.table, thisRow)

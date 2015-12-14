@@ -14,9 +14,83 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
-__2015-12-11__
 
-Progress on latest run
+
+__2015-12-14__Progress on latest run (chr19, more detailed output)
+
+	 "Round 668 . Marks on target layer: 76205 , Coverage: 7133959 , Regions with a hit: 14718 , Targets Hit: 10565 , Chrom size: 59128983 , Target count: 11451 , Target coverage: 11451000"
+	[1] "Round 668 . OldScore 0.125974998293263 NewScore 0.125704617482101 Better?"
+
+So, the current scoring is somewhat misleading. I think the max score for this chrom may be < 13%. 
+Layer 5 is marked over 7Mb (of 51Mb chrom (13%) and 11.4 Mb of target (expanded TSSs)). 
+There are 76k regions and ~15k of them overlap a TSS region.
+Of 11451 TSS regions, 10565 (92%) are hit by the regions.
+
+This is a multi-optimisation problem: the # of TSS hit  versus the proportion of non-TSS chromosome marked.
+
+ TODO alter scoring and/optimisation
+ TODO produce graphics of chr19 layer5 vs TSS.IR to show fit.
+ TODO run with reduced region as target.
+ TODO test if chr19 optimised factor set is any good at finding TFs on other chroms.
+ 
+Explored the currentFactorSet of the unfinished chr19 run (see load.pfs.chr19.1kb.par.R). Ran runLayerBinding with a custom 'watch.function()' to print out the number of TSS hit as each factor is applied.
+
+	> modLayerSet2 <- runLayerBinding(layerList=layerList.1, currentFactorSet, iterations=modsPerCycle,  collect.stats=TRUE, target.layer=target.layer, verbose=TRUE, 
+	+                                watch.function=function(x, target.vec=tss.IR , ...) {print(paste("Watch function", length(x[[target.layer]]), sum(overlapsAny(target.vec,x[[target.layer]]))))})
+	[1] "2015-12-14 17:37:34 runLayerBinding pos 1"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.25 673756 33334[1] "Watch function 0 0"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.7 19434 19434[1] "Watch function 0 0"
+	[1] "Hits match whole chromosome"
+	bf.16 1 33334[1] "Watch function 0 0"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.4 43332 33334[1] "Watch function 33334 8445"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.12 396 396[1] "Watch function 33568 8478"
+	[1] "Hits match whole chromosome"
+	bf.27 1 33334[1] "Watch function 33568 8478"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.17 4715 4715[1] "Watch function 33568 8478"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.3 42890 33334[1] "Watch function 64087 10225"
+	[1] "Hits match whole chromosome"
+	bf.24 1 33334[1] "Watch function 64087 10225"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.11 23544 23544[1] "Watch function 68740 10375"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.6 28080 28080[1] "Watch function 69879 10428"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.14 55643 33334[1] "Watch function 69879 10428"
+	[1] "Hits match whole chromosome"
+	bf.5 1 33334[1] "Watch function 69879 10428"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.1 2727 2727[1] "Watch function 69879 10428"
+	[1] "Hits match whole chromosome"
+	bf.22 1 33334[1] "Watch function 69879 10428"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.20 171 171[1] "Watch function 69879 10428"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.29 721 721[1] "Watch function 69879 10428"
+	[1] "Hits match whole chromosome"
+	bf.26 1 33334[1] "Watch function 69879 10428"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.19 25472 25472[1] "Watch function 71224 10428"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.8 19523 19523[1] "Watch function 70708 10436"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.9 21443 21443[1] "Watch function 73308 10514"
+	[1] "Sequence of length  59128983 , using  6 windows of length 1e+07"
+	bf.23 33685 33334[1] "Watch function 75920 10568"
+	[1] "2015-12-14 17:42:00 runLayerBinding.fast pos 2"
+ 
+BF.4 is a poly-B run (not A) and BF.3 is a poly-V run (not T). other jumps include other similar factors. Commonly GC-rich regions, not sure if not-A or not-T are more discerning than all-GC.
+
+TODO move on to testing against specific TSS being activated (quantitative?) or de-activated.
+
+
+ 
+__2015-12-11__  Progress on latest run
 
 L5_chr19.p mqbssdgb     r     12/12/2015 03:23:05	17 hrs
  "Round 213 . Marks on target layer: 120589 , Coverage: 8123230"
@@ -45,7 +119,6 @@ Current test function:-
 
 
 I re-load the current best factorSet from results/pfs_layer5_chr22_1kb_par/currentFactorSet.600.Rdata (manually but commands stored in scripts/pfs.reloadResultOnHydra.R).
-
 I ran runLayerBinding a couple of times. Each time, Layer 5 (target) had only (and exactly) 716 bp coverage in 10 regions (c.f. 4070000 for target). 
 
 I don't think it is marking as much of the chromosome as I expected and there may be a clue in output from runLayerBinding():-
