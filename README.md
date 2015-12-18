@@ -44,12 +44,12 @@ Note the sudden drop from 57081 regions (3.5Mb) to 186 regions (12.5kb). It reac
 
 So, 'accuracy' is very good at not marking bits of the genome containing promoters when the promoters are a small fraction of the genome. However, for defining where such promoters are 'accurately', it is not much use.
 
-__ADDENDUM__ I subsequently noted that the number of TSS hit had begun to increase again by the 8th cycle. So I renamed the run (acc) and restarted it with logging every iteration.
+__ADDENDUM__ I subsequently noted that the number of TSS hit had begun to increase again by the 8th cycle. So I renamed the run (pfs_layer5_chr22_400bp_acc) and restarted it with logging every iteration.
 
 __TODO__  Start directing the STDOUT and STDERR error logs to the output directory for each run. They are too informative to lose.
 __TODO__  I think I've considered this before, but will need some way to (visually?) summarise the resulting factorsets. Do they have an excess of a type of factor (currently limited by me)? Do they feature certain types of binding/modifying early or late in the binding order? Are they simply finding GC rich (or AT poor) regions?  Do some have more influence on the output than others?
 
-
+Also set of a similar job (pfs_layer5_chr22_400bp_ppv) to use positive predictive value (precision, TP/(TP+FP)) as optimisation score. 
 
 __2015-12-17__ 
 Killed the chr7 parallel job started on 10/12/2015. Only managed 500 rounds in a week. Are large chromosome going to be too large to handle. Could they mutate into slow runs? Maybe build in an execution time limit for each modification set.
