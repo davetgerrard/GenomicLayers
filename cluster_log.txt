@@ -59,3 +59,8 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_c22.acc.400 -b y -pe s
 # ppv (precision) favours getting postive hits.
 mkdir results/pfs_layer5_chr22_400bp_ppv
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_ppv -e $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_ppv -V -N L5_c22.ppv.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.ppv.R
+
+
+# try tpr (sensitivity or recall) to maximise hits coming back. Predict will mark a lot of the chrom
+mkdir results/pfs_layer5_chr22_400bp_tpr
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_tpr -e $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_tpr -V -N L5_c22.tpr.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.tpr.R

@@ -51,6 +51,29 @@ __TODO__  I think I've considered this before, but will need some way to (visual
 
 Also set of a similar job (pfs_layer5_chr22_400bp_ppv) to use positive predictive value (precision, TP/(TP+FP)) as optimisation score. 
 
+Both ppv and acc runs seem to be hovering around a small number of true-positive by only marking a small fraction of the genome. I'm slightly worried that they are very precisely matching a small set of (possibly overlapping TSS). Over-fitting?
+
+I am logging every round though, so in theory could visualise over-fitting by re-run each cycle's factorSet against a different chromosome. Might expect to see the performance increase as general (true) characteristics are picked up and then drop as the factorSet over-fits to the training chromosome.
+
+
+__Future__ Thinking about moving to finding selected TSS and perhaps not finding unselected TSS (1,0,-1 ? ). I was going to attempt to train towards either broadly expressed promoters (house-keepers) or the transcriptional state of a pluripotent stem cell (or ESC). However, I'm not sure how many TSS can be found reliably (current methods seem to be finding a small proportion accurately). 
+
+An alternative method would be to work toward tissue-specific TSS sets. I could specifiy partially overlapping sets that are enriched in either(both) of two tissue types. Then optimise for their marking separately and finally combine or contrast the optimsied sets. Liver and Brain might be two distinct tissue types. OR I could find a dataset of known targets of a certain TF and try to learn the TFs binding factor. The problem with both of these is tissue specificity and I don't expect pfs to cope yet with regulation from enhancers outside the immediate promoter. 
+
+I could use a dataset that relied on promoter-proximal binding: TATA, REST?
+
+[Paper featuring TFs that bind close to the TSS](http://nar.oxfordjournals.org/content/36/21/6795.short). It is possible that different subsets of these promoters have proximal and distal binding sites that may operate at different times/conditions. HNF4A and liver are candidates.
+
+the above was cited by another paper using primary [DNA sequence to predict promoter activity!](http://nar.oxfordjournals.org/content/39/11/e75.full)
+
+[Same team 2011](https://www.jstage.jst.go.jp/article/gi/25/1/25_1_53/_article)
+[Same team 2011b](http://genome.cshlp.org/content/21/5/775.full.pdf+html)
+
+Do they model changing binding specificity of factors through time?  
+
+
+
+
 __2015-12-17__ 
 Killed the chr7 parallel job started on 10/12/2015. Only managed 500 rounds in a week. Are large chromosome going to be too large to handle. Could they mutate into slow runs? Maybe build in an execution time limit for each modification set.
 
