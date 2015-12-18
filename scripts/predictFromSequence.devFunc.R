@@ -243,7 +243,7 @@ try(
   system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
                                           target.layer=target.layer, target.vec=tss.IR, n.iter=20, mut.rate=mut.rate,
                                           modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
-                                          verbose=F, use.parallel=TRUE, n.cores=3))
+                                          verbose=T, use.parallel=TRUE, n.cores=3))
 )
 # RUN1
 #[1] "Round 20 oldScore 0.175549322113137 newScore 0.175722947761194 Better?"

@@ -501,11 +501,12 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     
     cl <- makeCluster(mc)
     # TEMP need to export all functions to the nodes but don't know what they are.
-    func.vec <- sapply(ls(), FUN =function(x) class(get(x)))
-    func.vec <- func.vec[func.vec == "function"]
+    func.vec <- sapply(ls(.GlobalEnv), FUN =function(x) class(get(x)))
+    func.names <- names(func.vec[func.vec == "function"])
+    if(verbose) print(func.names)
     # TODO package code to avoid above
-    clusterExport(cl, c( func.vec, "layerList", 
-                        "modsPerCycle", "verbose", "target.layer","target.vec"), envir = environment())
+    clusterExport(cl, c( func.names, "layerList", 
+                         "modsPerCycle", "verbose", "target.layer","target.vec"), envir = environment())
     n.tries <- 10
     
   }
@@ -538,9 +539,9 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
           break;
         }
       }
-      #if(verbose) print(paste(tries, "of", n.tries, "attempted"))
+      if(verbose) print(paste(tries, "of", n.tries, "attempted"))
       #clusterExport(cl, "mod.list", envir = environment())
-      par.scores <- parSapply(cl, mod.list, FUN=function(x) test_function(layerList=x, targetLayer=target.layer, target.vec=target.vec))
+      par.scores <- parSapply(cl, mod.list, FUN=function(x) testing.function(layerList=x, targetLayer=target.layer, target.vec=target.vec))
       print(paste("x", mc, sep=""))
       
       
@@ -557,7 +558,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
         #print("using slow algorithm")
         newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
       }
-      newScore <- test_function(newModLayer, targetLayer=target.layer, target.vec=target.vec)
+      newScore <- testing.function(newModLayer, targetLayer=target.layer, target.vec=target.vec)
       
     }
     
