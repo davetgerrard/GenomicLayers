@@ -49,4 +49,7 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr19.par -b y -pe smp
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr19.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr19.400bp.par.R
 
 # repeat with chr22, incorporate new scoring measures
-qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr22.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.par.R
+#qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr22.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.par.R
+
+# renamed the script to test different score methods.
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_c22.acc.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.acc.R

@@ -22,7 +22,7 @@ matthews.cor <- function(TP, TN, FP, FN) {
 
 
 tpr <- function(TP, TN, FP, FN) {   #  true positive rate, TPR a.k.a.sensitivity
-  return(TP/(TP+FP))
+  return(TP/(TP+FN))
 }
 # tpr(50, 50, 3, 20)
 

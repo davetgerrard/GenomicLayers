@@ -245,6 +245,26 @@ try(
                                           modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
                                           verbose=T, use.parallel=TRUE, n.cores=3))
 )
+
+# use a different testing.function
+# source('scripts/pfs.scoreMeasures.R') 
+# currenlty must accept these arguments (hard-coded inside optimiseFactorSet) 
+# TODO change the hard-coding..
+test_function <- function(layerList, targetLayer, target.vec)  {
+  score <- score.hits(layerList$layerSet[[targetLayer]], target.vec, method=acc)
+  return(score)
+}
+#test_function(
+
+try(
+  system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
+                                          target.layer=target.layer, target.vec=tss.IR, n.iter=20, mut.rate=mut.rate,
+                                          modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
+                                          verbose=T, use.parallel=TRUE, n.cores=3))
+)
+
+# print.bfSet(result[1:30])
+
 # RUN1
 #[1] "Round 20 oldScore 0.175549322113137 newScore 0.175722947761194 Better?"
 #[1] "Yes!"

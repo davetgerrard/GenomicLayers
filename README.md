@@ -14,6 +14,43 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+
+__2015-12-18__ Using accuracy (acc) as scoring method
+
+This was really interesting. I fudged the code a bit but managed to get optimiseFactorSet() to work with acccuracy (TP + TN) / (TP +FP +FN +TN) as a score to optimise. Accuracy is basically the proportion of all sequence in the correct class.
+
+It began with what looked like good scores for the targets. 
+
+	[1] "Round 1 . Marks on target layer: 77537 , Coverage: 8026071 , Regions with a hit: 2068 , Targets Hit: 2553 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 1 . OldScore 0.554783338607464 NewScore 0.768401309130101 Better?"
+	[1] "Yes!"
+	[1] "x16"
+	[1] "Round 2 . Marks on target layer: 57081 , Coverage: 3569626 , Regions with a hit: 1444 , Targets Hit: 1762 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 2 . OldScore 0.768401309130101 NewScore 0.876863460548262 Better?"
+	[1] "Yes!"
+
+but very quickly 'decided' to ignore the promoters and optimised to mimismise the False positives, which is easy if it just doesn't mark very much.
+
+	[1] "Round 3 . Marks on target layer: 186 , Coverage: 12566 , Regions with a hit: 4 , Targets Hit: 5 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 3 . OldScore 0.876863460548262 NewScore 0.970420397660052 Better?"
+	[1] "Yes!"
+	[1] "x16"
+	[1] "Round 4 . Marks on target layer: 180 , Coverage: 11828 , Regions with a hit: 4 , Targets Hit: 5 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 4 . OldScore 0.970420397660052 NewScore 0.970437695540015 Better?"
+	[1] "Yes!"
+	[1] "x16"
+
+Note the sudden drop from 57081 regions (3.5Mb) to 186 regions (12.5kb). It reached accuracy of 0.97 in 4 rounds (x16 cores) and I stopped the job.
+
+So, 'accuracy' is very good at not marking bits of the genome containing promoters when the promoters are a small fraction of the genome. However, for defining where such promoters are 'accurately', it is not much use.
+
+__ADDENDUM__ I subsequently noted that the number of TSS hit had begun to increase again by the 8th cycle. So I renamed the run (acc) and restarted it with logging every iteration.
+
+__TODO__  Start directing the STDOUT and STDERR error logs to the output directory for each run. They are too informative to lose.
+__TODO__  I think I've considered this before, but will need some way to (visually?) summarise the resulting factorsets. Do they have an excess of a type of factor (currently limited by me)? Do they feature certain types of binding/modifying early or late in the binding order? Are they simply finding GC rich (or AT poor) regions?  Do some have more influence on the output than others?
+
+
+
 __2015-12-17__ 
 Killed the chr7 parallel job started on 10/12/2015. Only managed 500 rounds in a week. Are large chromosome going to be too large to handle. Could they mutate into slow runs? Maybe build in an execution time limit for each modification set.
 
