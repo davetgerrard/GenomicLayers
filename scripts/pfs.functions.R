@@ -500,8 +500,12 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     if(verbose) print(paste("Cores to use:" ,mc))
     
     cl <- makeCluster(mc)
-    clusterExport(cl, c("runLayerBinding", "matchBindingFactor","modifyLayerByBindingFactor.Views", "layerList", 
-                        "modsPerCycle", "verbose", "test_function", "target.layer","target.vec"), envir = environment())
+    # TEMP need to export all functions to the nodes but don't know what they are.
+    func.vec <- sapply(ls(), FUN =function(x) class(get(x)))
+    func.vec <- func.vec[func.vec == "function"]
+    # TODO package code to avoid above
+    clusterExport(cl, c( func.vec, "layerList", 
+                        "modsPerCycle", "verbose", "target.layer","target.vec"), envir = environment())
     n.tries <- 10
     
   }

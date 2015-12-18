@@ -14,9 +14,17 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+__2015-12-17__ 
+Killed the chr7 parallel job started on 10/12/2015. Only managed 500 rounds in a week. Are large chromosome going to be too large to handle. Could they mutate into slow runs? Maybe build in an execution time limit for each modification set.
 
 
-__2015-12-14__Progress on latest run (chr19, more detailed output)
+__2015-12-16__ 
+
+Yesterday I implemented some standard scoring functions (accuracry, tpr, fpr etc). I wanted to use these as optimisation scores. I added them to a script (pfs.scoreMeasures.R) and included their use in a run script (pfs.chr22.400bp.par.R). It failed though because the functions were not visible on the parallel nodes. The optimisation function does the export. 
+
+__TODO__ Either re-write the optimiisation function to export all functions in the environment to cluster nodes OR package the code properly. OR add a customisable watch_function to the optimisation function.
+
+__2015-12-14__ Progress on latest run (chr19, more detailed output)
 
 	 "Round 668 . Marks on target layer: 76205 , Coverage: 7133959 , Regions with a hit: 14718 , Targets Hit: 10565 , Chrom size: 59128983 , Target count: 11451 , Target coverage: 11451000"
 	[1] "Round 668 . OldScore 0.125974998293263 NewScore 0.125704617482101 Better?"
@@ -28,10 +36,10 @@ Of 11451 TSS regions, 10565 (92%) are hit by the regions.
 
 This is a multi-optimisation problem: the # of TSS hit  versus the proportion of non-TSS chromosome marked.
 
- TODO alter scoring and/optimisation
- TODO produce graphics of chr19 layer5 vs TSS.IR to show fit.
- TODO run with reduced region as target.
- TODO test if chr19 optimised factor set is any good at finding TFs on other chroms.
+- __TODO__ alter scoring and/optimisation
+- __TODO__ produce graphics of chr19 layer5 vs TSS.IR to show fit.
+- __TODO__ run with reduced region as target.
+- __TODO__ test if chr19 optimised factor set is any good at finding TFs on other chroms.
  
 Explored the currentFactorSet of the unfinished chr19 run (see load.pfs.chr19.1kb.par.R). Ran runLayerBinding with a custom 'watch.function()' to print out the number of TSS hit as each factor is applied.
 
@@ -86,8 +94,8 @@ Explored the currentFactorSet of the unfinished chr19 run (see load.pfs.chr19.1k
  
 BF.4 is a poly-B run (not A) and BF.3 is a poly-V run (not T). other jumps include other similar factors. Commonly GC-rich regions, not sure if not-A or not-T are more discerning than all-GC.
 
-TODO move on to testing against specific TSS being activated (quantitative?) or de-activated.
-
+__TODO__ move on to testing against specific TSS being activated (quantitative?) or de-activated.
+__TODO__ add ... to optimise function to allow watch function on layer binding (probably won't work with parallel jobs).
 
  
 __2015-12-11__  Progress on latest run
@@ -171,10 +179,10 @@ __2015-12-09__:  I left the chrM job running with 10,000 iterations. The compute
 
 I stopped the original pfs run on chr22 after 34hrs/1600 iters. It was stalling on 4% for 500iters and I wanted to get a parallel job started on the server. chr22:  47 iters/hr. Be careful when comparing this with parallel jobs because the scripts currently generate and test 16 (n.cores) mutated sets PER ITERATION. The parallel chr22 completed 6 iters in 30mins but this represents testing 6*16=96 factorSets.
 
-TODO remove verbosity from factor mutation, it is all I can see in the logs.
-TODO with parallel jobs, log scores more often (because many more factors are tested).
-TODO better reporting on optimisation e.g. score, size of seq, width of target regions, width of target seq modified, number of regions.
-TODO more liberal mutations: duplications (limited?), switching, quantity/proportion of each factor
+__TODO__ remove verbosity from factor mutation, it is all I can see in the logs.
+__TODO__ with parallel jobs, log scores more often (because many more factors are tested).
+__TODO__ better reporting on optimisation e.g. score, size of seq, width of target regions, width of target seq modified, number of regions.
+__TODO__ more liberal mutations: duplications (limited?), switching, quantity/proportion of each factor
 
 __2015-12-08__: Last night began the first long optimisations (10,000 iters) using pfs code on whole of chr22. The first set-off @ >500 iters by morning (approx 40/hr). Will take 20 days (so will probably be killed).
 
@@ -187,7 +195,7 @@ __N.B.__ I added the strict ordering to make computation tractable. I wonder if 
 Is there a theory of gene regulation that suggests how wide a promoter would be good to aim for. 
 
 The current system has many flaws:-
-- no long range in-cis effect (TODO could be added in by enabling offset parameter in bindingFactor)
+- no long range in-cis effect (__TODO__ could be added in by enabling offset parameter in bindingFactor)
 - improper control over the numbers of each bindingFactor (currently an equal number of each (or fewer).
 - It is very slow to get started because factors binding higher layers won't in the initial state. (unless they bind to empty state).
 
@@ -297,7 +305,7 @@ Also started a 5-layer test today (10,000 iters). Despite expectation that this 
 	[1] "Round 187 oldScore 0.135323991505638 newScore 0.173346165894045 Better?"
 	[1] "Yes!"
 	
-Some of the non-improved scores are still very low, which might indicate the system is easily broken but more likely is due to the fact that scoring is still stochastic and is picking rounds that largely by chance were high. TODO remove randomness in layer modificiation (but how? saturation of all possible sites is only way I can think and would be VV. slow). OR mutate at lower rate and run modification several times to get average score. This second option would make the scores more robust but would slow the system too. The second option also would avoid saturation, which is good as eventually I intend to introduce factor abundance as a parameter - i.e. I intend that not all sites are occupied.
+Some of the non-improved scores are still very low, which might indicate the system is easily broken but more likely is due to the fact that scoring is still stochastic and is picking rounds that largely by chance were high. __TODO__ remove randomness in layer modificiation (but how? saturation of all possible sites is only way I can think and would be VV. slow). OR mutate at lower rate and run modification several times to get average score. This second option would make the scores more robust but would slow the system too. The second option also would avoid saturation, which is good as eventually I intend to introduce factor abundance as a parameter - i.e. I intend that not all sites are occupied.
 
 Looking at the factor set of the five layer case. It seems it is going to be very difficult to read what is happening in these traces. It might be a good idea to make a 'movie' version of runLayerBinding to watch the sequence of changes that occur.  With 5 layers, and 30 factors, could be tricky to visualise.
 
@@ -310,7 +318,7 @@ If this is 'working', need to start doing proper training and testing on differe
 
 __2015-09-02__:  [predictFromSequence.devFunc.R](scripts/predictFromSequence.devFunc.R) Wrote alternative to runLayerBinding() called runLayerBinding.fast() that does not apply mods in random order and re-calculate, it just does them all for a single factor at a time. This breaks the idea of sequential mods creating pattern matches for other factors. The point was to increase speed enough to see if the system could find any TSS reliably. I also widened the goalposts by extending the TSS to a promoter with 200bp upstream and 200bp downstream. I created a random set of factors and a 1-layer LayerSet (layerList) and ran optimiseFactorSet() [n.iter=1000, mut.rate=0.1, modsPerCycle=10000].  This quickly scored above 1% and then to 3% (c.f. ~ 0.1%, previously), which is not too surprising with the widening of the targets.  The best score achieved was 12% and the plot of scores (by iteration index) showed a step-change around iteration 700.  Due to the stochastic nature of runLayerBinding.fast(), the set of factors does not produce the same result each time (range 3% - 12%). I therefore re-ran runLayerBinding.fast() 100 times without modifying the factor set, counting for each base the number of times it was marked. This gave a very nice set of peaks and troughs, some of the peaks being directly below TSS/promoters. The cor score for the summed vector and the tss vector was 12%. Using a threshold to divide the summed scores into bound/unbound did not help the cor score, possibly because the zeros are informative - in the test vector (HOXA cluster), one obvious pattern is the absense of prediction in the large gene desert to the left (chromosomal view) to the left of the HOXA cluster.
 
-LayerSet became encapsulated within LayerList (to store extra annotations) and FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet() TODO. 
+LayerSet became encapsulated within LayerList (to store extra annotations) and FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet() __TODO__. 
 
 Independently, I was looking at known motifs (loadMotifLibrary.XK2005.R). It would be better to see notes in context but here they are anyway:-
 - the random patterns are longer (mean 12.24 vs 9.9) but often have 1000s of hits in the test_sequence
@@ -327,7 +335,7 @@ Random vs. Real - Using 'random' binding factors and evolving the system will be
 
 Evolve a base set of factors that can predict basal TSS (does this distinction really exist?). Then evolve from this state new sets of factors that each predict tissue-specific sets of genes. Then re-combine with the basal set (if that is possible) or have sequential series. Hmmm. 
 
-### TODO list.
+### __TODO__ list.
 Specify factorSet to include optimscores (e.g. make a list like layerList)
 
 Spilt off calculation of binding positions from binding mods to speed up a series of mods.  Many TFs bind at independent locations.  Only a problem for binding events that depend on previous events but genome is so large and number of event so large, that many could be allowed to happen without re-calculation. e.g. if running 100k mods, could recalculate after every 1000. Practically, could split off binding calcs into separate thread. ASSUMPTION: # of events far greater than number of types of factors. [speed-up|design]

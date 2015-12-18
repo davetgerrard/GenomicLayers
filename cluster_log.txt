@@ -47,3 +47,6 @@ awk '{ if($1 == "chr19" && $3 == "transcript") print $0 }' /mnt/genome-shared-da
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr19.par -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr19.1kb.par.R
 # and another for smaller regions.
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr19.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr19.400bp.par.R
+
+# repeat with chr22, incorporate new scoring measures
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N L5_chr22.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.par.R
