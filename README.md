@@ -14,6 +14,73 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+__2015-12-21__  Progress on runs
+
+All runs finished over the weekend
+
+- L5_chr19.par (1kb)	original scoring method on 1kb targets centred on TSS.	Exactly 7 days = time limited on cluster
+- L5_chr19.400	original scoring method on 400bp targets centred on TSS.	5 days and 22 hours
+- L5_c22.acc	Accuracy	1 day and 1 hour (limited to 100 unchanging iters)
+- L5_c22.ppv	Positive predictive value	5 hours (limited to 100 unchanging iters)
+- L5_c22.tpr	True Positive Rate	12 hours (limited to 100 unchanging iters)
+
+__L5_chr19.par (1kb):__ Has covered 9Mb (~15%) of the chromosome using 181k regions to hit 11273/11451 (98%) of targets. 
+
+	[1] "x16"
+	[1] "Round 2996 . Marks on target layer: 181047 , Coverage: 9248198 , Regions with a hit: 30369 , Targets Hit: 11273 , Chrom size: 59128983 , Target count: 11451 , Target coverage: 11451000"
+	[1] "Round 2996 . OldScore 0.132442166384536 NewScore 0.131884788501455 Better?"
+	[1] "No!"
+
+
+ 
+__ L5_chr19.400:__ Has covered 4.8Mb (~8%) of the chromosome using 81k regions to hit 9277/11451 (81%) of targets. 
+
+	[1] "Round 2735 . Marks on target layer: 81051 , Coverage: 4792154 , Regions with a hit: 9770 , Targets Hit: 9277 , Chrom size: 59128983 , Target count: 11451 , Target coverage: 4580400"
+	[1] "Round 2735 . OldScore 0.0865191892290033 NewScore 0.0861258953846387 Better?"
+	[1] "No!"
+	[1] "No improvement in 1001 iterations, exiting!"
+	     user    system   elapsed
+	105276.58  73345.51 510483.86
+
+ 
+__ L5_c22.acc:__ Has covered 10kb (~2%) of the chromosome using 301 regions to hit 177/4070 (4.3%) of targets. The high score mainly represents the low false negative rate as most of the chromosome is (correctly) unmarked. > 0.97 was achieved already by iteration 3.
+
+	[mqbssdgb@login2(hydra) seqPredict]$ tail ../q_out/L5_c22.acc.400.o93111
+	[1] "Round 489 . Marks on target layer: 301 , Coverage: 10261 , Regions with a hit: 86 , Targets Hit: 177 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 489 . OldScore 0.970765734709443 NewScore 0.970742726486378 Better?"
+	[1] "No!"
+	[1] "No improvement in 101 iterations, exiting!"
+	    user   system  elapsed
+	25219.92 10893.50 89939.56
+
+ 
+__ L5_c22.ppv:__ Has covered <2kb (0.0037%) of the chromosome with 95 regions to hit 106/4070 2.6% of the targets. This seems very precise (and misses almost everything). I suspect it may be hitting one or two clusters of many TSS (but I should check). Subjectively, I would say this is not as good as the accuracy score.
+
+	[mqbssdgb@login2(hydra) seqPredict]$ tail results/pfs_layer5_chr22_400bp_ppv/L5_c22.ppv.400.o93132
+	[1] "Round 126 . Marks on target layer: 95 , Coverage: 1903 , Regions with a hit: 54 , Targets Hit: 106 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 126 . OldScore 0.657402728650834 NewScore 0.601681555438781 Better?"
+	[1] "No!"
+	[1] "No improvement in 101 iterations, exiting!"
+	     user    system   elapsed
+	 6073.188  2830.469 20344.988
+
+
+ 
+__ L5_c22.tpr:__  Has covered 44Mb (86%) of the chromosome using 68k regions to hit 3269/4070 (80%) of targets. Optimised for finding targets doesn't care about false positives.
+	
+	[mqbssdgb@login2(hydra) seqPredict]$ tail results/pfs_layer5_chr22_400bp_tpr/L5_c22.tpr.400.o93180
+	[1] "Round 220 . Marks on target layer: 68459 , Coverage: 44350954 , Regions with a hit: 3269 , Targets Hit: 4070 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 220 . OldScore 0.894632868425867 NewScore 0.88500254965998 Better?"
+	[1] "No!"
+	[1] "No improvement in 101 iterations, exiting!"
+	    user   system  elapsed
+	13441.01  5836.35 45145.92
+
+
+The performance of the different scoring metrics is dependent on the relative numbers of TP and TN. When searching for small regions in a large chromosome, TP/TN is very low. 
+
+It is also not obvious whether the 'standard' scoring metrics are any better than the custom method I came up with.
+
 
 __2015-12-18__ Using accuracy (acc) as scoring method
 
