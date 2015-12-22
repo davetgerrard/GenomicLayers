@@ -64,3 +64,12 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/
 # try tpr (sensitivity or recall) to maximise hits coming back. Predict will mark a lot of the chrom
 mkdir results/pfs_layer5_chr22_400bp_tpr
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_tpr -e $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_tpr -V -N L5_c22.tpr.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.tpr.R
+
+# test the behaviour of the acc method with new mutation types and mutable number of factors in factorSet.
+mkdir results/pfs_layer5_chr22_400bp_mutTest
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_mutTest -e $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_mutTest -V -N L5_c22.mutTest.400 -b y -pe smp.pe 16 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.mutTest.R
+
+
+mkdir results/pfs_layer5_chr22_400bp_mutTest_200bf
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_mutTest_200bf -e $SCRATCH/seqPredict/results/pfs_layer5_chr22_400bp_mutTest_200bf -V -N L5_c22.mutTest.200bf -b y -pe smp.pe 8 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr22.400bp.mutTest.200bf.R
+

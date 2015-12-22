@@ -24,16 +24,17 @@ TODO|2015-12-22|1|Improve summarisation of factorSets (e.g. base composition, ty
 TODO|2015-12-22|1|Allow factor type to mutate during optimisation
 TODO|2015-12-22|1|Either re-write the optimiisation function to export all functions in the environment to cluster nodes OR package the code properly. OR add a customisable watch_function to the optimisation function.
 TODO|2015-12-22|1|move on to testing against specific TSS being activated (quantitative?) or de-activated.
-TODO|2015-12-22|1|no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor)
+TODO|2015-12-22|1|no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor). What about using any nearby marks as offset, rather than precise number of bases?  (e.g. mark the nearest mark to the left, or pick one within range).
 TODO|2015-12-22|1|FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet()
 TODO|2015-12-22|1|Factors can be converted from common motifs formats (e.g. meme). Enables use of libraries. How to handle layer specificities?
-TODO|2015-12-22|1|Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once. WARNING: this will require linked abundance measure to be stored separately. 
+2015-12-22|2015-12-22|1|Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once. 
 TODO|2015-12-22|1|Test if system can rediscover some promoter motifs (e.g. HNF4A in liver specific promoters). Might be better to use existing data from similar papers.
 TODO|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
 TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
 TODO|2015-12-22|1| Overhaul factorSet objects
-TODO|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.
+2015-12-22|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE
 TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
+DOING|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
 TODO|201X-XX-XX|1|
 TODO|201X-XX-XX|1|
 
