@@ -33,6 +33,7 @@ TODO|2015-12-22|1| Run with many more factors to find more TSS? Or allow number 
 TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
 TODO|2015-12-22|1| Overhaul factorSet objects
 TODO|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.
+TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
 TODO|201X-XX-XX|1|
 TODO|201X-XX-XX|1|
 
