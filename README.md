@@ -11,6 +11,28 @@ The system models a series of very many sequential binding and modifying events.
 
 The ability of factors to bind changes through this series so that the number and positions of possible binding events for each factor change during the sequence.
 
+## TODO List
+
+DateComplete|DateAdded|Priority|Description
+: ------ :|:-------------:|: -----:|:--------------------------
+TODO|2015-12-22|1|GitHub repo (requires open access?)
+TODO|2015-12-22|1|CRAN/Bioconductor
+TODO|2015-12-22|1|Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor. 
+TODO|2015-12-22|1|FactorSet quantities are mutable
+TODO|2015-12-22|1|Factors can be selected from libraries (e.g. Jolma, TRANSFAC)
+TODO|2015-12-22|1|Improve summarisation of factorSets (e.g. base composition, types)
+TODO|2015-12-22|1|Allow factor type to mutate during optimisation
+TODO|2015-12-22|1|Either re-write the optimiisation function to export all functions in the environment to cluster nodes OR package the code properly. OR add a customisable watch_function to the optimisation function.
+TODO|2015-12-22|1|move on to testing against specific TSS being activated (quantitative?) or de-activated.
+TODO|2015-12-22|1|no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor)
+TODO|2015-12-22|1|FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet()
+TODO|2015-12-22|1|
+TODO|2015-12-22|1|
+TODO|2015-12-22|1|
+TODO|2015-12-22|1|
+TODO|2015-12-22|1|
+TODO|2015-12-22|1| 
+
 
 ### Notes (reverse chronological)
 
@@ -491,9 +513,5 @@ How to 'train' the system?
 What about tissue/stage specific expression? Also want to 
 
 
-| Tables        | Are           | Cool  |
-| ------------- |:-------------:| -----:|
-| col 3 is      | right-aligned | $1600 |
-| col 2 is      | centered      |   $12 |
-| zebra stripes | are neat      |    $1 |
+
 
