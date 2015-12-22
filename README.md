@@ -14,6 +14,8 @@ The ability of factors to bind changes through this series so that the number an
 
 ### Notes (reverse chronological)
 
+
+
 __2015-12-21__  Progress on runs
 
 All runs finished over the weekend
@@ -79,8 +81,11 @@ __ L5_c22.tpr:__  Has covered 44Mb (86%) of the chromosome using 68k regions to 
 
 The performance of the different scoring metrics is dependent on the relative numbers of TP and TN. When searching for small regions in a large chromosome, TP/TN is very low. 
 
-It is also not obvious whether the 'standard' scoring metrics are any better than the custom method I came up with.
+It is also not obvious whether the 'standard' scoring metrics are any better than the custom method I came up with. What is more important, starting transcription around about the right place, or preventing transcription in the wrong place?
 
+
+__TODO__ Functions to inspect output factorSets from above runs. Are they targeting randomd DNA?  Would a larger number of factors get better scores? More layers?
+__TODO__ Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor. Factor abundances can mutate.
 
 __2015-12-18__ Using accuracy (acc) as scoring method
 
@@ -113,7 +118,7 @@ So, 'accuracy' is very good at not marking bits of the genome containing promote
 
 __ADDENDUM__ I subsequently noted that the number of TSS hit had begun to increase again by the 8th cycle. So I renamed the run (pfs_layer5_chr22_400bp_acc) and restarted it with logging every iteration.
 
-__TODO__  Start directing the STDOUT and STDERR error logs to the output directory for each run. They are too informative to lose.
+__DONE__  Start directing the STDOUT and STDERR error logs to the output directory for each run. They are too informative to lose.
 __TODO__  I think I've considered this before, but will need some way to (visually?) summarise the resulting factorsets. Do they have an excess of a type of factor (currently limited by me)? Do they feature certain types of binding/modifying early or late in the binding order? Are they simply finding GC rich (or AT poor) regions?  Do some have more influence on the output than others?
 
 Also set of a similar job (pfs_layer5_chr22_400bp_ppv) to use positive predictive value (precision, TP/(TP+FP)) as optimisation score. 
@@ -306,8 +311,8 @@ __2015-12-09__:  I left the chrM job running with 10,000 iterations. The compute
 
 I stopped the original pfs run on chr22 after 34hrs/1600 iters. It was stalling on 4% for 500iters and I wanted to get a parallel job started on the server. chr22:  47 iters/hr. Be careful when comparing this with parallel jobs because the scripts currently generate and test 16 (n.cores) mutated sets PER ITERATION. The parallel chr22 completed 6 iters in 30mins but this represents testing 6*16=96 factorSets.
 
-__TODO__ remove verbosity from factor mutation, it is all I can see in the logs.
-__TODO__ with parallel jobs, log scores more often (because many more factors are tested).
+__DONE__ remove verbosity from factor mutation, it is all I can see in the logs.
+__DONE__ with parallel jobs, log scores more often (because many more factors are tested).
 __TODO__ better reporting on optimisation e.g. score, size of seq, width of target regions, width of target seq modified, number of regions.
 __TODO__ more liberal mutations: duplications (limited?), switching, quantity/proportion of each factor
 
@@ -486,4 +491,9 @@ How to 'train' the system?
 What about tissue/stage specific expression? Also want to 
 
 
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| col 3 is      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
 
