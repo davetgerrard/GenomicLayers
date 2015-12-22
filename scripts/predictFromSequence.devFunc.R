@@ -1,5 +1,63 @@
 ## Scratchbox to test the latest version of the functions.
 
+# Test mutating the number of factors and whether it reduces number of factors
+require(Biostrings)
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+source('scripts/pfs.functions.R')  
+
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chrM"]] 
+
+n.layers <- 5
+layerSet.5 <- list(LAYER.0 = thisChrom)
+for(i in 1:n.layers) {
+  layerSet.5[[paste('LAYER.', i , sep="")]] <- IRanges()    # use IRanges to store state of layers. TODO limit to chrom length
+}
+layerList.5 <- list(layerSet=layerSet.5, history=NULL)
+
+n.factors <- 30
+bindingFactorTypes <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"), n.factors, replace=T)
+factorSetRandom <- list()
+for(i in 1:n.factors) {
+  factorSetRandom[[paste("bf.",i ,sep="")]] <- createRandomBindingFactor(paste("bf.",i ,sep=""), 
+                                                                         layerSet.5, type=bindingFactorTypes[i], test.layer0.binding=TRUE, test.mismatch.rate=.1 ) 
+}
+
+print.bfSet(factorSetRandom)
+
+transcriptTable <- read.delim(transcript.file)
+names(transcriptTable)[c(4,5,7)] <- c("txStart", "txEnd", "strand")
+# set up for optimisation
+# target.vec is now an IRanges
+tss.positions <- ifelse(transcriptTable$strand == "+", transcriptTable$txStart, transcriptTable$txEnd)
+tss.positions <- unique(tss.positions)    # only want unique values.
+tss.positions <- na.omit(tss.positions)
+tss.IR <- IRanges(start=tss.positions-99, end=tss.positions+100)   # this version of IRanges, resize not working right.
+
+test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
+  inter.size <- sum(width(intersect(layerList$layerSet[[targetLayer]], target.vec)))
+  union.size <- sum(width(union(layerList$layerSet[[targetLayer]], target.vec)))
+  #layer.vec <- as.numeric(strsplit(as.character(layerList$layerSet[[targetLayer]]),"")[[1]])
+  return(inter.size/ union.size)
+}
+
+# TODO : get these object back into aligment.
+
+# test the Layer binding
+system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.5, factorSet = factorSetRandom, verbose=TRUE))  
+
+n.iter <- 20
+
+try(
+  system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
+                                          target.layer=target.layer, target.vec=tss.IR, n.iter=n.iter, mut.rate=mut.rate,
+                                          modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
+                                          verbose=T, use.parallel=TRUE, n.cores=3))
+)
+
+
+
 
 # Investigating low coverage on optimisation --------------------
 # Increase coverage of modifications?

@@ -32,6 +32,7 @@ TODO|2015-12-22|1|Test if system can rediscover some promoter motifs (e.g. HNF4A
 TODO|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
 TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
 TODO|2015-12-22|1| Overhaul factorSet objects
+TODO|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.
 TODO|201X-XX-XX|1|
 TODO|201X-XX-XX|1|
 
@@ -65,6 +66,7 @@ On the bright side, I have made good progress in implementing quite a few featur
 - Can pass custom scoring functions  (need to tidy this up though).
 
 
+Thinking about allowing number of factors to mutate. If allow insertion, deletion, duplication with equal probabilities, then there may be a mutational pressure to increase overall numbers (insert + duplicate vs delete). However, my current selection regimen (winner takes all) does not really promote neutral mutations. Could easily test for this (add to TODO table).
 
 
 __2015-12-21__  Progress on runs
