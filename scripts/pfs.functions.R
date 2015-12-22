@@ -412,13 +412,20 @@ mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.
 
   
   if(mut_type== "duplicate")  {
-    index <- sample(1:length(factorSet), n.muts)
-    for(i in index) {
-      thisName <- names(factorSet)[i]
-      newName <- ifelse(name.prefix == "", thisName, paste(name.prefix, i, sep="."))
-      newFactorSet[[thisName]] <-  createRandomBindingFactor(newName,layerSet, type=factorSet[[i]]$type, test.layer0.binding=test.layer0.binding, test.mismatch.rate=.1, verbose=verbose ) 
+    for(j in 1:n.muts)  {
+      copy <- sample(1:length(newFactorSet), 1)  # which factor to duplicate
+      index <- sample(1:length(newFactorSet), 1)  # what position to insert
+      position  <- sample(c("before", "after"), 1)
+      newName <- paste("dup", copy, sep=".")
+      newFactor <- newFactorSet[[copy]]
+      newFactor$name <-  newName
+      # first join the newFactor 
+      append.index <- ifelse(position=="after", index, index-1)   # subtract one if "before"
+      newFactorSet <- append(newFactorSet, list(newFactor), after=append.index)
+      names(newFactorSet)[append.index+1] <- newName
+
       if(verbose)  {
-        print(paste("Factor", i ,"substituted"))
+        print(paste("Factor", copy,  "duplicated to ", position , "position", index ))
       }
     }
     
@@ -432,7 +439,7 @@ mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.
     newName <- paste("ins", index, sep=".")
     newType <- sample(c("DNA_motif", "DNA_region","layer_region","layer_island"),1, replace=T)
     newFactor <- createRandomBindingFactor(newName,layerSet, type=newType, test.layer0.binding=test.layer0.binding, test.mismatch.rate=.1, verbose=verbose ) 
-    if(verbose) print(newFactor)
+    #if(verbose) print(newFactor)
     # first join the newFactor 
     append.index <- ifelse(position=="after", index, index-1)   # subtract one if "before"
     #fS.l <- length(factorSet)
