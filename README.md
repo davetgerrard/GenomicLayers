@@ -26,15 +26,44 @@ TODO|2015-12-22|1|Either re-write the optimiisation function to export all funct
 TODO|2015-12-22|1|move on to testing against specific TSS being activated (quantitative?) or de-activated.
 TODO|2015-12-22|1|no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor)
 TODO|2015-12-22|1|FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet()
-TODO|2015-12-22|1|
-TODO|2015-12-22|1|
-TODO|2015-12-22|1|
-TODO|2015-12-22|1|
-TODO|2015-12-22|1|
-TODO|2015-12-22|1| 
+TODO|2015-12-22|1|Factors can be converted from common motifs formats (e.g. meme). Enables use of libraries. How to handle layer specificities?
+TODO|2015-12-22|1|Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once. WARNING: this will require linked abundance measure to be stored separately. 
+TODO|2015-12-22|1|Test if system can rediscover some promoter motifs (e.g. HNF4A in liver specific promoters). Might be better to use existing data from similar papers.
+TODO|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
+TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
+TODO|2015-12-22|1| Overhaul factorSet objects
+TODO|201X-XX-XX|1|
+TODO|201X-XX-XX|1|
+
 
 
 ### Notes (reverse chronological)
+
+__2015-12-22__ 
+
+Feeling a bit negative about this idea. Part overwhelmed, part skeptical. There seem too many factors that cannot be accounted for in this framework. 
+
+- post-transcriptional modification
+- extra-cellular regualation
+- long-range enhancer effects
+- cooperative binding
+- stable vs transient binding
+- local tethering of factors (e.g. factors may stick around to bind again nearby)
+- changing factor abundances with feedback
+- regulatory loops (positive and negative feedback)
+
+Some of the above may be approximated by latent variables or careful abstraction.
+
+
+On the bright side, I have made good progress in implementing quite a few features. 
+
+- Optimisation does improve the factor set to be better than random. 
+- Using IRanges, I can run layerBinding over a whole chromosome in a few minutes or less (30 factors)
+- Parallelised to optimise faster (e.g. testing 16 mutations on 16 cores)
+- Can be run on much smaller memory system (with loss of speed).
+- Several mutation types and more to follow.
+- Can pass custom scoring functions  (need to tidy this up though).
+
 
 
 
