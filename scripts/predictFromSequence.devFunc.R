@@ -47,17 +47,18 @@ test_function <- function(layerList, targetLayer=target.layer, target.vec)  {
 # test the Layer binding
 system.time(modLayerSet.fast <- runLayerBinding(layerList=layerList.5, factorSet = factorSetRandom, verbose=TRUE))  
 
-n.iter <- 20
 
+# test optimisation with new mutation types c("insert", "delete" , "duplicate")
+n.iter <- 20
 try(
   system.time(result <- optimiseFactorSet(layerList=layerList.5, factorSetRandom, testing.function=test_function,
                                           target.layer=target.layer, target.vec=tss.IR, n.iter=n.iter, mut.rate=mut.rate,
                                           modsPerCycle=modsPerCycle,logFile="temp.log",logCycle=logCycle, maxNoChange=maxNoChange,
-                                          verbose=T, use.parallel=TRUE, n.cores=3))
+                                          verbose=T, use.parallel=TRUE, n.cores=3, max.factors=20))
 )
+length(result)
 
-
-
+names(result)
 
 # Investigating low coverage on optimisation --------------------
 # Increase coverage of modifications?

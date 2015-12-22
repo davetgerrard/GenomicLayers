@@ -518,8 +518,10 @@ mutateFactorSet <- function(factorSet, layerSet , mut_type="subRandomFactor", n.
 # verbose=FALSE, 
 # use.parallel=FALSE, 
 # n.cores=1
+# max.factors=50    # max number of factors allowed. (when reached, removes "insert" and "duplicate" mut_types
 optimiseFactorSet <- function(layerList, factorSet, testing.function, target.layer, target.vec, n.iter=10, target.score=1, mut.rate=0.1, modsPerCycle=100,
-                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE, use.parallel=FALSE, n.cores=1)  {
+                              test.layer0.binding=FALSE, method="fast", logFile="",logCycle=10, maxNoChange=n.iter, verbose=FALSE, use.parallel=FALSE, n.cores=1, 
+                              max.factors=50, mut_type_list = c("subRandomFactor" ,  "switch", "duplicate" , "insert", "delete"))  {
   
   if(logFile != "")  write.table(cbind("iter", "best.score"), row.names=F, col.names=F, sep="\t", quote=F,file=logFile)
   
@@ -577,10 +579,19 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       print(paste("No improvement in ", iSinceLastImprovement, " iterations, exiting!", sep=""))
       break ; 
     }
+    
+    if(length(currentFactorSet) >= max.factors)  {   # stop the factor set growing larger than this
+      use_mut_types <- setdiff(mut_type_list, c("insert", "duplicate"))
+      if(verbose)  print(paste("Factor set limited to max.factors: ", max.factors))
+    } else {
+      use_mut_types <- mut_type_list
+      
+    }
+    
     better <- FALSE
     if(use.parallel) {
       # create n.cores new factorSet by mutating the currentSet.
-      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,type_list = c("subRandomFactor" ,  "switch"), mut_type= "random", n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
+      factorSet.list <- replicate(mc, mutateFactorSet(currentFactorSet, layerList$layerSet,type_list = use_mut_types, mut_type= "random", n.muts=floor(length(currentFactorSet) * mut.rate), verbose=verbose, test.layer0.binding=T, name.prefix=paste("m",i,sep="")), simplify=FALSE)
       
       # list(...) added when cluster not picking up layerList
       #n.tries <- 10  # VERY WEIRDLY , the below command sometimes fails on first call but works on second (or later).  TODO: fix this!
@@ -604,7 +615,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
       newModLayer <- mod.list[[best.index]]
       newScore <- par.scores[best.index]
     } else {
-      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate),type_list = c("subRandomFactor" ,  "switch"), mut_type= "random",  verbose=verbose, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
+      newFactorSet <- mutateFactorSet(currentFactorSet, layerList$layerSet,n.muts=floor(length(currentFactorSet) * mut.rate),type_list = use_mut_types, mut_type= "random",  verbose=verbose, test.layer0.binding=test.layer0.binding, name.prefix=paste("m",i,sep=""))
       if(method =="fast") {
         #print("using fast algorithm")
         newModLayer <- runLayerBinding(layerList=layerList, factorSet = newFactorSet, iterations=modsPerCycle, verbose=verbose)
@@ -623,7 +634,7 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
     
     
     scores.vector[i] <- newScore
-    print(paste("Round", i, ". Marks on target layer:", n.regions, ", Coverage:", coverage, ", Regions with a hit:", regionsWithHit,
+    print(paste("Round", i, ". Facors:", length(newFactorSet),". Marks on target layer:", n.regions, ", Coverage:", coverage, ", Regions with a hit:", regionsWithHit,
                 ", Targets Hit:", targetsWithHit, ", Chrom size:", chrom.size, ", Target count:", target.count, ", Target coverage:", target.coverage))
     print(paste("Round", i, ". OldScore", currentBestScore, "NewScore", newScore, "Better?"))
     if(is.na(newScore)) {
