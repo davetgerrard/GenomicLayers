@@ -354,7 +354,10 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
     theseHits <- matchBindingFactor(newLayerList$layerSet, factorSet[[thisBF]], verbose=verbose)  
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
 	#print(length(theseHits))
-    if(length(theseHits) < 1) { next ;}
+    if(length(theseHits) < 1) {
+      if(verbose) print(paste(thisBF, "0 hits, skipping"))
+      next ;
+    }
     
     # how many of the potential hits to mark? 
     # iterations/n.factors (rounded up).
@@ -376,7 +379,12 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
     newLayerList$layerSet <-  modifyLayerByBindingFactor.Views(newLayerList$layerSet, hits=hits.sample, bindingFactor=factorSet[[thisBF]], verbose=verbose)
     watch.function(x= newLayerList$layerSet, ...)
     if(collect.stats) {
+      coverages <- unlist(lapply(newLayerList$layerSet[-1], FUN=function(x) sum(width(x))))
+      block.counts <- unlist(lapply(newLayerList$layerSet[-1], length))
+      #hit.counts <- 
       thisRow <- data.frame(bf=thisBF,hits=length(hits.sample) , target.coverage=sum(width(hits.sample)))
+      thisRow[, paste("Coverage.", names(coverages), sep="")] <- coverages
+      thisRow[, paste("nBlocks.", names(block.counts), sep="")] <- block.counts
       stats.table <- rbind(stats.table, thisRow)
     }
     #print(as.numeric(letterFrequency(newLayerSet$LAYER.1, letters= "1")))
@@ -661,4 +669,81 @@ optimiseFactorSet <- function(layerList, factorSet, testing.function, target.lay
 
 
 
+# create a matrix of nucleotide frequencies in the LAYER.0 patterns of the factorSet 
+af.factorSet <- function(factorSet) {
+  for(i in 1:length(factorSet)) {
+    
+    if(i == 1)  {
+      af.table <-  alphabetFrequency(factorSet[[1]]$profile[['LAYER.0']]$pattern)
+    }else {
+      af.table <- rbind(af.table,alphabetFrequency( factorSet[[i]]$profile[['LAYER.0']]$pattern))
+      
+      
+    }
+    
+    
+  }
+  return(af.table)
+}
+# colSums(af.factorSet(result[1:length(result)-1]))  # quite useful to see composition of bfs
 
+plot.layerBindingHistory <- function(modLayerSet ) {
+  
+  coverage.cols <-  sort(grep("Coverage", names(modLayerSet$history), value=T))
+  blockCount.cols <-  sort(grep("nBlocks", names(modLayerSet$history), value=T))
+  par(mfrow=c(1,2))
+  matplot(1:nrow(modLayerSet$history),modLayerSet$history[,coverage.cols], ylab="Coverage", xlab="Binding factor")
+  matplot(1:nrow(modLayerSet$history),modLayerSet$history[,blockCount.cols], ylab="Number of blocks", xlab="Binding factor")
+  
+}
+
+#plot.layerBindingHistory(modLayerSet)
+
+# show the profile and modification specificities for a set of binding factors. 
+plot.factorSet <- function(factorSet)  {
+  
+  layerMap <- data.frame()
+  
+  profileLayers <- character()
+  modLayers <- character()
+  
+  for(i in 1:length(factorSet)) {
+    profileLayers <- sort(union(profileLayers, names(factorSet[[i]]$profile)))
+    modLayers <-  sort(union(modLayers, names(factorSet[[i]]$mods)))
+  }
+  # could just set modLayers <- profileLayers ?
+  
+  profile.layerMap <- matrix(NA, ncol=length(profileLayers), nrow=length(factorSet), dimnames=list(factor=1:length(factorSet), layer=profileLayers ))
+  mod.layerMap <- matrix(NA, ncol=length(modLayers), nrow=length(factorSet), dimnames=list(factor=1:length(factorSet), layer=modLayers ))
+  
+  for(i in 1:length(factorSet)) {
+    
+    
+    
+    for(thisLayer in names(factorSet[[i]]$profile)) {
+      if(thisLayer == "LAYER.0") {
+        profile.layerMap[i,thisLayer] <- 1
+      } else {
+        profile.layerMap[i,thisLayer] <- factorSet[[i]]$profile[[thisLayer]]$pattern
+      }
+      
+    }
+    
+    
+    for(thisLayer in names(factorSet[[i]]$mods)) {
+      #mod.layerMap[i,thisLayer] <- TRUE  
+      mod.layerMap[i,thisLayer] <- as.integer(factorSet[[i]]$mods[[thisLayer]]$state)
+      
+    }
+    
+  }
+  
+  par(mfrow=c(1,2))
+  image(t(profile.layerMap), main="profile", axes=F, xlab="Layer") ; box()
+  mtext(row.names(profile.layerMap), side=2, at=seq(0,1, length.out=nrow(profile.layerMap)), las=1)
+  mtext(0:(ncol(profile.layerMap)-1), side=1, at=seq(0,1, length.out=ncol(profile.layerMap)), las=1)
+  image(t(mod.layerMap), main="mods", axes=F, xlab="Layer"); box()
+  mtext(row.names(mod.layerMap), side=2, at=seq(0,1, length.out=nrow(mod.layerMap)), las=1)
+  mtext(1:ncol(mod.layerMap), side=1, at=seq(0,1, length.out=ncol(mod.layerMap)), las=1)
+}
+# plot.factorSet(factorSetRandom)

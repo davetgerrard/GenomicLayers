@@ -4,49 +4,7 @@
 # perhaps could be used to describe the change in composition over an optimisation.
 
 
-plot.factorSet <- function(factorSet)  {
-  
-  layerMap <- data.frame()
-  
-  profileLayers <- character()
-  modLayers <- character()
-  
-  for(i in 1:length(factorSet)) {
-    profileLayers <- sort(union(profileLayers, names(factorSet[[i]]$profile)))
-    modLayers <-  sort(union(modLayers, names(factorSet[[i]]$mods)))
-  }
-  # could just set modLayers <- profileLayers ?
-  
-  profile.layerMap <- matrix(NA, ncol=length(profileLayers), nrow=length(factorSet), dimnames=list(factor=1:length(factorSet), layer=profileLayers ))
-  mod.layerMap <- matrix(NA, ncol=length(modLayers), nrow=length(factorSet), dimnames=list(factor=1:length(factorSet), layer=modLayers ))
-  
-  for(i in 1:length(factorSet)) {
-    
-    
-    
-    for(thisLayer in names(factorSet[[i]]$profile)) {
-      if(thisLayer == "LAYER.0") {
-        profile.layerMap[i,thisLayer] <- 1
-      } else {
-        profile.layerMap[i,thisLayer] <- factorSet[[i]]$profile[[thisLayer]]$pattern
-      }
-      
-    }
-    
-    
-    for(thisLayer in names(factorSet[[i]]$mods)) {
-      #mod.layerMap[i,thisLayer] <- TRUE  
-      mod.layerMap[i,thisLayer] <- as.integer(factorSet[[i]]$mods[[thisLayer]]$state)
-      
-    }
-    
-  }
-  
-  par(mfrow=c(1,2))
-  image(t(profile.layerMap), main="profile")
-  image(t(mod.layerMap), main="mods")
-  
-}
+
 
 # plot.factorSet(factorSet)
 # plot.factorSet(factorSetRandom)
@@ -67,22 +25,8 @@ load("data/HYDRA_runs/pfs_layer5_chr22_400bp_tpr/pfs_layer5_chr22_400bp_tpr.fina
 colSums(af.factorSet(result[1:length(result)-1]))  # quite useful to see composition of bfs
 
 
-# create a matrix of nucleotide frequencies in the LAYER.0 patterns of the factorSet 
-af.factorSet <- function(factorSet) {
-  for(i in 1:length(factorSet)) {
-    
-    if(i == 1)  {
-      af.table <-  alphabetFrequency(factorSet[[1]]$profile[['LAYER.0']]$pattern)
-    }else {
-      af.table <- rbind(af.table,alphabetFrequency( factorSet[[i]]$profile[['LAYER.0']]$pattern))
-      
-      
-    }
-    
-    
-  }
-  return(af.table)
-}
+
+
 
 
 # af.factorSet(result[1:(length(result)-1)])  # remember the last element is optimScores
@@ -106,3 +50,42 @@ for(i in 1:(length(result)-1))  {
 
 merge(raw.hits, modLayerSet$history)
 
+
+load("data/HYDRA_runs/pfs_layer5_chr22_400bp_mutTest/pfs_layer5_chr22_400bp_mutTest.final.Rdata")
+# plot.factorSet(factorSetRandom)
+# n.factors <- length(result) -1
+# plot.factorSet(result[1: n.factors])    # many more conversion of layer 5 to 1-state
+colSums(af.factorSet(result[1:length(result)-1]))  # quite useful to see composition of bfs
+
+load("data/HYDRA_runs/pfs_layer5_chr22_400bp_mutTest_200bf/pfs_layer5_chr22_400bp_mutTest_200bf.final.Rdata")
+# plot.factorSet(factorSetRandom)
+# n.factors <- length(result) -1
+# plot.factorSet(result[1: n.factors])    # many more conversion of layer 5 to 1-state
+colSums(af.factorSet(result[1:length(result)-1]))  # quite useful to see composition of bfs
+
+
+# run against the full chromosome
+library(BSgenome.Hsapiens.UCSC.hg19) # note the other packages being loaded.
+genome <- BSgenome.Hsapiens.UCSC.hg19
+thisChrom <- genome[["chr22"]] 
+
+n.layers <- 5
+layerSet.5 <- list(LAYER.0 = thisChrom)
+for(i in 1:n.layers) {
+  layerSet.5[[paste('LAYER.', i , sep="")]] <- IRanges()    # use IRanges to store state of layers. TODO limit to chrom length
+}
+layerList.5 <- list(layerSet=layerSet.5, history=NULL)
+# run layerbinding with same number of mods as per optimisation
+system.time(modLayerSet <- runLayerBinding(layerList=layerList.5, factorSet = result[1:(length(result)-1)], verbose=TRUE, collect.stats = TRUE, iterations=1000000,target.layer=5))  
+
+modLayerSet$history
+
+# plot the history showing the changing marked blocks and coverage on all the layers.
+par(mfrow=c(1,2))
+matplot(1:nrow(modLayerSet$history),modLayerSet$history[,c(4:8)], ylab="Coverage", xlab="Binding factor")
+matplot(1:nrow(modLayerSet$history),modLayerSet$history[,c(9:13)], ylab="Number of blocks", xlab="Binding factor")
+# DONE put into a function where the correct columns are found with grep
+
+
+
+plot.layerBindingHistory(modLayerSet)
