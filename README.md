@@ -42,6 +42,53 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+
+__2016-01-04__  Progress on runs
+
+
+Was testing the behaviour of the acc method with new mutation types and mutable number of factors in factorSet.
+
+pfs_layer5_chr22_400bp_mutTest , max binding factors: 100
+
+	[mqbssdgb@login2(hydra) seqPredict]$ tail  results/pfs_layer5_chr22_400bp_mutTest/L5_c22.mutTest.400.o93515 -n 30
+	[1] "x16"
+	[1] "Round 551 . Facors: 55 . Marks on target layer: 337 , Coverage: 5483 , Regions with a hit: 39 , Targets Hit: 85 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 551 . OldScore 0.970751174926647 NewScore 0.97072707560416 Better?"
+	[1] "No!"
+	[1] "No improvement in 101 iterations, exiting!"
+	    user   system  elapsed
+	21115.15 12292.50 66164.75
+
+
+
+pfs_layer5_chr22_400bp_mutTest_200bf, fewer cores (to get it to run during congestion and maximum 200 binding factors). This performed less well than the 16 core job. It attained a very similar acc-score but used more marks to cover a larger area while hitting fewer targets. It also did not increase the number of factors very much (37 instead of 55 in 16-core job).
+
+	[mqbssdgb@login2(hydra) seqPredict]$ tail results/pfs_layer5_chr22_400bp_mutTest_200bf/L5_c22.mutTest.200bf.o94047 
+	[1] "x8"
+	[1] "Round 285 . Facors: 37 . Marks on target layer: 446 , Coverage: 6034 , Regions with a hit: 31 , Targets Hit: 57 , Chrom size: 51304566 , Target count: 4070 , Target coverage: 1628000"
+	[1] "Round 285 . OldScore 0.970750576775273 NewScore 0.970729712080067 Better?"
+	[1] "No!"
+	[1] "No improvement in 101 iterations, exiting!"
+	     user    system   elapsed
+	 2990.905  1710.012 15411.149
+
+
+
+pfs_layer5_chr19_400bp_mutTest_200bf, similar peformance to the chromosome 22 run. 
+
+	[mqbssdgb@login2(hydra) seqPredict]$ tail results/pfs_layer5_chr19_400bp_mutTest_200bf/L5_c19.mutTest.200bf.o94108
+	[1] "x8"
+	[1] "Round 581 . Facors: 28 . Marks on target layer: 288 , Coverage: 16715 , Regions with a hit: 134 , Targets Hit: 256 , Chrom size: 59128983 , Target count: 11451 , Target coverage: 4580400"
+	[1] "Round 581 . OldScore 0.955012358582652 NewScore 0.955007170922698 Better?"
+	[1] "No!"
+	[1] "No improvement in 101 iterations, exiting!"
+	     user    system   elapsed
+	 5545.755  3721.578 33970.507
+
+
+Need to look at the resulting factorSets to see how they have mutated.
+
+
 __2015-12-22__ 
 
 Feeling a bit negative about this idea. Part overwhelmed, part skeptical. There seem too many factors that cannot be accounted for in this framework. 
