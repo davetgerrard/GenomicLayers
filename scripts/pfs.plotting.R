@@ -89,3 +89,26 @@ matplot(1:nrow(modLayerSet$history),modLayerSet$history[,c(9:13)], ylab="Number 
 
 
 plot.layerBindingHistory(modLayerSet)
+
+# what score? 
+transcript.file <- "data/hg19.G19.chr22.transcript.gtf"
+transcriptTable <- read.delim(transcript.file)
+names(transcriptTable)[c(4,5,7)] <- c("txStart", "txEnd", "strand")
+tss.positions <- ifelse(transcriptTable$strand == "+", transcriptTable$txStart, transcriptTable$txEnd)
+tss.positions <- unique(tss.positions - base.0)    # only want unique values.
+tss.positions <- na.omit(tss.positions)
+tss.IR <- IRanges(start=tss.positions-199, end=tss.positions+200)   # this version of IRanges, resize not working right.
+
+
+score.hits(modLayerSet$layerSet$LAYER.5, target = tss.IR, method = acc)
+
+
+
+
+
+
+plot.score.hits(query=modLayerSet$layerSet$LAYER.5, target = tss.IR)
+
+
+
+
