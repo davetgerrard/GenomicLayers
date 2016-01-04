@@ -18,7 +18,7 @@ DateComplete|DateAdded|Priority|Description
 TODO|2015-12-22|1|GitHub repo (requires open access?)
 TODO|2015-12-22|1|CRAN/Bioconductor
 TODO|2015-12-22|1|Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor. 
-TODO|2015-12-22|1|FactorSet quantities are mutable
+TODO|2015-12-22|1|FactorSet abundances are mutable
 TODO|2015-12-22|1|Factors can be selected from libraries (e.g. Jolma, TRANSFAC)
 TODO|2015-12-22|1|Improve summarisation of factorSets (e.g. base composition, types)
 TODO|2015-12-22|1|Allow factor type to mutate during optimisation
@@ -29,7 +29,7 @@ TODO|2015-12-22|1|FactorSet needs to be encapsulated to carry the optimScores ta
 TODO|2015-12-22|1|Factors can be converted from common motifs formats (e.g. meme). Enables use of libraries. How to handle layer specificities?
 2015-12-22|2015-12-22|1|Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once. 
 TODO|2015-12-22|1|Test if system can rediscover some promoter motifs (e.g. HNF4A in liver specific promoters). Might be better to use existing data from similar papers.
-TODO|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
+2015-12-23|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
 TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
 TODO|2015-12-22|1| Overhaul factorSet objects
 2015-12-22|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE
