@@ -89,6 +89,9 @@ pfs_layer5_chr19_400bp_mutTest_200bf, similar peformance to the chromosome 22 ru
 Need to look at the resulting factorSets to see how they have mutated.
 
 
+__OBS__ Using accuracy as the score, most of the resulting factorsets are dedicated to turning off most of the target layer. This is not surprising when TSS are such a tiny fraction of the chromosome. __IDEA__ Are real nuclei like this, are there many factors actively turning off the genome all the time? We know that many areas are turned off using DNA methylation or repressive histone marks.  Could any sequence initiate transcription if it was properly packaged and/or the surrounding chromosome is properly inhibited?  
+
+
 __2015-12-22__ 
 
 Feeling a bit negative about this idea. Part overwhelmed, part skeptical. There seem too many factors that cannot be accounted for in this framework. 
