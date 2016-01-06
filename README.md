@@ -9,7 +9,7 @@ Some factors may also recognise patterns on the layers (e.g. regions in state 1)
 
 The system models a series of very many sequential binding and modifying events. 
 
-The ability of factors to bind changes through this series so that the number and positions of possible binding events for each factor change during the sequence.
+~~The ability of factors to bind changes through this series so that the number and positions of possible binding events for each factor change during the sequence.~~ Taken out early on (around 2015-09-02) when implemeented runLayerBinding.fast()
 
 ## TODO List
 
@@ -342,7 +342,7 @@ L5_chr19.p mqbssdgb     r     12/12/2015 03:23:05	17 hrs
 [1] "Round 213 . OldScore 0.127049312140155 NewScore 0.126935690792474 Better?"
 [1] "No!"
 
-# Started with a score of 6%, quickly attained 12.7%.  Need more output on number of TSS with ANY overlap and # of regions with a TSS target overlap.
+Started with a score of 6%, quickly attained 12.7%.  Need more output on number of TSS with ANY overlap and number of regions with a TSS target overlap.
 
 
 __2015-12-11__: Progress on long runs 08:50
