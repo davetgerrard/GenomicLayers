@@ -41,6 +41,16 @@ TODO|201X-XX-XX|1|
 
 
 ### Notes (reverse chronological)
+__2016-01-08__ 
+
+To start simply, might be good to optimise towards heterochromatic banding. Somewhar archaic, but may help pre-pattern genome for later mods.
+
+http://hgdownload.cse.ucsc.edu/goldenPath/hg19/database/cytoBand.txt.gz
+
+Once a _ground state_ has been applied, we can then run _in silico_ experiments with alternate factors targeting different sets of genes. e.g. endoderm vs ectoderm. 
+
+It would probably be a good idea to draft a roadmap of things to do and test. Might form part of a grant.
+
 
 __2016-01-08__ 
 
