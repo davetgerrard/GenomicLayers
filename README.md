@@ -42,6 +42,29 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-01-08__ 
+
+The idea on super-enhancers may be a good one, but they are still only a tiny fraction of the genome.  I could create binding factors for the main players (OCT4, SOX2, NANOG, KLF4, etc) and see if these can pick out more of the super-enhancers than an alternative set of TSS? BUT this would not really demonstrate any benefit of modelling layers on the chromosomes. Could perhaps have some larger scale binding factor that was sensitive to a high density of marks put down by the individual factors.
+
+
+It may also be helpful to optimise a factorSet that marks up the genome into heterochromatin/euchromatin (although the boundaries/existence are somewhat fuzzy). 
+
+
+Perhaps some  marks that reliably and repeatably mark a large portion (e.g. 20%-80%) of the genome. The procedure and test for this would be slightly different:- 
+
+ - mutate a factorSet
+ - runLayerBinding N times on the factorSet
+ - calculate the mean overlap between different runs AND the proportion of genome marked. Aim to stay close to the desired proportion but optimise to maximise overlap.
+
+Probably need to enable off-target modification (offset property of bindingFactors).
+
+
+
+__2016-01-06__ 
+
+Might super-enhancer be good first targets?  Larger than TSS and supposedly full of binding sites for small numbers of factors. Hnisz et al. (2013) define regular and super-enhancers for range of cell types. Could optimise to each and/or build libraries for the know factors (most are from ENCODE/Roadmap and have motifs).
+
+Could score the regular enhancers and the the super-enhancers separately and optimise on the difference? E.g. discriminatory.
 
 __2016-01-04__  Progress on runs
 
