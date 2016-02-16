@@ -35,7 +35,8 @@ TODO|2015-12-22|1| Overhaul factorSet objects
 2015-12-22|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE
 TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
 DOING|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
-TODO|201X-XX-XX|1|
+TODO|2016-02-16|1| Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two?
+TODO|2016-XX-XX|1|
 TODO|201X-XX-XX|1|
 
 
