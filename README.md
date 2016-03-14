@@ -36,13 +36,78 @@ TODO|2015-12-22|1| Overhaul factorSet objects
 TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
 DOING|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
 TODO|2016-02-16|1| Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two?
+TODO|2016-02-16|1| 3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track. 
 TODO|2016-XX-XX|1|
 TODO|201X-XX-XX|1|
 
 
 
 ### Notes (reverse chronological)
-__2016-01-08__ 
+
+
+__2016-03-14__ 
+
+Reading about TADs.  Cite the [Lieberman-Aiden, 2009](http://www.citeulike.org/user/daveGerrard/article/5913660) Fractal Globule paper for A vs B domains (active vs silent). Might be good data to set up baseline dna state. This, and X inactivation will both require working offset parameter.
+
+Question: What size are the patterns that are 'recognised' in A vs B scenario?  Could it be over megabases? or is it accumulation of very many small hits?  Does the difference have implications for later regulatory changes and 'unpacking'?
+
+The Dixon et al, 2012 paper has data on TADs (in my UCSC browser already). However, the regions overlap a bit between replicates and it is hard to assign 1/0 to a given domain. It may be better to start simpler and say, "is a given region marked as heterochromatin, or not?". For this, the NKI lamina data may be better as it is 1/0 in blocks but also with per-base scores.  Also, the lamina regions have nice GC% link, so could 'design' a system to call them. See if the designed system performs better than an optimised system from a random start. 
+
+Designed system:  low GC% -> start het mark; highGC% -> start Euch. mark;  travel het marks along chrom;  variation - install insulators at CTCF sites.
+
+
+Separately, could allow for large scale genomic marking of domains. Joining of adjacent domains or splitting of larges ones. Would this be like looping?  It might also be worth implemented edge effects, i.e. sub-domains near the border of two large domains.
+
+
+__2016-03-09__ 
+Another in silico experiment that occurs is the silencing of a single X chromosome when two are present. It may involve local lncRNA to chromosome interactions but this could be modelled by a specific factor. The key thing would be to see the spread of silencing across the X chromosome and, if possible, compare this with the spread in vivo. We could predict the pattern of spread if multiple starting foci. Also, marsupials are different and only paternal X is silenced - what marks on paternal X (or other chromosomes) act as starting foci?  Is this reminiscent of very early eutherian silencing (meaning early in development - there are two rounds).
+
+NEED to set up basal regulatory state in early dividing embryo. Nucleosomes, epigenetic marks and key histone mods. TFs?
+
+Spread of polycomb: [paper](http://www.ncbi.nlm.nih.gov/pubmed/22948768)
+
+__2016-03-08__ 
+
+Motif sources are a bit of a mess and use different formats. PWM most standard, but still not sure of that.
+
+Which R packages have standar classes for pwm or motifs in general?  
+
+PWMEnrich has PWM() and PFMtoPWM() and readMotifs()  - the latter fails if format not auto-detected, not clear what format(s) expected.
+BioStrings has matchPWM() which takes a simple matrix as pwm
+MotIV has readPWMfile(), makePWM() and store motifs as class motiv  
+TFBStools has toPWM() , might have PFMatrix()  (seen in examples, not in manual?!). Seems like it might have the most comprehensive motif class structure.
+
+
+__2016-03-07__ 
+
+Thinking about importing motif patterns.
+
+
+Some R/Bioconductor packages:-
+ [MotifDb](http://bioconductor.org/packages/release/bioc/html/MotifDb.html) includes Jolma. Not obvious how to get into useable format.
+ [TFBStools](http://bioconductor.org/packages/release/bioc/html/TFBSTools.html)   includes new HMM site-site dependency motifs (TFFM). Acccss to JASPAR?
+ [PWMenrich](http://bioconductor.org/packages/release/bioc/html/PWMenrich.html) _readMotifs()_ , various makePWM functions.
+ [Biostrings]()  _matchPWM()_
+ [motIV]() some PWM import (transfac, gadem), pwms from matrices, jaspar2010.  readPWMfile(), makePWM(), data(jaspar2010)
+
+Other dbs
+[ENCODE motifs] (http://compbio.mit.edu/encode-motifs/)		contains many factors including multiple for NANOG.
+[JASPAR](http://jaspar.genereg.net/html/DOWNLOAD/JASPAR_CORE/pfm/nonredundant/pfm_all.txt) 
+
+__2016-01-18__ 
+
+Need some better proof of principle. Going to start with Heterochromatin.  There are heterochromatin tracks in UCSC (cytoBand.txt) but I need to check that heterochromatin doesn't change too much between cell types (e.g. that there is a rough 'default' or ground-state).
+
+Some refs: [Wang2008Combinatorial](http://www.nature.com/ng/journal/v40/n7/full/ng.154.html) [Ernst2011Mapping](http://www.nature.com/nature/journal/v473/n7345/full/nature09906.html)
+
+Unclear from Ernst2011Mapping what proportion of epigenome is 'constant' across many cell types. 
+
+Got sidetracked by [Whitaker2015Predicting]().  Could be useful source of motifs.
+
+To simulate 'spreading' of heterochromatin (or histone mods), need to implement the 'offset' parameter. e.g. bind at X, set upstream 500 to 1. Also may need to check/implement orientation, and strand-specific binding.
+
+
+__2016-02-16__ 
 
 To start simply, might be good to optimise towards heterochromatic banding. Somewhar archaic, but may help pre-pattern genome for later mods.
 
