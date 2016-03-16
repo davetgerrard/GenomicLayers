@@ -2,9 +2,9 @@
 # function(s) to describe the composition of a set of factors (a factorSet)
 
 # perhaps could be used to describe the change in composition over an optimisation.
-
-
-
+setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
+source('scripts/pfs.functions.R')
+source('scripts/pfs.scoreMeasures.R')
 
 # plot.factorSet(factorSet)
 # plot.factorSet(factorSetRandom)
@@ -110,5 +110,13 @@ score.hits(modLayerSet$layerSet$LAYER.5, target = tss.IR, method = acc)
 plot.score.hits(query=modLayerSet$layerSet$LAYER.5, target = tss.IR)
 
 
+load("data/HYDRA_runs/pfs_layer5_chr22_400bp_mutTest/pfs_layer5_chr22_400bp_mutTest.final.Rdata")
+png("figures/pfs_layer5_chr22_400bp_mutTest.plotFactorSet.initial.png", width=1200, height=800, res=150)
+plot.factorSet(factorSetRandom)
+dev.off()
+png("figures/pfs_layer5_chr22_400bp_mutTest.plotFactorSet.final.png", width=1200, height=800, res=150)
+n.factors <- length(result) -1
+plot.factorSet(result[1: n.factors]) 
+dev.off()
 
 
