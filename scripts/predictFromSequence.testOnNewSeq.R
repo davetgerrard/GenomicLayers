@@ -83,7 +83,17 @@ for(i in 1:reps) {
   
 save(result.vector.initial, result.vector.final, file="results/layer_5_test.100modsSummed.Rdata")
 
-png("figures/layer.5.train.HOXA.test.HOXD.png", width=2000, height=2000, res=150)
+
+# load("results/layer_5_test.100modsSummed.Rdata")
+
+# show optimisation performance
+
+opt.table <- read.delim("data/HYDRA_runs/layer5_10k/layer5_10k.out.tab")
+png("figures/layer.5.train.HOXA.optimScores.png", width=600, height=600, res=150)
+plot(opt.table, ylim=c(0,.3), pch=19)
+dev.off()
+
+png("figures/layer.5.train.HOXA.test.HOXD.png", width=1000, height=1000, res=150)
 par(mfrow=c(2,1))
 # plot them 
 plot(which(tss.vector == 1), rep(1.05, sum(tss.vector)), xlim=c(0, length(tss.vector)), ylim=c(0,1.1), xlab="position", ylab="Proportion of mods base is altered")

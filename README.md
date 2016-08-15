@@ -44,6 +44,18 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-03-21__ 
+
+Useful resource (mainly paragraphs from ENCODE papers).
+http://www.nature.com/encode/threads/transcription-factor-motifs
+
+__2016-03-15__ 
+
+Some coding to produce plots for grant application.
+ 
+Added plot.LogStats.R to input the STDOUT log from a gridengine job and graph some of the stats.  Results are in the figures/ dir with suffix statPlots.png
+
+Amended pfs.plotting.R to show example of using plot.factorSet() before and after optimisation.
 
 __2016-03-14__ 
 
