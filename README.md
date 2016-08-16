@@ -50,6 +50,8 @@ Long gap.   Hard to get back into this. Started by splitting functions into indi
 
 Don't know what script to run to test everything is still working. Need to have test scripts. 
 
+Began writing tests and found that accessing hits objects with overlaps@queryHits, is no longer supported and need to use an accessor: queryHits(overlaps)  or from(overlaps)
+
 
 
 __2016-03-21__ 
