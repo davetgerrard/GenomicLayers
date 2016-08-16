@@ -90,11 +90,11 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
     validHits <- hitList[[1]]
     for(i in 1:length(hitList)) {
       overlaps <- findOverlaps(validHits, hitList[[i]])
-      validHits <- validHits[unique(overlaps@queryHits)]   # temp value to return
+      validHits <- validHits[unique(queryHits(overlaps))]   # temp value to return
     }
 
     #overlaps <- findOverlaps(hitList[[1]], hitList[[2]])
-    #validHits <- hitList[[1]][unique(overlaps@queryHits)]   # temp value to return
+    #validHits <- hitList[[1]][unique(queryHits(overlaps))]   # temp value to return
 
   }
   # intersect hits to get proper valid hits.
