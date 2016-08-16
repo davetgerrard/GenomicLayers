@@ -44,6 +44,14 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+
+__2016-08-16__ 
+Long gap.   Hard to get back into this. Started by splitting functions into individual files in the R/ sub-dir. The ideas is that this will eventually be the correct location for an R package. The file 'scripts/predictFromSequence.functions.R' now makes a list of all the .R files in R/ and sources them. 
+
+Don't know what script to run to test everything is still working. Need to have test scripts. 
+
+
+
 __2016-03-21__ 
 
 Useful resource (mainly paragraphs from ENCODE papers).
