@@ -44,6 +44,10 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-08-17__ 
+Wrote another test and moved locations of test scripts to match devtools::test() expectation.
+
+
 
 __2016-08-16__ 
 Long gap.   Hard to get back into this. Started by splitting functions into individual files in the R/ sub-dir. The ideas is that this will eventually be the correct location for an R package. The file 'scripts/predictFromSequence.functions.R' now makes a list of all the .R files in R/ and sources them. 
