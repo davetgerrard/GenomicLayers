@@ -4,7 +4,7 @@
 
 library(testthat) 
 
-source('scripts/predictFromSequence.functions.R')
+source('scripts/pfs.functions.R')
 
 test_results <- test_dir("tests/testthat", reporter="summary")
 
