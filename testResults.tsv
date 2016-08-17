@@ -1,2 +1,5 @@
 file	context	test	nb	failed	skipped	error	warning	user	system	real
+test_createRandomBindingFactor.R		Factors have expected types	1	0	FALSE	FALSE	0	0	0	0
+test_createRandomBindingFactor.R		Number of factors correct	1	0	FALSE	FALSE	0	0	0	0
 test_matchBindingFactor.R		Factor matches equal pattern matches equal eleven	3	0	FALSE	FALSE	0	0	0	0
+test_runLayerBinding.R		Modification matches pattern length	1	0	FALSE	FALSE	0	0	0	0
