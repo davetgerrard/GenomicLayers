@@ -44,6 +44,13 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-08-31__
+While at GS2016, trying to run basic optimisation on chr1. Moved to dpsf cluster. Had to move over TSS data and make new file of TSS for chr1, in a sub-dir data/
+Also needed a local results/ sub-dir to collect the run results. 
+
+Each iteration (layerBinding) on the chr22 (55Mb) run with 30 factors and 5 layers took 1-2 mins. For chr1 (250Mb) I increased number of binding event x5 , they took 5-6mins. Not sure if that is chrom size or number of factors.
+
+
 __2016-08-17__ 
 Wrote another test and moved locations of test scripts to match devtools::test() expectation.
 

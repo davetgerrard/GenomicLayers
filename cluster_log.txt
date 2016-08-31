@@ -77,3 +77,35 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/
 mkdir results/pfs_layer5_chr19_400bp_mutTest_200bf
 qsub -cwd -m e -M david.gerrard@manchester.ac.uk -o $SCRATCH/seqPredict/results/pfs_layer5_chr19_400bp_mutTest_200bf -e $SCRATCH/seqPredict/results/pfs_layer5_chr19_400bp_mutTest_200bf -V -N L5_c19.mutTest.200bf -b y -pe smp.pe 8 Rscript $SCRATCH/seqPredict/predictfromsequence/scripts/pfs.chr19.400bp.mutTest.200bf.R
 
+
+# On DPSF
+
+
+
+
+ module load libs/bioconductor/3.3/gcc-4.8.5+R-3.3.1
+
+ in R
+
+ source("https://bioconductor.org/biocLite.R")
+biocLite("BSgenome.Hsapiens.UCSC.hg19")
+
+
+	mkdir data
+	mkdir results
+
+
+need to create TSS file for chrom1 (or load whole gtf?)
+
+
+
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr22.1kb -b y -pe smp.pe 16 Rscript $SCRATCH/predictfromsequence/scripts/dpsf.pfs.chr22.1kb.verbose.R
+
+awk '{ if($1 == "chr1" && $3 == "transcript") print $0 }' /mnt/data-sets/bcf/genomeIndexes/hg19_GRCh37_random_chrM/annotation/gencode.v19.annotation.gtf > data/hg19.G19.chr1.transcript.gtf
+
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr1.1kb -b y -pe smp.pe 16 Rscript $SCRATCH/predictfromsequence/scripts/dpsf.pfs.chr1.1kb.verbose.R
+qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr1.S -b y -pe smp.pe 16 Rscript $SCRATCH/predictfromsequence/scripts/dpsf.pfs.chr1.1kb.verbose.sparse.R
+
+# to check times of each iteration:
+ grep 'runLayerBinding pos' ../q_out/Lay5_chr22.1kb.o19381 |wc
+
