@@ -34,21 +34,29 @@ TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow 
 TODO|2015-12-22|1| Overhaul factorSet objects
 2015-12-22|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE
 TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
-DOING|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
+STARTED|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
 TODO|2016-02-16|1| Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two?
 TODO|2016-02-16|1| 3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track. 
-TODO|2016-XX-XX|1|
+TODO|2016-XX-XX|1| Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it. 
 TODO|201X-XX-XX|1|
 
 
 
 ### Notes (reverse chronological)
 
+__2016-09-02__ The chr1 runs are still going. By iteration 490, they are taking 10-12 minutes per iteration (started at 5-6mins). This may be because the factor sets are larger or more complex. There are currently 47 factors (from 30 at start):-
+
+	[1] "Round 492 . Facors: 47 . Marks on target layer: 482820 , Coverage: 80428020 , Regions with a hit: 24021 , Targets Hit: 15625 , Chrom size: 249250621 , Target count: 16040 , Target coverage: 16040000"
+
+
+Beginning to think about running whole genome layer binding. Current layerSets cover only a single sequence, genome will be a list of layerSets.  Will need to re-write runLayerBinding() and matchBindingFactor() to cope. Perhaps begin with a createLayerSet() function to make this all easier and more structured. Accessor functions to obtain parts of layerSets (although the actual values on the layers will need to be modifiable.
+
+
 __2016-08-31__
 While at GS2016, trying to run basic optimisation on chr1. Moved to dpsf cluster. Had to move over TSS data and make new file of TSS for chr1, in a sub-dir data/
 Also needed a local results/ sub-dir to collect the run results. 
 
-Each iteration (layerBinding) on the chr22 (55Mb) run with 30 factors and 5 layers took 1-2 mins. For chr1 (250Mb) I increased number of binding event x5 , they took 5-6mins. Not sure if that is chrom size or number of factors.
+Each iteration (layerBinding) on the chr22 (55Mb) run with 30 factors and 5 layers took 1-2 mins. For chr1 (250Mb) I increased number of binding event x5 , they took 5-6mins. Not sure if that is chrom size or number of factors.  [__2016-09-02__] It was chromosome size, I ran another with same number of mods as the chr22 run and the times for each iteration were still 5-6 mins.
 
 
 __2016-08-17__ 
