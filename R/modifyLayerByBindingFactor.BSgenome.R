@@ -2,13 +2,13 @@
 # hits is now a Views object
 # TODO, edit to alter layerset IN-PLACE i.e. modifyLayerByBindingFactor.Views(layerSet, position.vec,bindingFactor)
 # function
-# description
+# Modify all hits genome-wide on a layerSet built upon a BSgenome object.
 # Parameters:-
 # layerSet,
 # hits,
 # bindingFactor,
 # verbose=FALSE
-modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
+modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
   require(Biostrings)
   newLayerSet <- layerSet
   for(thisLayer in names(bindingFactor$mods))  {
@@ -25,9 +25,9 @@ modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verb
     # restrict hits to range
 
 
-    newLayerSet[[thisLayer]] <- switch(thisState,
-                                       "1" = reduce(union(newLayerSet[[thisLayer]], hits)),
-                                       "0" = setdiff(newLayerSet[[thisLayer]], hits),
+    newLayerSet$layerSet[[thisLayer]] <- switch(thisState,
+                                       "1" = reduce(union(newLayerSet$layerSet[[thisLayer]], hits), ignore.strand=TRUE),
+                                       "0" = setdiff(newLayerSet$layerSet[[thisLayer]], hits),
                                        stop(paste("unknown state", thisState)))
 
 

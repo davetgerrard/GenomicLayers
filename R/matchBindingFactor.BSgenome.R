@@ -29,7 +29,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
       } else {
         #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
         all.hits <- vmatchPattern(thisPattern, genome, fixed=F) 
-        hitList[[thisLayer]] <- reduce(all.hits)
+        hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
         #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
       }
       #validHits <- hitList[[thisLayer]]
@@ -72,7 +72,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
     # trim the hitList to be within bounds for the sequence.
     #print(paste(thisLayer, class(hitList[[thisLayer]])))
     hitList[[thisLayer]] <- as(hitList[[thisLayer]], "GRanges")
-    hitList[[thisLayer]] <- restrict(hitList[[thisLayer]] , start=genome.starts, end=genome.ends)
+    if(length(hitList[[thisLayer]]) > 0)   hitList[[thisLayer]] <- restrict(hitList[[thisLayer]] , start=genome.starts, end=genome.ends)
     # remove those shorter than patternLength (those overlapping the edges.
     hitList[[thisLayer]] <- hitList[[thisLayer]][width(hitList[[thisLayer]]) >= patternLength]
 

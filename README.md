@@ -38,6 +38,8 @@ STARTED|2015-12-22|1| Write a reporting function for factorSet that states how m
 TODO|2016-02-16|1| Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two?
 TODO|2016-02-16|1| 3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track. 
 TODO|2016-XX-XX|1| Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it. 
+TODO|2016-09-05|1|createBindingFactor()  where user specifies some or all properties and function fills in the rest.
+TODO|2016-09-05|1|runLayerBinding.BSgenome() for all binding factor types
 TODO|201X-XX-XX|1|
 
 

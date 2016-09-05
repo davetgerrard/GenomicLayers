@@ -41,12 +41,33 @@ testFactor2 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
 
 results <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor2)
 
-# now can match things genome wide.
+testFactor3 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
+                                             mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
+
+results3 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor3)
 
 
+# check that a profile looking for 1 will not find any.
+testFactor4 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,1), 
+                                                            mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
+
+results <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor4)
 
 
+# now can match things genome wide. Need to run layerBinding and modification.
 
+# need to have a factorSet, a list of bindingFactors
+
+testFS <- list(bf.1=testFactor2, bf.2=testFactor3, bf.3=testFactor4)
+
+
+# also need for modifyLayerByBindingFactor.Views to work on BSgenome and hits
+
+mfLayer <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet, hits=results3, bindingFactor=testFactor3)
+
+
+modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE)
+# 2016-09-05 Why no hits? 
 
 
 # will this run on human genome?  No, need much more memory to do human genome pattern matching.
