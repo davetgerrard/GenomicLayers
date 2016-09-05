@@ -34,6 +34,21 @@ testFactor <- createRandomBindingFactor(name="test.1", layerSet=scLayerSet$layer
 results <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor)
 
 
+
+# need to prescribe a simple binding factor, made a simple function to create one.
+
+testFactor2 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
+
+results <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor2)
+
+# now can match things genome wide.
+
+
+
+
+
+
+
 # will this run on human genome?  No, need much more memory to do human genome pattern matching.
 
 library(BSgenome.Hsapiens.UCSC.hg19)

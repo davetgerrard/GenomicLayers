@@ -12,6 +12,9 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
   stopifnot( class(layerSet$layerSet[[1]]) == "BSgenome")
   genome <- layerSet$layerSet[[1]]
   genome.sl <- seqlengths(genome)
+  genome.starts <- rep(1, length(genome))
+  names(genome.starts) <- seqnames(genome)
+  genome.ends <- genome.sl
   #seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
   #max.window <- min(max.window, seqRange[2])
   hitList <- list()
@@ -50,8 +53,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
 
         # would need to be inverted for negative islands.
       } else {
-        these.hits <- layerSet[[thisLayer]][width(layerSet[[thisLayer]]) >= patternLength]
-        these.gaps <- gaps(layerSet[[thisLayer]])[width(gaps(layerSet[[thisLayer]]))>=patternLength]   # TODO include length of feature..
+        these.hits <- layerSet$layerSet[[thisLayer]][width(layerSet$layerSet[[thisLayer]]) >= patternLength]
+        these.gaps <- gaps(layerSet$layerSet[[thisLayer]])[width(gaps(layerSet$layerSet[[thisLayer]]))>=patternLength]   # TODO include length of feature..
         if(pattern == 1) {
           hitList[[thisLayer]] <-these.hits
         } else {
@@ -68,8 +71,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
     }
     # trim the hitList to be within bounds for the sequence.
     #print(paste(thisLayer, class(hitList[[thisLayer]])))
-    hitList[[thisLayer]] <- as(hitList[[thisLayer]], "IRanges")
-    hitList[[thisLayer]] <- restrict(hitList[[thisLayer]] , start=seqRange[1], end=seqRange[2])
+    hitList[[thisLayer]] <- as(hitList[[thisLayer]], "GRanges")
+    hitList[[thisLayer]] <- restrict(hitList[[thisLayer]] , start=genome.starts, end=genome.ends)
     # remove those shorter than patternLength (those overlapping the edges.
     hitList[[thisLayer]] <- hitList[[thisLayer]][width(hitList[[thisLayer]]) >= patternLength]
 
