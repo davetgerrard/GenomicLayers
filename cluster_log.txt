@@ -109,3 +109,8 @@ qsub -cwd -m e -M david.gerrard@manchester.ac.uk -V -N Lay5_chr1.S -b y -pe smp.
 # to check times of each iteration:
  grep 'runLayerBinding pos' ../q_out/Lay5_chr22.1kb.o19381 |wc
 
+
+# run a vmatchPattern on whole human genome (fails on my desktop)  :  tf.hits <- vmatchPattern("TTTCCCTAATC", genome, fixed=F)
+qsub -cwd -m e  -V -N hg19.vMatch -b y -pe smp.pe 16 Rscript $SCRATCH/predictfromsequence/scripts/testGenomePatternMatch.R
+
+# it worked, but used 22Gb of RAM at one point.

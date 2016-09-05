@@ -51,6 +51,9 @@ __2016-09-02__ The chr1 runs are still going. By iteration 490, they are taking 
 
 Beginning to think about running whole genome layer binding. Current layerSets cover only a single sequence, genome will be a list of layerSets.  Will need to re-write runLayerBinding() and matchBindingFactor() to cope. Perhaps begin with a createLayerSet() function to make this all easier and more structured. Accessor functions to obtain parts of layerSets (although the actual values on the layers will need to be modifiable.
 
+I did run a simple vMatchPattern on hg19 using the DPSF cluster.  Recorded 22Gb of memory usage! 
+
+	tf.hits <- vmatchPattern("TTTCCCTAATC", genome, fixed=F) 
 
 __2016-08-31__
 While at GS2016, trying to run basic optimisation on chr1. Moved to dpsf cluster. Had to move over TSS data and make new file of TSS for chr1, in a sub-dir data/
