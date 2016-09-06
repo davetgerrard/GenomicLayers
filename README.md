@@ -40,11 +40,23 @@ TODO|2016-02-16|1| 3D chromatin structure can be approximated by providing a tab
 TODO|2016-XX-XX|1| Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it. 
 TODO|2016-09-05|1|createBindingFactor()  where user specifies some or all properties and function fills in the rest.
 TODO|2016-09-05|1|runLayerBinding.BSgenome() for all binding factor types
+TODO|2016-09-06|1|Map which functions are in use by other functions. Begin to deprecate and remove development functions.
+TODO|2016-09-06|1|Write createBindingFactor.XXX functions for other BF types. 
 TODO|201X-XX-XX|1|
 
 
 
 ### Notes (reverse chronological)
+
+__2016-09-06__ Using the yeast geneome have run full BSgenome layer binding for a DNA_motif. Three factors, each dependent on modifications by the earlier. Required several new functions:- 
+
+createBindingFactor.DNA_motif.R		needed non-random binding factors.
+matchBindingFactor.BSgenome.R
+modifyLayerByBindingFactor.BSgenome.R
+runLayerBinding.BSgenome.R
+
+Worked up in scripts/scratchbox.BSgenome.R    TODO: move the trial into a TEST.
+
 
 __2016-09-02__ The chr1 runs are still going. By iteration 490, they are taking 10-12 minutes per iteration (started at 5-6mins). This may be because the factor sets are larger or more complex. There are currently 47 factors (from 30 at start):-
 

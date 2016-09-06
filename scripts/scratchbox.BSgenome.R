@@ -47,8 +47,8 @@ testFactor3 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", 
 results3 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor3)
 
 
-# check that a profile looking for 1 will not find any.
-testFactor4 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,1), 
+# check that a profile looking for 1 will not find any.  N.B this WILL bind AFTER testFactor2
+testFactor4 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(1,0), 
                                                             mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
 
 results <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor4)
@@ -58,7 +58,7 @@ results <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = te
 
 # need to have a factorSet, a list of bindingFactors
 
-testFS <- list(bf.1=testFactor2, bf.2=testFactor3, bf.3=testFactor4)
+testFS <- list(testFactor2=testFactor2, testFactor3=testFactor3, testFactor4=testFactor4)
 
 
 # also need for modifyLayerByBindingFactor.Views to work on BSgenome and hits
@@ -67,7 +67,12 @@ mfLayer <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet, hits=results
 
 
 modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE)
-# 2016-09-05 Why no hits? 
+# 2016-09-05 
+
+# with the above configuration, there are 41 possible sites across the genome, setting iterations=30, restricts the number that are marked, so the number of potential sites reduces.
+modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=30)
+
+# TODO convert the above into a test.
 
 
 # will this run on human genome?  No, need much more memory to do human genome pattern matching.
