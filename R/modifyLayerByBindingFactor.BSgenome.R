@@ -10,6 +10,7 @@
 # verbose=FALSE
 modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
   require(Biostrings)
+  require(GenomicRanges)
   newLayerSet <- layerSet
   for(thisLayer in names(bindingFactor$mods))  {
 
@@ -25,9 +26,9 @@ modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, v
     # restrict hits to range
 
 
-    newLayerSet$layerSet[[thisLayer]] <- switch(thisState,
+    newLayerSet$layerSet[[thisLayer]] <- switch(as.character(thisState),
                                        "1" = reduce(union(newLayerSet$layerSet[[thisLayer]], hits), ignore.strand=TRUE),
-                                       "0" = setdiff(newLayerSet$layerSet[[thisLayer]], hits),
+                                       "0" = setdiff(newLayerSet$layerSet[[thisLayer]], hits, ignore.strand=TRUE),
                                        stop(paste("unknown state", thisState)))
 
 
