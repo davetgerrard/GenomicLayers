@@ -17,9 +17,11 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
     max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
     if(thisLayer == "LAYER.0") {
       patternLength <- bindingFactor$profile[[thisLayer]]$length
+      max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
       if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
         hitList[[thisLayer]] <- IRanges(start=seqRange[1], end=seqRange[2])
       } else {
+        
         # currently DNA matches using fixed length string with IUPAC codes (adapt later for pwm matching)
         #TODO add in WINDOWING for long searches here.
         # for very long sequences >100k, need to break the sequence into sections, get results and concatenate them.
@@ -30,16 +32,26 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
         if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
         all.hits <- IRanges()
         for(i in 1:length(win.starts)) {
-          win.hits <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]][win.starts[i]: win.ends[i]], fixed='subject', max.mismatch= max.mismatches), "IRanges")   # fixed='subject' ignores NNNs in subject (e.g. telomeres). See ?`lowlevel-matching` for more information.
+          if(bindingFactor$type == "DNA_regexp" ) {
+            grepResult <- gregexpr(bindingFactor$profile[[thisLayer]]$pattern, layerSet[[thisLayer]][win.starts[i]: win.ends[i]])
+            if(grepResult[[1]][1] == -1 ) {  # no grep hits
+              win.hits <- IRanges() 
+            } else {
+              win.hits <- IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE))
+            }
+          } else  {
+            win.hits <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]][win.starts[i]: win.ends[i]], fixed='subject', max.mismatch= max.mismatches), "IRanges")   # fixed='subject' ignores NNNs in subject (e.g. telomeres). See ?`lowlevel-matching` for more information.
+          }
           win.hits <- shift(win.hits , win.starts[i] - 1)
           #print(win.hits)
           all.hits <- c(all.hits, win.hits)
         }
         hitList[[thisLayer]] <- reduce(all.hits)
         #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
+        
       }
       #validHits <- hitList[[thisLayer]]
-    } else {
+    } else {      # Not LAYER.0
       # with binary patterns, take ranges that have value 0 (gaps) 1 (IRanges)
       patternLength <- bindingFactor$profile[[thisLayer]]$length
       pattern <- bindingFactor$profile[[thisLayer]]$pattern
@@ -74,7 +86,7 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
         # hitList[[thisLayer]] <- ifelse(pattern == 1, these.hits, these.gaps) # this threw weird error: Error in NSBS(i, x, exact = exact, upperBoundIsStrict = !allow.append) :  subscript contains NAs or out-of-bounds indices
       }
           #validHits <- union(validHits, )
-    }
+    }   # end of other LAYER names
     # trim the hitList to be within bounds for the sequence.
     #print(paste(thisLayer, class(hitList[[thisLayer]])))
     hitList[[thisLayer]] <- as(hitList[[thisLayer]], "IRanges")

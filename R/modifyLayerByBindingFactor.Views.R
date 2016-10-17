@@ -19,7 +19,13 @@ modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verb
 
     stateWidth <- bindingFactor$mods[[thisLayer]]$stateWidth
     hits <- resize(hits, width=stateWidth, fix="center")    # adjust the width
-    thisOffset <- bindingFactor$mods[[thisLayer]]$offset
+    # if there is an offset.method, use it. Otherwise just use the offset. 
+    # Written so that function is applied for each one of hits independently.
+    if(!is.null(bindingFactor$mods[[thisLayer]]$offset.method )) {
+      thisOffset <- replicate(length(hits),bindingFactor$mods[[thisLayer]]$offset.method(x=bindingFactor$mods[[thisLayer]]$offset))
+    } else {
+      thisOffset <- bindingFactor$mods[[thisLayer]]$offset
+    }
     hits <- shift(hits, shift=thisOffset)                 # move up- or downstream
 
     # restrict hits to range

@@ -48,6 +48,17 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+
+__2016-10-17__ Struggling to concentrate on this between other projeccts. Trying to implement model of X-inactivation spreading involving CpG islands. Hard to positively define them. Implemented DNA_regexp as another BF type. Somewhat more abstract than what I wanted. Also introduces problem of variable patternLength and bumps up need to split off patternLength from modification length (these could each be vectors with different values for each layer - maybe even lists). The model also now requires the offset parameter to work so that mods can be applied near-to but not on top off binding sites. 
+
+
+__2016-09-09__ After coding up runLayerBinding.BSgenome.R and testing on yeast, ran scripts/dpsf.pfs.hg19.3factor.LayerBindingTest.R on DPSF to run 3 factors over hg19.  The third factor modification to LAYER.2 is dependent on previous factor mods.   With number of binding events (iterations=30) limited to 30, it took ~7 mins to run the three factors (all based on the same DNA-motif). I ran again with iterations=5000 (there are 19614 hits in the genome) and it took the same time - it's the searching that takes time.
+
+__N.B.__ for DNA motifs, it would save a lot of time to cache the matches for a DNA-motif pattern, assuming the same motif is reused in a single run.
+
+Next TODOs:  write matchBindingFactor functions for other factor types. Maybe also write optimiseFactorSet.BSgenome().  
+
+
 __2016-09-06__ Using the yeast geneome have run full BSgenome layer binding for a DNA_motif. Three factors, each dependent on modifications by the earlier. Required several new functions:- 
 
 createBindingFactor.DNA_motif.R		needed non-random binding factors.

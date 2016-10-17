@@ -1,8 +1,10 @@
-createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString="N",profile.layers="LAYER.1",profile.marks=0,mod.layers="LAYER.1",mod.marks=1,
+createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternString="N",patternLength=0, profile.layers=NULL,profile.marks=NULL,mod.layers=NULL,mod.marks=NULL,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, min.DM.length=2, min.DR.length=10, verbose=FALSE) {
   
-  patternLength <- nchar(patternString)
-  profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, length=patternLength))
+  # patternLength will be variable for regular expressions. Need separate parameter for modLength and may become a vector or list with different lengths for each layer.
+  #patternLength <- nchar(patternString)
+  #TODO sort out how to define patternLength or re-write other functions to accomodate variable patternLength
+  profileList <- list(LAYER.0=list(pattern=patternString , mismatch.rate=0, length=patternLength))
   
   
   if(length(profile.layers) >0) {
@@ -12,13 +14,14 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString
   }
   }
   modList <- list()
+  if(length(mod.layers) >0) {
   for(i in 1:length(mod.layers)) {
   #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
     thisLayer <- mod.layers[i]
     modState <- mod.marks[i]
     modList[[thisLayer]] <- list(state=modState, stateWidth=patternLength, offset=0, align="centre")   # TODO make stateWidth independent of patternLength
   }
-  
+  }
   bindingFactor <- list(name=name, type=type,
                         profile=profileList,
                         mods=modList)
@@ -29,4 +32,4 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString
 
 
 
-createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
+createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")

@@ -1,13 +1,6 @@
 
 
 
-
-
-
-
-
-
-
 pattern.core <- "GAAAC"
 pattern.long <- "TGAAACR"  # R = puRine (A,G)
 IUPAC_CODE_MAP
