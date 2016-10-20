@@ -44,7 +44,7 @@ runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFre
       hits.sample <- theseHits[sample(1:length(theseHits) ,min(length(theseHits),max.hits))]   # now multiple
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits.used =", length(hits.sample), sep=" "))
     }
-    if(verbose) {cat(paste(thisBF, length(theseHits), length(hits.sample)))
+    if(verbose) {print(paste(thisBF, length(theseHits), length(hits.sample)))
     } else { cat( ".")}
 	#thisHitPosition <- start(hits.sample) + floor(width(hits.sample)/2)
 

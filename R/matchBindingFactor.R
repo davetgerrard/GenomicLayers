@@ -73,6 +73,7 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
       } else {
         these.hits <- layerSet[[thisLayer]][width(layerSet[[thisLayer]]) >= patternLength]
         these.gaps <- gaps(layerSet[[thisLayer]])[width(gaps(layerSet[[thisLayer]]))>=patternLength]   # TODO include length of feature..
+        if(length(these.hits) < 1) these.gaps <- IRanges(start=seqRange[1], end=seqRange[2])   # if no hits, whole chrom is a gap.
         if(pattern == 1) {
           hitList[[thisLayer]] <-these.hits
         } else {
@@ -101,8 +102,9 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
   } else{
     validHits <- hitList[[1]]
     for(i in 1:length(hitList)) {
-      overlaps <- findOverlaps(validHits, hitList[[i]])
-      validHits <- validHits[unique(queryHits(overlaps))]   # temp value to return
+      #overlaps <- findOverlaps(validHits, hitList[[i]])
+      #validHits <- validHits[unique(queryHits(overlaps))]   # temp value to return
+      validHits <- intersect(validHits, hitList[[i]])
     }
 
     #overlaps <- findOverlaps(hitList[[1]], hitList[[2]])

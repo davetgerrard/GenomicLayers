@@ -42,6 +42,7 @@ TODO|2016-09-05|1|createBindingFactor()  where user specifies some or all proper
 TODO|2016-09-05|1|runLayerBinding.BSgenome() for all binding factor types
 TODO|2016-09-06|1|Map which functions are in use by other functions. Begin to deprecate and remove development functions.
 TODO|2016-09-06|1|Write createBindingFactor.XXX functions for other BF types. 
+TODO|2016-10-19|1|Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT.
 TODO|201X-XX-XX|1|
 
 
@@ -49,8 +50,50 @@ TODO|201X-XX-XX|1|
 ### Notes (reverse chronological)
 
 
+__2016-10-20__
+
+ I've run it several times and it looks largely the same each time. The peaks are roughly in the correct places with some stand out differences. 
+e.g.mm9,chrX ~ 80-85 Mb is a peak of H3K27me3 in Simon et al., not visible in my simulation.
+Conversely, there are two large sections with marking in the Simon data ~20-45Mb and  ~ 110-130Mb with little H3K27me3 marking but which both show peaks in my simulations.
+
+I'm wondering what part gene activity (escape from XI) plays?
+
+The true marked peak at 80-85Mb is in a CpG desert. Their is an oasis of CpG at the DMD and GK gene pair. 
+From https://www.ncbi.nlm.nih.gov/pubmed/23110537 :-
+
+>"The results confirm that DMD clinical manifestations in carriers are associated with non-random patterns of X inactivation."
+
+Might be worth looking at https://en.wikipedia.org/wiki/Skewed_X-inactivation
+
+From :-
+
+>"A linkage study using the molecular trait of skewed X inactivation as the scored pheno-type localized this trait to Xq28 (DXS1108; maximum LOD score [Zmax] = 4.34, recombination fraction [?] = 0). Both genotyping of additional markers and FISH of a YAC probe in Xq28 showed a deletion spanning from intron 22 of the factor VIII gene to DXS115-3."
+
+__N.B.__ skewed X inactivation may be under genetic control (e.g. promoter of XIST is damaged) but may also be due to cell-selection on allelic variants of genes if cell growth or division are impaired by the mutant. This may then manifest as differences between tissues. e.g. in muscular dystrophy.
+
+__2016-10-19__ Starting to compare simulation results with mouse data.   
+
+Simulation displayed using IdeoViz package plotOnIdeo(). Data from Simon et al. (2013) displayed using Sushi plotBedGraph().   Some similarity but far from perfect. Need metric and noteworthy that correlation can be measured against each wave of the simulation - hence can tell if simulation is 'overcooked'.
+
+First 100 waves only gave low coverage (though seemed to still be increasing linearly). Running further waves from wave 101 to 1000, outputting every 100 waves.
+
+ON STORAGE OF RESULTS :  Currently storing full layerList object. It is roughly 45Mb whether it contains 1 wave or 100. I suspect it is using pointers to a single instance of the chrX sequence.  That's good, but could be better. The DNA sequence is immutable (well, it should be) and therefore does not need to be saved if it comes from a trusted source or well defined file (e.g. chrX of the BSgenome.Mmusculus.UCSC.mm10 package). In future, could just store a pointer, and write a function to restore the sequence to the object when reloaded and/or needed.
+
+
+
+
+__2016-10-18__ Working model. Seems to work. Late in day thought: how much is due to large gaps in sequence of mouse chrX, what proportion is N? 
+
+	letterFrequency(genome[["chrX"]] , c("N"))/length(genome[["chrX"]]) = 0.04410482 
+
+Shouldn't be too much of a problem...
+
+
 __2016-10-17__ Struggling to concentrate on this between other projeccts. Trying to implement model of X-inactivation spreading involving CpG islands. Hard to positively define them. Implemented DNA_regexp as another BF type. Somewhat more abstract than what I wanted. Also introduces problem of variable patternLength and bumps up need to split off patternLength from modification length (these could each be vectors with different values for each layer - maybe even lists). The model also now requires the offset parameter to work so that mods can be applied near-to but not on top off binding sites. 
 
+Offset parameter was already partially implemented. Made some binding factors to use it. 
+
+Altered matchBindingFactor() to produce valid hits using intersect() rather than sequential overlaps. This reduces the size of the resulting regions but should be offset by making the modification length (stateWidth) independent of the patternLength. I think. 
 
 __2016-09-09__ After coding up runLayerBinding.BSgenome.R and testing on yeast, ran scripts/dpsf.pfs.hg19.3factor.LayerBindingTest.R on DPSF to run 3 factors over hg19.  The third factor modification to LAYER.2 is dependent on previous factor mods.   With number of binding events (iterations=30) limited to 30, it took ~7 mins to run the three factors (all based on the same DNA-motif). I ran again with iterations=5000 (there are 19614 hits in the genome) and it took the same time - it's the searching that takes time.
 

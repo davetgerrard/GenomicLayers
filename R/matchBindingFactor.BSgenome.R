@@ -83,8 +83,9 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
   } else{
     validHits <- hitList[[1]]
     for(i in 1:length(hitList)) {
-      overlaps <- findOverlaps(validHits, hitList[[i]])
-      validHits <- validHits[unique(queryHits(overlaps))]   # temp value to return
+      #overlaps <- findOverlaps(validHits, hitList[[i]])
+      #validHits <- validHits[unique(queryHits(overlaps))]   # temp value to return
+      validHits <- intersect(validHits, hitList[[i]])
     }
 
     #overlaps <- findOverlaps(hitList[[1]], hitList[[2]])
