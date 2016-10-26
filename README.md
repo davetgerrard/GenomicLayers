@@ -50,6 +50,31 @@ TODO|201X-XX-XX|1|
 ### Notes (reverse chronological)
 
 
+__2016-10-21__ X inactivation missing hits 150Mb+. In the runs so far, there has been no marking (from any factor) beyond 150Mb, even though mm9 chrX extends to 166.6Mb.  Not sure why but suspect code. 
+
+Checked matchBindingFactor() that is returning hits at 166.4Mb, so OK.
+
+Check runLayerBinding() that is also returning hits at 166.4Mb, so OK.
+
+Re-running the sim with 10 waves and 1000 iters seems to have 'fixed' the problem. Weird. 
+
+Returning to question of whether the final H3K27me3 tracks resembel the Simon et al. Xist track. They don't.  
+
+Is the offsetting too large? How do the simulation H3K27me3 compare to the simulation CpG_islands? 
+Also not-great.
+
+Have removed requiredment of CpG_island binding to be unmarked in H3K27me3, just in case that is preventing good blocks of CpG_island from being established.
+
+
+On the upside, I test bg.CpG_island against the published definition and it was VERY good. Out of 2148 hits on mm9 chrX, 5 would have failed for not having GC% > 50% and 11 would have failed for not having O/E > 0.6.  
+
+ 	table(cpgRatioVec > 0.6, cgPcVec > 0.5)
+		       
+	        FALSE TRUE
+	  FALSE     0   11
+	  TRUE      5 2132
+
+
 __2016-10-20__
 
  I've run it several times and it looks largely the same each time. The peaks are roughly in the correct places with some stand out differences. 

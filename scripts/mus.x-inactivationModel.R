@@ -2,6 +2,11 @@
 
 # Simulate 2-stage X-inactivation in mouse
 #environment, packages and functions
+
+
+# TODO - CpG BF finding CpGs, but results not very life-like. Check paper, is it GC% instead?
+# TODO - better/best method to assess results?
+
 setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
 #library(BSgenome.Mmusculus.UCSC.mm10)
 library(BSgenome.Mmusculus.UCSC.mm9)  # to compare with data from Simon et al.
@@ -40,13 +45,16 @@ bf.CpG <- createBindingFactor.DNA_motif("CpG", patternString="CG",
 
 bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.rate=0, 
                                            profile.layers = "CpG_island", profile.marks = 1,  
-                                           mod.layers = "PRC", mod.marks=1, stateWidth=1000)
+                                           mod.layers = "PRC", mod.marks=1, stateWidth=500)
 
 #bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){50}CG", patternLength=300, profile.layers="H3K27me3",profile.marks=0, mod.layers = "CpG_island", mod.marks=1)
 # needed more seed areas, so took shorter CpG motifs.
+# bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
+#                                                profile.layers="H3K27me3",profile.marks=0, 
+#                                                mod.layers = "CpG_island", mod.marks=1, stateWidth=300)
 bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
-                                               profile.layers="H3K27me3",profile.marks=0, 
-                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=300)
+                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
+
 #N.B. temporarily setting a fixed patternLength, because don't know how to implement variable patternLength yet.
 # current effect is that hits < patternLength are discarded
 
@@ -59,7 +67,7 @@ upDownFunc <- function(x)  {
 bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150, mismatch.rate=0, 
                                                  profile.layers = "PRC", profile.marks = 1, 
                                                  mod.layers = "H3K27me3", mod.marks=1, 
-                                                 stateWidth=200,offset=500, offset.method=upDownFunc)
+                                                 stateWidth=200,offset=350, offset.method=upDownFunc)
 # 2016-10-19 reduced the statewidth and offset because I thought it was growing too fast relative to CpG islands. 
 
 
@@ -97,9 +105,10 @@ results4b <- matchBindingFactor(layerList.X$layerSet, bindingFactor = bf.spreadR
 
 #   combine factors into factor set (list)
 #XFS <- list(bf.CpG=bf.CpG, bf.PRC=bf.PRC, bf.CpGisland =bf.CpGisland ,bf.spreadRep=bf.spreadRep)
+#XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
 XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
 
-mod.X <- runLayerBinding(layerList.X, factorSet = XFS, iterations = 10000, verbose=T)
+mod.X <- runLayerBinding(layerList.X, factorSet = XFS, iterations = 10000, verbose=T)  # will saturate CpG islands in first round
 
 # these were some tests I was doing when binding wasn't working properly. Changed matchBindingFactor to use intersect()
 #mod.CpGIsland <- runLayerBinding(layerList.X, factorSet = list(bf.CpGisland =bf.CpGisland), iterations = 10000, verbose=T)
@@ -116,17 +125,18 @@ mod.X <- runLayerBinding(layerList.X, factorSet = XFS, iterations = 10000, verbo
 # need to collect data each time to plot. it. 
 
 n.waves <- 10
-n.waves <- 100
+#n.waves <- 100
+n.iters <- 2000
 waveList <- list()
 waveList[[1]] <- current.X <- layerList.X
 for(i in 2:n.waves) {
   print(paste("Running wave", i))
-  current.X <- runLayerBinding(current.X, factorSet = XFS, iterations = 100, verbose=T)
+  current.X <- runLayerBinding(current.X, factorSet = XFS, iterations = n.iters, verbose=T)
   waveList[[i]] <- current.X
 }
 
 
-save(XFS, waveList, file=paste0(OUTPUTDIR, "x.inactivation.",GENOME,".", n.waves, ".waveList.Rdata"))
+save(XFS, waveList, file=paste0(OUTPUTDIR, "x.inactivation.",GENOME,".", n.waves, ", ", n.iters,".waveList.Rdata"))
 
 # 
 ## run further waves - uncomment to run, takes a fair while. Saves every 100 waves.
@@ -207,6 +217,7 @@ thisChrom <- "chrX"
 chrom_bins <- getBins(thisChrom, ideo_mm,stepSize=1*1000*1000)
 focal.waves <- c(2,4,8,16,32,64)  # too similar for H3K27me3
 focal.waves <- c(10,25,50,75,100)
+focal.waves <- c(2,4,6,8,10)
 
 for(thisFactor in c( "CpG_island" ,"PRC"   ,"H3K27me3")) {
 

@@ -116,3 +116,69 @@ for(i in c(40,50,60,70,80,90,100))  {
 dev.off()
 
 
+
+
+# Gardiner-Garden and XX 1987 wrote a definition for CpG islands  O/E > 0.6 and GC% > 50  (over 100bp)
+# Later expanded and used by others at 200bp or 500bp
+# Seem's fairly arbitrary but may be useful  to compare with other methods.
+# Their formula for O/E  was   N.CpG  x   L   /  (N.C  x N.G)    
+
+#So, for a 200bp stretch with 51 G and 51 C (GC% > 50%), 
+ N.CpG <- (.6 /200)  * (51 * 51)    # only 7.803
+
+# with GC% at 60%, 
+ N.CpG <- (.6 /200)  * (60 * 60)  # 10.8
+
+countPattern("CG", testString)
+
+letterFrequency(DNAString(testString), letters = c("C","G"))
+
+nchar(testString)
+
+letterFrequencyInSlidingView(DNAString(testString), letters = c("C","G"), view.width = 200)
+
+
+
+cpgRatio <- function(x, verbose=FALSE)  {
+  # calculate the O/E CpG ratio for a give sequence
+  # would be good to be able to apply this in a sliding window.
+  x <- DNAString(x)
+  L <- length(x)
+  N.CpG <- countPattern("CG", x)
+  lf.CG <- letterFrequency(x, letters = c("C","G"))
+  N.C <- lf.CG[1]
+  N.G <- lf.CG[2]
+  GCpc <- sum(lf.CG/L) * 100
+  if(verbose)  {
+    cat(paste("Length:", L, "\n", "N.CpG", N.CpG, "\n", "N.C", N.C, "N.G", N.G, "\n", "GC%", format(GCpc, digits=3), "%", "\n"))
+  }
+  return(as.numeric( (N.CpG  *   L)   /  (N.C  * N.G)))
+  
+}
+
+cpgRatio(testString, verbose=T)
+
+
+
+
+
+results3 <- matchBindingFactor(layerSet.X, bindingFactor = bf.CpGisland)  # from mus.x-inactivationModel.R
+# how many of these have CpG ratio above .6 or GC% above 50%?
+
+# many are not 200bp, but they are delimited by CpG so should be good
+seqs <- getSeq( genome, GRanges("chrX", results3))     # super cool that this works!
+cpgRatioVec <- numeric()
+cgPcVec <- numeric()
+for(i in 1:length(results3)) {
+  cpgRatioVec[i] <- cpgRatio(seqs[[i]])
+  cgPcVec  [i] <- sum(letterFrequency(seqs[[i]], letters = c("C","G")))/length(seqs[[i]])
+  
+}
+
+table(cpgRatioVec > 0.6, cgPcVec > 0.5)  # bf.CpGisland is VERY good at finding CpG islands.
+
+# the only problem may be the length
+
+hist(width(results3))
+hist(cpgRatioVec, breaks=100)
+hist(cgPcVec, breaks=100)  # odd spike at ~75%   are these repeats?
