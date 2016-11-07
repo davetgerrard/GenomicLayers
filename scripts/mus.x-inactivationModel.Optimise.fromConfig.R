@@ -17,7 +17,7 @@ spec = matrix(c(
   'config'  , 'c', 1, "character"
 ), byrow=TRUE, ncol=4);
 opt <- getopt(spec);
-if ( is.null(opt$config ) ) { opt$config <- 'scripts/CONFIG.mus.x-inactivationModel.Optimise.2016-11-04.R'}
+if ( is.null(opt$config ) ) { opt$config <- 'C:/Users/Dave/HalfStarted/predictFromSequence/scripts/CONFIG.mus.x-inactivationModel.Optimise.2016-11-04.R'}
 
 
 source(opt$config)
