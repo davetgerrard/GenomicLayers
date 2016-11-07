@@ -2,7 +2,7 @@
 setwd('C:/Users/Dave/HalfStarted/predictFromSequence/')
 #library(BSgenome.Mmusculus.UCSC.mm10)
 library(BSgenome.Mmusculus.UCSC.mm9) 
-
+genome <- BSgenome.Mmusculus.UCSC.mm9 
 # digression from mus.x-inactivationModel.R  - compare with real mouse data
 
 OUTPUTDIR <- "results/mus_X_inactivation/"
@@ -46,7 +46,7 @@ dev.off()
 #load the simulation results
 n.waves <- 1000
 n.waves <- 10
-n.iters < 1000
+n.iters <- 1000
 load(paste0(OUTPUTDIR, "x.inactivation.",GENOME,".", n.waves,  ".", n.iters,".waveList.Rdata"))  # may not work for some earlier runs
 
 # simon et al., data are in 500bp bins. 
@@ -58,7 +58,7 @@ load(paste0(OUTPUTDIR, "x.inactivation.",GENOME,".", n.waves,  ".", n.iters,".wa
 # need to take a little care of the chromosome start and end, which appear non-binned in the Simon et al. data
 
 nrow(bg.chrom)   # many rows.
-bg.chrom.GR <- GRanges(bg.chrom$chrom, IRanges(start=bg.chrom$start, end=bg.chrom$end))
+bg.chrom.GR <- GRanges(bg.chrom$chrom, IRanges(start=bg.chrom$start, end=bg.chrom$end), value=bg.chrom$value)
 bg.chrom.IR <- IRanges(start=bg.chrom$start, end=bg.chrom$end)
 
 thisFactor <- "H3K27me3"
@@ -68,6 +68,7 @@ sum(ov)
 length(ov)
 
 boxplot(as.numeric(bg.chrom$value) ~ ov)
+by(as.numeric(bg.chrom$value), ov, median)
 
 cor(bg.chrom$value, as.integer(ov))
 
@@ -174,7 +175,59 @@ test_function(waveList[[5]], targetLayer="PRC", target.vec=bg.chrom.subset.IR)
 #  Poor agreement between the simulation and the Simon et al data. 
 # I wonder if the simulated CpG_islands may be a better fit OR whether they match the simulated H3K27me3 (wondering whether the offset parameter is too generours).
 
+window.start <- 60000000
+window.end <- 140000000
+
+window.start <- 1
+window.end <- length(thisChrom)
+
+
+layerSubset <- restrict(waveList[[10]][['layerSet']][[thisFactor]], start = window.start, end=window.end)
+bgSubset <- restrict(bg.chrom.GR, start = window.start, end=window.end)
+cpgHitsSubset <- restrict(results3, start = window.start, end=window.end)
+
+png(filename=paste0(OUTPUTDIR, "x.inactivation.simonData.zoomWindow.", n.waves, ".", n.iters,".", ceiling(window.start/1000000), ".", ceiling(window.end/1000000),".png"), width=2400, height=800)
+#par(mfrow=c(2,1))
+#plot(start(restrict(waveList[[10]][['layerSet']][[thisFactor]], start = window.start, end=window.end)), start(restrict(waveList[[10]][['layerSet']][[thisFactor]], start = window.start, end=window.end)) )
+plot(start(bgSubset), bgSubset$value)
+grid(nx=40, ny=0, col="grey50")
+#points(start(layerSubset), rep(10, length(layerSubset)))
+rug(start(layerSubset), side=3, line=2)
+mtext("final layer", side=3, line=1, col="black", adj = 0)
+rug(start(cpgHitsSubset), side=3, line=4, col="blue")
+mtext("CpG islands", side=3, line=3, col="blue", adj=0)
+# this Xist regions is highly punctate.    using 
+#window.start <- 100000000
+#window.end <- 105000000
+dev.off()
+# using 80Mb to 120Mb,  there is a high density of CpG hits (
+length(results3)  # 2148
+length(cpgHitsSubset) # 489
+
+
+# same plot showing more waves in wider upper margin
+
+wavesToShow <- c(2,4,6,8,10)
+window.start <- 1
+window.end <- length(thisChrom)
+
+png(filename=paste0(OUTPUTDIR, "x.inactivation.simonData.zoomWindow.", n.waves, ".", n.iters,".", ceiling(window.start/1000000), ".", ceiling(window.end/1000000),".wavesRug.png"), width=2400, height=800)
+par(mar=c(5,5,(length(wavesToShow) + 2)*2,4))
+plot(start(bgSubset), bgSubset$value, ylab="Xist signal", xlab="mm9 chrX")
+grid(nx=40, ny=0, col="grey50")
+for(i in 1:length(wavesToShow)) {
+  layerSubset <- restrict(waveList[[wavesToShow[i]]][['layerSet']][[thisFactor]], start = window.start, end=window.end)
+  plotLine <- (i + 1)*2
+  rug(start(layerSubset), side=3, line=plotLine)
+  mtext(paste("Wave", wavesToShow[i]), side=3, line=plotLine, col="black", adj = 0)
+}
+rug(start(cpgHitsSubset), side=3, line=2, col="blue")
+mtext("CpG islands", side=3, line=2, col="blue", adj=0)
+dev.off()
 
 
 
 
+
+
+# TODO - try concordance as a measure?

@@ -50,6 +50,25 @@ TODO|201X-XX-XX|1|
 ### Notes (reverse chronological)
 
 
+__2016-11-07__
+
+Having written prototype code to mutate parameters of a binding factor, I ran an optimisation on the offset parameter for the X inactivation over the weekend (420/1000 iterations by Monday morning). But I cocked it up and the 'better' scores were not always better!  Start again!
+
+New functions:-
+
+ - recurseListNames()
+ - getListNodeByCharacter()
+ - assignListNodeByCharacter()
+ - mutateBindingFactor()
+ - buildMutationSkeleton()
+
+
+
+__2016-10-27__ Attempt at running mus x inactivation script with a separate config for the simulation parameters. Output should go to a separate run-specific sub-directory.
+	
+	"/c/Program Files/R/R-3.3.1/bin/Rscript.exe"  /c/Users/Dave/HalfStarted/predictFromSequence/scripts/mus.x-inactivationModel.fromConfig.R --config /c/Users/Dave/HalfStarted/predictFromSequence/scripts/CONFIG.mus.x-inactivationModel.2016-10-27.R
+
+
 __2016-10-21__ X inactivation missing hits 150Mb+. In the runs so far, there has been no marking (from any factor) beyond 150Mb, even though mm9 chrX extends to 166.6Mb.  Not sure why but suspect code. 
 
 Checked matchBindingFactor() that is returning hits at 166.4Mb, so OK.
