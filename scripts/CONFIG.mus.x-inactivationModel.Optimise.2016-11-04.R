@@ -95,6 +95,26 @@ thisFactor <- "H3K27me3"
 window.start <- 1
 window.end <- length(thisChrom)
 
+window.length <- 1*1000*1000
+
+bin.starts <- seq(1, window.end, by=0.1*1000*1000)
+
 wavesToShow <- c(2,5,10,50,10,200)
 
 
+# load comparative data
+
+# read in bedGraph Data from Simon et al.
+fileName <- "C:/Users/Dave/data/Simon_etal_2013_MusXist/bedGraphs/GSM1182890_d3.xist.mus.bedGraph.gz"
+
+bg <- read.table(fileName, header=F, skip=1, sep= " ")
+
+nrow(bg)
+names(bg) <- c("chrom", "start", "end", "value")
+# only want chrX values.
+bg.chrom <- subset(bg , chrom=="chrX")
+nrow(bg.chrom)
+bg.chrom.GR <- GRanges(bg.chrom$chrom, IRanges(start=bg.chrom$start, end=bg.chrom$end), value=bg.chrom$value)
+bg.chrom.IR <- IRanges(start=bg.chrom$start, end=bg.chrom$end)
+meanScores <- windowMean(bg.chrom.IR, y=mcols(bg.chrom.GR)$value, starts=bin.starts, window.size=window.length, limit=window.end)
+no.index <- seq(30, length(meanScores), by=10) 
