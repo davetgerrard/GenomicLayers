@@ -80,7 +80,7 @@ results4b <- matchBindingFactor(layerList.X$layerSet, bindingFactor = bf.spreadR
 
 
 
-###!!!!
+##!!!!
 # How to combine/detect clusters of high density?
 # this kind of matching is not implemented!
 #   the CpG factor is matching a random selection of 2bp CpG di-nucleotides.  To then do inexact matching of regions, is not obvious using iRanges intersections.

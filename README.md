@@ -49,6 +49,48 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-11-15__
+
+Optimisation of mus X inactivation runs on DPSF are slow. 
+
+Realised that I had not fully implemented passing of max.window parameter from runLayerBinding() to matchBindingFactor().  Now done using '...'. On my desktop, increasing max.window from 10M to 60M reduces matchBindingFactor() from 49secs to 27sec (elapsed). Not linear, 100M is only 26secs (2 vs 3 windows for chrX)
+
+Will not run using whole chrom (166M) on my desktop. But using half the chrom length ~85M gave faster time still: 24secs.
+
+Concerned that the optimisation is just picking high-scoring outliers (the sims are stochastic). Should really be optimising against mean performance of N runs. 
+
+Could I send some 16 core job with parallel runs?   I did this previously in an earler version of the code.
+
+FIRST, go a do multiple runs of 'optimised' results to compare with multi-runs of starting set - proper test of whether optimisation has made measurable improvement.
+
+SECOND, get parallelisation working. Maybe do this first.
+
+THIRD, run better optimisation.
+
+
+
+
+__2016-11-11__
+
+Earlier in the week ran optimisation on some mus inactivation binding factors. 1000 rounds of mutation (1 mut per round, mutating eithe offset or stateWidth or spreadRep), resuled in small improvement to correltation from .45-.50 to .558 .
+
+The resulting offset moved from a starting value of 200 to a final value of over 900 [CHECK]
+
+Would be nice to re-run this many times to get distribution(s) of optimised parameters and make a plot.
+
+Need to check it will run on one node?
+Run on dpsf as a batch submission?
+Folders or files for each run.  (have run ID as input parameter?).
+Do I need to worry about randomness. Set a different seed each time or let nature take it's course....
+I don't really want 100 folders, each with 100 large output files.  
+Will need to be see the final parameter values and it would be nice to track the change in parameter values over time.
+
+
+Seemed to have got it going with scripts/mus.x.batchOpt.2016-11-11.submitter.sh 
+
+The early stages are already diverged in scores, so no need to worry about random-ness.
+
+
 
 __2016-11-07__
 
