@@ -49,6 +49,22 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-11-21__
+
+Want to calculate scores for CpG_island BF that lacks sequence specificity. Hope the score is not good. Should match for length. Looking at histogram of lengths of chrX matches by patternString="(CG.{0,20}){9}CG".  Peak between 100-110. Oddly, strong modal peak at 107 - approx 10% of > 2000 hits have length exactly 107. Checked on in UCSC, it is a LINE element (L1Md_T).
+
+Seem's there is already a link between LINEs and XCI. [Lyon, 2006](https://www.ncbi.nlm.nih.gov/pubmed/16877818). Also of mono-allelic expression and local LINE content.
+
+That's ok. But may need to check that experimental data is not biased against repetitive elements (e.g. uniquely mapping reads).
+
+Also read that X chromosome inactivation spreads slowly across autosomes (what papers). Worth checking?
+
+
+
+TODO check hits produced when matching NNNN to whole chromosome only.  
+
+
+
 __2016-11-15__
 
 Optimisation of mus X inactivation runs on DPSF are slow. 

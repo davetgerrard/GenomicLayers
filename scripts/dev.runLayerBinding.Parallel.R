@@ -99,6 +99,10 @@ verbose <- TRUE
 n.cores <- 3
 #layerList <- layerList.X
 
+
+
+
+
 # attempt at parallel runs
 require(parallel)
 mc <- getOption("cl.cores", n.cores)
@@ -114,7 +118,6 @@ if(verbose) print(func.names)
 clusterExport(cl, c( func.names, "layerList.X",
                      "XFS.10", "n.iters", "window.max", "n.waves"), envir = environment())
 n.tries <- 10     # this was because of a weird common failure on first try but not subsequent.
-
 
 
 # for optimisation, will probably generate mutants and use parLapply (or parLapplyLB)  # don't export the factorset
@@ -153,3 +156,84 @@ score.vec
 
 
 
+# try running through to score in parallel 
+
+
+# combine runLayerBindng() and scoring to return a single value.
+
+layerBindAndScore <- function(layerList, factorSet, iterations, thisFactor, window.start, window.end, window.length, 
+                              bin.starts, meanScores, no.index )  {
+  
+  modLayer <- runLayerBinding( layerList=layerList, factorSet = factorSet, iterations =iterations)
+  
+  layerSubset <- restrict(modLayer[['layerSet']][[thisFactor]], start = window.start, end=window.end)
+  metric.vec <- windowWidth(layerSubset, starts=bin.starts, window.size=window.length, limit=window.end)
+  gc()
+  return(cor(meanScores[no.index], metric.vec[no.index] , use="complete.obs", method="spearman"))
+  
+}
+
+
+
+cl <- makeCluster(mc)
+# TEMP need to export all functions to the nodes but don't know what they are.
+func.vec <- sapply(ls(.GlobalEnv), FUN =function(x) class(get(x)))
+func.names <- names(func.vec[func.vec == "function"])
+if(verbose) print(func.names)
+# TODO package code to avoid above
+
+clusterExport(cl, c( func.names, "layerList.X",
+                     "XFS.10", "n.iters", "window.max", "n.waves",
+                     "window.start", "window.end",
+                     "meanScores","no.index"), envir = environment())
+n.tries <- 10     # this was because of a weird common failure on first try but not subsequent.
+
+
+# for optimisation, will probably generate mutants and use parLapply (or parLapplyLB)  # don't export the factorset
+# for distribution of results, will probably use clusterApply (or clusterApplyLB)   # export all functions and variables
+system.time(
+  resultsSpread <- clusterApplyLB(cl, 1:10, fun=function(x) runLayerBinding( layerList=layerList.X, factorSet = XFS.10, iterations = n.iters*n.waves))
+)  # took 46mins on my PC.
+#resultsSpread <- clusterCall(cl, 1:6, fun=function(x) runLayerBinding( layerList=layerList.X, factorSet = XFS, iterations = 10000))  #'works' but only gives one result per node.
+stopCluster(cl)
+gc()
+
+
+#TESTING# n.waves <- 1
+#TESTING# n.iters <- 2000
+
+thisSCore <- layerBindAndScore(layerList=layerList.X, factorSet = XFS.10, iterations = n.iters*n.waves,
+                              thisFactor=thisFactor, window.start=window.start, window.end=window.end,
+                              window.length=window.length, bin.starts=bin.starts, meanScores=meanScores, 
+                              no.index =no.index)  
+
+
+# now try on cluster
+require(parallel)
+mc <- getOption("cl.cores", n.cores)
+cl <- makeCluster(mc)
+# TEMP need to export all functions to the nodes but don't know what they are.
+func.vec <- sapply(ls(.GlobalEnv), FUN =function(x) class(get(x)))
+func.names <- names(func.vec[func.vec == "function"])
+if(verbose) print(func.names)
+# TODO package code to avoid above
+n.waves <- 1
+n.iters <- 2000 * 10   # to compensate for larger XFS.
+clusterExport(cl, c( func.names, "layerList.X",
+                     "XFS.10", "n.iters", "window.max", "n.waves",
+                     "window.start", "window.end", "window.length",
+                     "meanScores","no.index", "thisFactor", "bin.starts"), envir = environment())
+n.tries <- 10     # this was because of a weird common failure on first try but not subsequent.
+
+
+# for optimisation, will probably generate mutants and use parLapply (or parLapplyLB)  # don't export the factorset
+# for distribution of results, will probably use clusterApply (or clusterApplyLB)   # export all functions and variables
+system.time(
+  resultsVec <- clusterApplyLB(cl, 1:4, fun=function(x) layerBindAndScore(layerList=layerList.X, factorSet = XFS.10, iterations = n.iters*n.waves,
+                                                                           thisFactor=thisFactor, window.start=window.start, window.end=window.end,
+                                                                           window.length=window.length, bin.starts=bin.starts, meanScores=meanScores, no.index =no.index))
+)  # took XX on my PC.
+#resultsSpread <- clusterCall(cl, 1:6, fun=function(x) runLayerBinding( layerList=layerList.X, factorSet = XFS, iterations = 10000))  #'works' but only gives one result per node.
+stopCluster(cl)
+gc()
+resultsVec  # comes back as a list, 20 mins on my PC (4 runs on 3 cores)<
