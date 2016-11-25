@@ -54,7 +54,7 @@ testFS <- list(testFactor2=testFactor2, testFactor3=testFactor3, testFactor4=tes
 
 # with the above configuration, there are 41 possible sites across the genome, setting iterations=30, restricts the number that are marked, so the number of potential sites reduces.
 system.time(
-  modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=30)
+  modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=5000)
 )
 modTest
 
