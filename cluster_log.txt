@@ -175,13 +175,13 @@ qsub -V -b y -cwd -N psf10test -pe smp.pe 16 Rscript scripts/mus.x-inactivationM
 qsub -V -b y -cwd -N psf12test -pe smp.pe 16 Rscript scripts/mus.x-inactivationModel.parallel.12.R
 qsub -V -b y -cwd -N psf16test -pe smp.pe 16 Rscript scripts/mus.x-inactivationModel.parallel.16.R
 # 4 jobs
-#	cores	t.1	t.2
-# 	4	196	hung
-#	6	hung	242
-#	8	hung	hung
-#	10	259	266
-#	12	210	hung
-#	16	hung	592
+#	cores	t.1	t.2	t.3
+# 	4	196	hung	189
+#	6	hung	242	194
+#	8	hung	hung	199
+#	10	259	266	336
+#	12	210	hung	212
+#	16	hung	592	220
 
 
 
@@ -200,4 +200,46 @@ job-ID  prior   name       user         state submit/start at     queue         
 results of successful n=16 run:
 
 	more ../q_out/psf16test.o45608
+
+
+Some days later, I ran the above scripts again. They all worked (column t.3)
+
+
+Need to take the parallelisation code in scripts/mus.x-inactivationModel.parallel.16.R and create a new batch optimisation script with associated CONFIG
+
+new script:  scripts/mus.x-inactivationModel.BatchOpt.parallel.fromConfig.R
+new CONFIG:  scripts/CONFIG.mus.x-inactivationModel.BatchOpt.2016-11-25.dpsf.R
+
+Any need to retain waveList?  seems a waste of memory and resources.
+
+test it once:
+
+
+	module load libs/bioconductor/3.3/gcc-4.8.5+R-3.3.1
+	qsub -pe smp.pe 16 -cwd -V -N BachOptTest -b y  Rscript $SCRATCH/predictfromsequence/scripts/mus.x-inactivationModel.BatchOpt.parallel.fromConfig.R --config scripts/CONFIG.mus.x-inactivationModel.BatchOpt.2016-11-25.dpsf.R --job_id 9999
+
+Once that is working, set of a batch job. How many?  50, 100?
+
+	 qsub -V -N batch -cwd ./scripts/mus.x.batchOpt.2016-11-25.submitter.sh
+
+Array of 100 but reduced the number of optimisation rounds to 100 for each.
+
+
+After 20/100 had completed, quite modest increases. e.g. 0.46 to 0.49.
+
+Probably should be using some form of t-test to compare new runs.
+
+	 qsub -V -N batch -cwd ./scripts/mus.x.batchOpt.2016-11-26.submitter.sh
+
+
+Most runs saw ONE improvement (in 100 rounds). Some saw two
+
+	 grep 'Wilcox p-value:  0.0'  ../q_out/batch.o47015.*
+
+This one had two
+
+	 grep -C 6 'Wilcox p-value:  0.0'  ../q_out/batch.o47015.22
+
+
+
 

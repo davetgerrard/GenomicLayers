@@ -49,6 +49,17 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-11-28__ The cost of stochasticity in model optimisation.   
+
+Have been running mus.x-inactivationModel.BatchOpt.parallel.fromConfig.R  on DPSF over the weekend. 100 batch jobs, each with 100 optimisation cycles. Mutating bf.spread.rep _offset_ and _stateWidth_ params. Using wilcox.text$p.value > 0.1 to accept 'better' binding factor. It looks like each job received, on average, only ONE improvement (1/100). Makes me wonder if this is indeed an improvement and I'm still only catching exceptional , but stochastic, layerbinding. In support of this, it looks like subsequent mutations are far worse than the newly accepted one, this would be expected if there had been a great leap forward to near the optimum but the differences are fairly modest, so it is consistent with the 'better scores' just being an outlier set.
+
+Not sure how to improve the optimisation but in the meantime, can use a post-optimisation test to validate it. Expect that another runLayerBinding() with the mutated set may not be significant.
+
+__NEED__ to collect optimisation results?  Or can get improvement round from the scores.matrx?  
+
+Incidentally, the batch run was curtailed at ~80/100 due to server reboot.
+
+
 __2016-11-21__
 
 Want to calculate scores for CpG_island BF that lacks sequence specificity. Hope the score is not good. Should match for length. Looking at histogram of lengths of chrX matches by patternString="(CG.{0,20}){9}CG".  Peak between 100-110. Oddly, strong modal peak at 107 - approx 10% of > 2000 hits have length exactly 107. Checked on in UCSC, it is a LINE element (L1Md_T).
