@@ -49,6 +49,50 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2016-12-09__ 
+
+Re-specified the blank model for CpG to use empty string in DNA pattern. Added clause to matchBindingFactor to return whole chromosoome as a hit if length of DNAstring pattern is 0.  Now matchBindingFactor() returns a hit the full length of the chromosome.
+
+Now need runLayerBinding to cope with full chromosome length hits... it should already do. It does but __NOTE__ when a region matches the whole chromosome, it does not return the correct tiled set of hits across most of chromosome.
+
+TODO rework runLayerBinding to generate proper tiling of hit regions into hitwidth length windows, then sample from these. 
+
+
+Wrote 
+
+
+Also successfully re-tested the supposedly optimised runs from 2016-11-25 run. See scripts/mus.x-inactivationModel.reTestOpt.parallel.fromConfig.R
+
+Using grep on q_out files shows not many actually improved. Is it even > 10%?    Answer 15/98.
+
+
+
+
+__2016-12-08__ 
+
+Having generated lots of results. Need to validate the 'improvements'. I suspect the the optimisation was just selecting extreme value runs. Therefore need a script to quickly load up a saved __KEEP.XFS__ object and score it against the original. 
+
+
+__2016-11-28__ The cost of stochasticity in model optimisation.   
+
+Have been running mus.x-inactivationModel.BatchOpt.parallel.fromConfig.R  on DPSF over the weekend. 100 batch jobs, each with 100 optimisation cycles. Mutating bf.spread.rep _offset_ and _stateWidth_ params. Using wilcox.text$p.value > 0.1 to accept 'better' binding factor. It looks like each job received, on average, only ONE improvement (1/100). Makes me wonder if this is indeed an improvement and I'm still only catching exceptional , but stochastic, layerbinding. In support of this, it looks like subsequent mutations are far worse than the newly accepted one, this would be expected if there had been a great leap forward to near the optimum but the differences are fairly modest, so it is consistent with the 'better scores' just being an outlier set.
+
+Not sure how to improve the optimisation but in the meantime, can use a post-optimisation test to validate it. Expect that another runLayerBinding() with the mutated set may not be significant.
+
+__NEED__ to collect optimisation results?  Or can get improvement round from the scores.matrx?  
+
+Incidentally, the batch run was curtailed at ~80/100 due to server reboot.  May have restarted  but not sure...
+
+
+
+Later found [this document](https://people.maths.ox.ac.uk/erban/Education/StochReacDiff.pdf) that might be an approach to dealing with non-deterministic simulation 
+
+Other docs by same authors: -
+
+ - [iop](http://iopscience.iop.org/article/10.1088/1478-3975/6/4/046001/fulltext/) 
+ - [arxiv](https://arxiv.org/abs/0704.1908)
+
+
 __2016-11-21__
 
 Want to calculate scores for CpG_island BF that lacks sequence specificity. Hope the score is not good. Should match for length. Looking at histogram of lengths of chrX matches by patternString="(CG.{0,20}){9}CG".  Peak between 100-110. Oddly, strong modal peak at 107 - approx 10% of > 2000 hits have length exactly 107. Checked on in UCSC, it is a LINE element (L1Md_T).

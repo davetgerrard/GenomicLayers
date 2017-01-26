@@ -42,35 +42,6 @@ layerSet.X[['H3K27me3']] <- IRanges()
 layerList.X <- list(layerSet=layerSet.X, history=NULL)  # add some metadata
 
 
-# 1. like CpG island but without ANY sequence specificity (e.g. binds N)
-bf.CpGisland.N <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
-                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
-
-
-bf.CpGisland.N <- createBindingFactor.DNA_motif(name="CpGisland", type="DNA_motif", patternString="N", patternLength=108, 
-                              mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
-
-
-# try setting patternString to empty string
-bf.CpGisland.N <- createBindingFactor.DNA_motif(name="CpGisland", type="DNA_motif", patternString="", patternLength=108, profile.layers=NULL,
-                                                mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
-
-
-#bf.CpGisland.N <- createBindingFactor.DNA_regexp("CpGisland", patternString="[NACGT]{108}", patternLength=20,
-  #                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
-#
-
-
-results6 <- matchBindingFactor(layerSet.X, bindingFactor = bf.CpGisland.N)
-
-gc()
-
-bf.GpCisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(GC.{0,20}){9}GC", patternLength=20,
-                                                 mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
-
-results7 <- matchBindingFactor(layerSet.X, bindingFactor = bf.GpCisland)
-
-
 
 
 bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.rate=0, 
@@ -82,8 +53,8 @@ bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.r
 # bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
 #                                                profile.layers="H3K27me3",profile.marks=0, 
 #                                                mod.layers = "CpG_island", mod.marks=1, stateWidth=300)
-#bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
- #                                              mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
+bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
+                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
 
 #N.B. temporarily setting a fixed patternLength, because don't know how to implement variable patternLength yet.
 # current effect is that hits < patternLength are discarded
@@ -103,7 +74,7 @@ bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150,
 n.waves <- 10
 n.iters <- 2000
 
-XFS <- list(bf.CpGisland =bf.CpGisland.N , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
+XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
 
 XFS.10 <- rep(XFS, times=n.waves)
 
@@ -151,10 +122,10 @@ layerBindAndScore <- function(layerList, factorSet, iterations, thisFactor, wind
 }
 
 
-thisSCore <- layerBindAndScore(layerList=layerList.X, factorSet = XFS.10, iterations = n.iters*n.waves,
-                               thisFactor=thisFactor, window.start=window.start, window.end=window.end,
-                               window.length=window.length, bin.starts=bin.starts, meanScores=meanScores, 
-                               no.index =no.index)  
+#thisSCore <- layerBindAndScore(layerList=layerList.X, factorSet = XFS.10, iterations = n.iters*n.waves,
+ #                              thisFactor=thisFactor, window.start=window.start, window.end=window.end,
+ #                              window.length=window.length, bin.starts=bin.starts, meanScores=meanScores, 
+ #                              no.index =no.index)  
 
 # DONE check matchBindingFactor() to see if returning separate hits or reduced element.
 
@@ -190,7 +161,7 @@ stopCluster(cl)
 gc()
 resultsVec 
 
-write(unlist(resultsVec), file="results/mus_X_inactivation/mXi.2016.12.09.null.CpG/scores.30.txt", ncolumns = 1)
-png(file="results/mus_X_inactivation/mXi.2016.12.09.null.CpG/scores.30.bxp.png", res=150)
+write(unlist(resultsVec), file="results/mus_X_inactivation/mXi.2016.12.09.basic.CpG/scores.30.txt", ncolumns = 1)
+png(file="results/mus_X_inactivation/mXi.2016.12.09.basic.CpG/scores.30.bxp.png", res=150)
 boxplot(unlist(resultsVec), ylim=c(-1,1))
 dev.off()

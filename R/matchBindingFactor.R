@@ -18,7 +18,7 @@ matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.windo
     if(thisLayer == "LAYER.0") {
       patternLength <- bindingFactor$profile[[thisLayer]]$length
       max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
-      if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
+      if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (length(bindingFactor$profile$LAYER.0$pattern)==0) || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
         hitList[[thisLayer]] <- IRanges(start=seqRange[1], end=seqRange[2])
       } else {
         
