@@ -35,4 +35,4 @@ createBindingFactor.layer_region <- function(name,  type="layer_region", pattern
 
 
 
-createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
+#createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
