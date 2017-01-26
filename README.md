@@ -1,9 +1,11 @@
-## predictFromSequence
+## GenomicLayers - Simple, sequence-based simulation of epi-genomes.
 
 
-Predict transcription (or any positional mark) from genome sequence by modelling the factors that can bind to DNA and add or remove states. 
+Simulate changes to epigenetic states informed by genomic sequence.
 
-The raw DNA sequence cannot be altered but a series of layers (binary vectors of same length of sequence) can have regions of any length switched (0 <-> 1). 
+Predict transcription (or any positional mark) from genome sequence by modelling the __factors__ that can bind to DNA and add or remove states. 
+
+The raw DNA sequence cannot be altered but a series of __layers__ (binary vectors of same length of sequence) can have regions of any length switched (0 <-> 1). 
 
 Some factors may also recognise patterns on the layers (e.g. regions in state 1) in addition to or instead of the underlying DNA sequence. 
 
@@ -13,37 +15,37 @@ The ability of factors to bind changes through this series so that the number an
 
 ## TODO List
 
-DateComplete|DateAdded|Priority|Description
-: ------ :|:-------------:|: -----:|:--------------------------
-TODO|2015-12-22|1|GitHub repo (requires open access?)
-TODO|2015-12-22|1|CRAN/Bioconductor
-TODO|2015-12-22|1|Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor. 
-TODO|2015-12-22|1|FactorSet abundances are mutable
-TODO|2015-12-22|1|Factors can be selected from libraries (e.g. Jolma, TRANSFAC)
-TODO|2015-12-22|1|Improve summarisation of factorSets (e.g. base composition, types)
-TODO|2015-12-22|1|Allow factor type to mutate during optimisation
-TODO|2015-12-22|1|Either re-write the optimiisation function to export all functions in the environment to cluster nodes OR package the code properly. OR add a customisable watch_function to the optimisation function.
-TODO|2015-12-22|1|move on to testing against specific TSS being activated (quantitative?) or de-activated.
-TODO|2015-12-22|1|no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor). What about using any nearby marks as offset, rather than precise number of bases?  (e.g. mark the nearest mark to the left, or pick one within range).
-TODO|2015-12-22|1|FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet()
-TODO|2015-12-22|1|Factors can be converted from common motifs formats (e.g. meme). Enables use of libraries. How to handle layer specificities?
-2015-12-22|2015-12-22|1|Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once. 
-TODO|2015-12-22|1|Test if system can rediscover some promoter motifs (e.g. HNF4A in liver specific promoters). Might be better to use existing data from similar papers.
-2015-12-23|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
-TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
-TODO|2015-12-22|1| Overhaul factorSet objects
-2015-12-22|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE
-TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
-STARTED|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
-TODO|2016-02-16|1| Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two?
-TODO|2016-02-16|1| 3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track. 
-TODO|2016-XX-XX|1| Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it. 
-TODO|2016-09-05|1|createBindingFactor()  where user specifies some or all properties and function fills in the rest.
-TODO|2016-09-05|1|runLayerBinding.BSgenome() for all binding factor types
-TODO|2016-09-06|1|Map which functions are in use by other functions. Begin to deprecate and remove development functions.
-TODO|2016-09-06|1|Write createBindingFactor.XXX functions for other BF types. 
-TODO|2016-10-19|1|Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT.
-TODO|201X-XX-XX|1|
+|DateComplete|DateAdded|Priority|Description
+|: ------ :|:-------------:|: -----:|:--------------------------
+|TODO|2015-12-22|1|GitHub repo (requires open access?)
+|TODO|2015-12-22|1|CRAN/Bioconductor
+|TODO|2015-12-22|1|Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor. 
+|TODO|2015-12-22|1|FactorSet abundances are mutable
+|TODO|2015-12-22|1|Factors can be selected from libraries (e.g. Jolma, TRANSFAC)
+|TODO|2015-12-22|1|Improve summarisation of factorSets (e.g. base composition, types)
+|TODO|2015-12-22|1|Allow factor type to mutate during optimisation
+|TODO|2015-12-22|1|Either re-write the optimiisation function to export all functions in the environment to cluster nodes OR package the code properly. OR add a customisable watch_function to the optimisation function.
+|TODO|2015-12-22|1|move on to testing against specific TSS being activated (quantitative?) or de-activated.
+|TODO|2015-12-22|1|no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor). What about using any nearby marks as offset, rather than precise number of bases?  (e.g. mark the nearest mark to the left, or pick one within range).
+|TODO|2015-12-22|1|FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet()
+|TODO|2015-12-22|1|Factors can be converted from common motifs formats (e.g. meme). Enables use of libraries. How to handle layer specificities?
+|2015-12-22|2015-12-22|1|Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once. 
+|TODO|2015-12-22|1|Test if system can rediscover some promoter motifs (e.g. HNF4A in liver specific promoters). Might be better to use existing data from similar papers.
+|2015-12-23|2015-12-22|1| Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits).
+|TODO|2015-12-22|1| Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here. 
+|TODO|2015-12-22|1| Overhaul factorSet objects
+|2015-12-22|2015-12-22|1| Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE
+|TODO|2015-12-22|1| Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name.
+|STARTED|2015-12-22|1| Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R
+|TODO|2016-02-16|1| Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two?
+|TODO|2016-02-16|1| 3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track. 
+|TODO|2016-XX-XX|1| Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it. 
+|TODO|2016-09-05|1|createBindingFactor()  where user specifies some or all properties and function fills in the rest.
+|TODO|2016-09-05|1|runLayerBinding.BSgenome() for all binding factor types
+|TODO|2016-09-06|1|Map which functions are in use by other functions. Begin to deprecate and remove development functions.
+|TODO|2016-09-06|1|Write createBindingFactor.XXX functions for other BF types. 
+|TODO|2016-10-19|1|Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT.
+|TODO|201X-XX-XX|1|
 
 
 
