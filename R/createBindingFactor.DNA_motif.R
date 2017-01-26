@@ -32,4 +32,4 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString
 
 
 
-createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
+#createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
