@@ -241,5 +241,34 @@ This one had two
 	 grep -C 6 'Wilcox p-value:  0.0'  ../q_out/batch.o47015.22
 
 
+This one had three
+
+	grep -C 6 'Wilcox p-value:  0.0' ../q_out/batch.o47015.86
+
+What happened to the results fo the 2016-11-26.sh?  Was it runnning the 2016-11-26 script or the 2016-11-25 script?
+
+
+The file
+set the CONFIG_FILE to be  scripts/CONFIG.mus.x-inactivationModel.BatchOpt.2016-11-25.dpsf.R    N.B. the 25th, not the 26th!
+
+I suspect this means that the correct script ran, but dumped the results in the outfolder for the run started on the 25th (and probably over-writing what was there).
+
+
+
+
+
+
+	qsub -pe smp.pe 16 -cwd -V -N reTestTest -b y  Rscript scripts/mus.x-inactivationModel.reTestOpt.parallel.fromConfig.R --config scripts/CONFIG.mus.x-inactivationModel.BatchOpt.2016-11-25.dpsf.R --job_id 9999
+
+	qsub -V -N batch -cwd ./scripts/mus.x.batchOptReTest.2016-11-25.submitter.sh
+
+
+This seems to be working and can quicly grep the output file for p-values
+
+	grep 'Wilcox' ../q_out/batch.o51063.*
+
+This shows that almost all 'optimised' sets are no improvement. BUT how many were an improvement during optimisation?
+
+
 
 
