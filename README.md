@@ -49,6 +49,29 @@ TODO|201X-XX-XX|1|
 
 ### Notes (reverse chronological)
 
+__2017-01-26__ 
+
+Progress has stalled since I gave a talk in mid-December and was snowed under with real work.   If this is ever to see the light of day, I need to prioritise and get it out there. Unlikely to get funding for secret code, but if I get some people using it, I may get some papers. In which case, need to give it a name, move over to github, add a proper licence and start documenting.
+
+#### Altered priorities:-
+
+ - publish as github package (with devtools installation possible)
+ - increase useability with Roxygen2 docs (how do these work in github install?
+ 	* user manual and/or vignette.
+ - focus on ease of getting started and running simulations
+ - import of 'known' binding factors more important than optimisation routines. TFBS import functions, transfer/load TFBS datasets.
+ - re-runnning stochastic simulations will still be required.
+ - leave in the optimisation where possible.
+
+
+Prospectve names:-
+
+ - epiSeq - used already
+ - predictFromSequence - too long, and wrong
+ - pfs   - meaningless
+ - GenomicLayers - not taken, sounds like GenomicRanges etc.
+ 	* Tagline: Simple, sequence-based simulation of epi-genomes.
+
 __2016-12-09__ 
 
 Re-specified the blank model for CpG to use empty string in DNA pattern. Added clause to matchBindingFactor to return whole chromosoome as a hit if length of DNAstring pattern is 0.  Now matchBindingFactor() returns a hit the full length of the chromosome.
