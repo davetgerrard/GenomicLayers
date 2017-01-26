@@ -91,6 +91,7 @@ Spent some time trying to get install from github working. Seems to be a problem
 
 DNAString() is a function from Biostrings, which is installed on my system, but not getting picked up by install_github()
 
+__Solution__ there were some lines of test code still in some function definition files. Commented these out and now installs. However, on loading, none of the bioconductor dependencies are loaded. 
 
 __2016-12-09__ 
 
