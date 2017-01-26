@@ -2,9 +2,9 @@
 
 SCRATCH=/mnt/fls01-home01/mqbssdgb/scratch
 
-SCRIPT_TO_RUN=$SCRATCH/predictfromsequence/scripts/mus.x-inactivationModel.BatchOpt.parallel.fromConfig.R
+SCRIPT_TO_RUN=$SCRATCH/predictfromsequence/scripts/mus.x-inactivationModel.reTestOpt.parallel.fromConfig.R
 
-CONFIG_FILE=$SCRATCH/predictfromsequence/scripts/CONFIG.mus.x-inactivationModel.BatchOpt.2016-11-26.dpsf.R
+CONFIG_FILE=$SCRATCH/predictfromsequence/scripts/CONFIG.mus.x-inactivationModel.BatchOpt.2016-11-25.dpsf.R
 
 # The following line specifies that there are 100 jobs
 #$ -t 1-100

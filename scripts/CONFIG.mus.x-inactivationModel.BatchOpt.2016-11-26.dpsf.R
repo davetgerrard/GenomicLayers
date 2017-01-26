@@ -14,7 +14,7 @@ print("load functions")
 source('scripts/pfs.functions.R')
 
 print("load parameters")
-RUN_NAME <- "mXi.BatchOpt.2016.11.25.dpsf/"
+RUN_NAME <- "mXi.BatchOpt.2016.11.26.dpsf/"
 OUTPUTDIR <- paste0("results/mus_X_inactivation/", RUN_NAME)
 GENOME <- 'mm9'
 
