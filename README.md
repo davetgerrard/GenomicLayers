@@ -13,11 +13,19 @@ The system models a series of very many sequential binding and modifying events.
 
 The ability of factors to bind changes through this series so that the number and positions of possible binding events for each factor change during the sequence. 
 
+## Installation 
+
+in R:-
+
+	library(devtools)
+	install_github(repo="davetgerrard/GenomicLayers")
+
+
 ## TODO List
 
 
 | DateComplete | DateAdded | Priority | Description |
-| : ------ : | :-------------: | : -----: | :-------------------------- |
+| ------ | ------------- | ----- | -------------------------- |
 | TODO | 2015-12-22 | 1 | GitHub repo (requires open access?) |
 | TODO | 2015-12-22 | 1 | CRAN/Bioconductor |
 | TODO | 2015-12-22 | 1 | Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor.  |
