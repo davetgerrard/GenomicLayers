@@ -26,7 +26,7 @@ in R:-
 
 | DateComplete | DateAdded | Priority | Description |
 | ------ | ------------- | ----- | -------------------------- |
-| TODO | 2015-12-22 | 1 | GitHub repo (requires open access?) |
+| DOING | 2015-12-22 | 1 | GitHub repo (requires open access?) |
 | TODO | 2015-12-22 | 1 | CRAN/Bioconductor |
 | TODO | 2015-12-22 | 1 | Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor.  |
 | TODO | 2015-12-22 | 1 | FactorSet abundances are mutable |
@@ -83,6 +83,14 @@ Prospectve names:-
  - pfs   - meaningless
  - GenomicLayers - not taken, sounds like GenomicRanges etc.
  	* Tagline: Simple, sequence-based simulation of epi-genomes.
+
+
+Spent some time trying to get install from github working. Seems to be a problem with install_github().  Not picking up dependencies or not loading them? 
+
+	Error in createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") :   could not find function "DNAString"
+
+DNAString() is a function from Biostrings, which is installed on my system, but not getting picked up by install_github()
+
 
 __2016-12-09__ 
 
