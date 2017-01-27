@@ -1,11 +1,19 @@
-# matchBindingFactor
-# description
-# Parameters:-
-# layerSet,
-# bindingFactor,
-# clusterGap=10,
-# max.window=10000000,
-# verbose=FALSE
+#' Find matches for a binding factor on a layer set
+#'
+#' Generate a list of matches for a binding factor against a layerSet object. 
+#'
+#' @param layerSet method to do something to (\code{"hsv"} or \code{"cluster"})
+#' @param bindingFactor description of that param
+#' @param clusterGap  =10 you get the idea
+#' @param max.window    =10000000 you get the idea
+#' @param verbose you get the idea
+#'
+#' @return \code{"hits"}
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @export
 matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
   require(Biostrings)
   seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])

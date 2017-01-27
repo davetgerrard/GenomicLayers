@@ -1,11 +1,19 @@
-# matchBindingFactor.BSgenome  
-# attempt to match a binding factor over a whole genome
-# Parameters:-
-# layerSet,
-# bindingFactor,
-# clusterGap=10,
-# max.window=10000000,
-# verbose=FALSE
+#' Find matches for a binding factor on a layer set containing a BSgenome sequence
+#'
+#' Generate a list of matches for a binding factor against a layerSet object containing a BSgenome sequence. 
+#'
+#' @param layerSet method to do something to (\code{"hsv"} or \code{"cluster"})
+#' @param bindingFactor description of that param
+#' @param clusterGap  =10 you get the idea
+#' @param max.window    =10000000 you get the idea
+#' @param verbose you get the idea
+#'
+#' @return \code{"hits"}
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @export
 matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
   
   require(Biostrings)
