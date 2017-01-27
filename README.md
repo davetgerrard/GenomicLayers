@@ -48,7 +48,7 @@ in R:-
 | STARTED | 2015-12-22 | 1 |  Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R |
 | TODO | 2016-02-16 | 1 |  Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two? |
 | TODO | 2016-02-16 | 1 |  3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track.  |
-| TODO | 2016-XX-XX | 1 |  Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it.  |
+| TODO | 2016-09-05 | 1 |  Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it.  |
 | TODO | 2016-09-05 | 1 | createBindingFactor()  where user specifies some or all properties and function fills in the rest. |
 | TODO | 2016-09-05 | 1 | runLayerBinding.BSgenome() for all binding factor types |
 | TODO | 2016-09-06 | 1 | Map which functions are in use by other functions. Begin to deprecate and remove development functions. |
@@ -87,11 +87,16 @@ Prospectve names:-
 
 Spent some time trying to get install from github working. Seems to be a problem with install_github().  Not picking up dependencies or not loading them? 
 
-	Error in createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") :   could not find function "DNAString"
+	Error in createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") :   
+	could not find function "DNAString"
 
 DNAString() is a function from Biostrings, which is installed on my system, but not getting picked up by install_github()
 
 __Solution__ there were some lines of test code still in some function definition files. Commented these out and now installs. However, on loading, none of the bioconductor dependencies are loaded. 
+
+see [here](http://r-pkgs.had.co.nz/namespace.html#imports) : can be fixed using importFrom in the NAMESPACE file or explicitly replace all uses of functions with package::function() notations.
+
+and [also here](https://cran.r-project.org/web/packages/roxygen2/vignettes/namespace.html)
 
 __2016-12-09__ 
 
