@@ -26,7 +26,7 @@ in R:-
 
 | DateComplete | DateAdded | Priority | Description |
 | ------ | ------------- | ----- | -------------------------- |
-| DOING | 2015-12-22 | 1 | GitHub repo (requires open access?) |
+| 2017-01-27 | 2015-12-22 | 1 | GitHub repo (requires open access?) |
 | TODO | 2015-12-22 | 1 | CRAN/Bioconductor |
 | TODO | 2015-12-22 | 1 | Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor.  |
 | TODO | 2015-12-22 | 1 | FactorSet abundances are mutable |
@@ -54,7 +54,8 @@ in R:-
 | TODO | 2016-09-06 | 1 | Map which functions are in use by other functions. Begin to deprecate and remove development functions. |
 | TODO | 2016-09-06 | 1 | Write createBindingFactor.XXX functions for other BF types.  |
 | TODO | 2016-10-19 | 1 | Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT. |
-| TODO | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement |
+| TODO | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement. __N.B.__ but where to store as matchBindingFactor intersects on the other layers and does not retain or return the pure hits. |
+| STARTED | 2017-01-27 | 1 | Document with Roxygen2 |
 | TODO | 201X-XX-XX | 1 |  |
 
 

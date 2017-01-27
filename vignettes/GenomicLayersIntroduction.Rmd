@@ -1,0 +1,23 @@
+---
+title: "An introduction to the GenomicLayers package"
+author: "Dave T. Gerrard"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{An introduction to the GenomicLayers package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+This will be an introductory vignette on how and why to use GenomicLayers.
+
+
+```{r}
+
+library(GenomicLayers)
+
+first.bf <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
+
+```
