@@ -54,8 +54,8 @@ in R:-
 | TODO | 2016-09-06 | 1 | Map which functions are in use by other functions. Begin to deprecate and remove development functions. |
 | TODO | 2016-09-06 | 1 | Write createBindingFactor.XXX functions for other BF types.  |
 | TODO | 2016-10-19 | 1 | Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT. |
+| TODO | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement |
 | TODO | 201X-XX-XX | 1 |  |
-
 
 
 
