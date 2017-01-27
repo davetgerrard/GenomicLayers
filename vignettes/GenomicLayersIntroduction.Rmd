@@ -19,5 +19,5 @@ library(Biostrings)  # why is this not automatic?
 library(GenomicLayers)
 
 first.bf <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
-
+print(first.bf)
 ```
