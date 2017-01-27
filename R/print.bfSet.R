@@ -1,7 +1,15 @@
-# print.bfSet
-# description
-# Parameters:-
-# factorSet
+#' Formatted printing for a set of binding factors
+#'
+#' Formatted printing for a set of binding factors
+#'
+#' @param factorSet method to do something to (\code{"hsv"} or \code{"cluster"})
+#'
+#' @return NULL
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @export
 print.bfSet <- function(factorSet) {
   print("A list of binding factors:-")
   bf.names <- names(factorSet)
