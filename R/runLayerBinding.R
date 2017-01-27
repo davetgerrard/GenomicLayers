@@ -1,14 +1,22 @@
-# runLayerBinding
-# description
-# Parameters:-
-# layerList,
-# factorSet,
-# iterations=1,
-# bindingFactorFreqs=rep(1, length(factorSet)),
-# watch.function=function(x){},
-# collect.stats=FALSE,
-# target.layer=2,
-# verbose=FALSE
+#' Run the layer binding simulation
+#'
+#' Description text here
+#'
+#' @param layerList method to do something to (\code{"hsv"} or \code{"cluster"})
+#' @param factorSet description of that param
+#' @param iterations you get the idea
+#' @param bindingFactorFreqs you get the idea
+#' @param watch.function you get the idea
+#' @param collect.stats you get the idea
+#' @param target.layer you get the idea
+#' @param verbose you get the idea
+#'
+#' @return \code{"LayerList"}
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @export
 runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE, ...)  {
   if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
