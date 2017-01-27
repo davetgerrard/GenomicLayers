@@ -15,7 +15,7 @@ This will be an introductory vignette on how and why to use GenomicLayers.
 
 
 ```{r}
-
+library(Biostrings)  # why is this not automatic?
 library(GenomicLayers)
 
 first.bf <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
