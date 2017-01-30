@@ -2,7 +2,7 @@
 % Please edit documentation in R/createBindingFactor.layer_region.R
 \name{createBindingFactor.layer_region}
 \alias{createBindingFactor.layer_region}
-\title{Find matches for a binding factor on a layer set}
+\title{Create a new biding factor}
 \usage{
 createBindingFactor.layer_region(name, type = "layer_region",
   patternLength = 1, patternString = "N", mismatch.rate = 0,
@@ -47,7 +47,7 @@ createBindingFactor.layer_region(name, type = "layer_region",
 \code{"hits"}
 }
 \description{
-Generate a list of matches for a binding factor against a layerSet object.
+Create a new biding factor
 }
 \examples{
 x <- 1   # great!

@@ -1,6 +1,6 @@
-#' Find matches for a binding factor on a layer set
+#' Create a new biding factor
 #'
-#' Generate a list of matches for a binding factor against a layerSet object. 
+#' Create a new biding factor
 #'
 #' @param name method to do something to (\code{"hsv"} or \code{"cluster"})
 #' @param type description of that param
