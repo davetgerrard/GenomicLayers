@@ -13,6 +13,9 @@
 #' @examples
 #' x <- 1   # great!
 #'
+#' @import GenomicRanges
+#' 
+#'
 #' @export
 matchBindingFactor <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
   require(Biostrings)

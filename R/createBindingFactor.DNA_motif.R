@@ -21,6 +21,9 @@
 #'
 #' @return \code{"hits"}
 #'
+#'
+#' @import Biostrings
+#' 
 #' @examples
 #' x <- 1   # great!
 #'

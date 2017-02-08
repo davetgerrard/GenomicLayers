@@ -13,6 +13,8 @@
 #' @examples
 #' x <- 1   # great!
 #'
+#' @import GenomicRanges
+#' 
 #' @export
 matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
   
