@@ -18,7 +18,20 @@ The ability of factors to bind changes through this series so that the number an
 in R:-
 
 	library(devtools)
-	install_github(repo="davetgerrard/GenomicLayers")
+	install_github(repo="davetgerrard/GenomicLayers",build_vignettes = TRUE)
+
+The above may take several minutes and requires several dependencies. If it does not work, or you are in a hurry, leave out the 'build_vignettes'.
+
+  install_github(repo="davetgerrard/GenomicLayers")
+
+
+To view the introduction vignette, type
+
+  vignette("GenomicLayersIntroduction")
+
+To view what vignettes are available, type
+
+  vignette(package="GenomicLayers")
 
 
 ## TODO List
