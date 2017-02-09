@@ -1,0 +1,130 @@
+---
+title: "MouseX-inacivation"
+author: "Dave T. Gerrard"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+## Introduction]
+
+
+A real model of spreading of several factors across the X chromosome.
+
+
+Requires mouse BSgenome.Mmusculus.UCSC.mm9 which can be obtained from Bioconductor
+
+  source("https://bioconductor.org/biocLite.R")
+  biocLite("BSgenome.Mmusculus.UCSC.mm9")
+
+
+## Load prerequisites
+
+
+If  _BSgenome.Mmusculus.UCSC.mm9_ and _GenomicLayers_ are installed, the following should not give errors.
+
+```{r load-libs, echo=TRUE}
+library(BSgenome.Mmusculus.UCSC.mm9)
+library(GenomicLayers)
+```
+
+
+
+
+## Set up chromosome and layers
+```{r }
+OUTPUTDIR <- "results/mus_X_inactivation/"
+GENOME <- 'mm9'
+
+# load X chromosome sequence 
+genome <- BSgenome.Mmusculus.UCSC.mm9 
+thisChrom <- genome[["chrX"]] 
+
+# set up a layerSet on chrom X.
+
+layerSet.X <- list(LAYER.0 = thisChrom)
+layerSet.X[['CpG_island']] <- IRanges()
+layerSet.X[['PRC']] <- IRanges()
+layerSet.X[['H3K27me3']] <- IRanges()
+
+layerList.X <- list(layerSet=layerSet.X, history=NULL)  # add some metadata
+
+
+
+```
+
+
+## Load/Create binding factors
+```{r }
+
+
+bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.rate=0, 
+                                           profile.layers = "CpG_island", profile.marks = 1,  
+                                           mod.layers = "PRC", mod.marks=1, stateWidth=500)
+
+#bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){50}CG", patternLength=300, profile.layers="H3K27me3",profile.marks=0, mod.layers = "CpG_island", mod.marks=1)
+# needed more seed areas, so took shorter CpG motifs.
+# bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
+#                                                profile.layers="H3K27me3",profile.marks=0, 
+#                                                mod.layers = "CpG_island", mod.marks=1, stateWidth=300)
+bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
+                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
+
+#N.B. temporarily setting a fixed patternLength, because don't know how to implement variable patternLength yet.
+# current effect is that hits < patternLength are discarded
+
+# want a binding factor that creates mods either up or downstream of binding site. New parameter 'offset.method' to accept function as argument
+upDownFunc <- function(x)  {
+  return(sample(c(x, -x), 1))
+  
+}
+
+bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150, mismatch.rate=0, 
+                                                 profile.layers = "PRC", profile.marks = 1, 
+                                                 mod.layers = "H3K27me3", mod.marks=1, 
+                                                 stateWidth=200,offset=350, offset.method=upDownFunc)
+
+
+```
+
+
+
+
+
+## Run Layer binding
+
+```{r run-binding, echo=TRUE}
+
+
+n.waves <- 10
+n.iters <- 2000
+
+XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
+
+XFS.10 <- rep(XFS, times=n.waves)
+n.iters <- 2000 * 10
+
+modLayer <- runLayerBinding( layerList=layerList.X, factorSet = XFS.10, iterations =n.iters)
+
+# inspect the result
+modLayer
+
+```
+
+
+
+## Visualise the results
+```{r }
+#TODO
+```
+
+
+
+## Score against experimental data
+```{r }
+#TODO
+```

@@ -23,7 +23,9 @@ document()
 
 # create a new vignette
 library(devtools)
-use_vignette("GenomicLayersIntroduction")
+#use_vignette("GenomicLayersIntroduction")  # only do once to set up vignette for first time
+#use_vignette("MouseX-inacivation") # only do once to set up vignette for first time
+
 
 require(Biostrings)
 build_vignettes()  #  did not load the dependencies by itself.  need require(Biostrings) 

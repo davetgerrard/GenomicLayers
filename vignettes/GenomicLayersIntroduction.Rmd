@@ -14,10 +14,12 @@ vignette: >
 This will be an introductory vignette on how and why to use GenomicLayers.
 
 
-```{r}
+```{r load-libs, echo=FALSE}
 library(Biostrings)  # why is this not automatic?
 library(GenomicLayers)
+```
 
+```{r first-para}
 first.bf <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
 print(first.bf)
 ```
