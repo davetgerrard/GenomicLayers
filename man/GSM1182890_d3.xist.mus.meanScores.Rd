@@ -9,10 +9,10 @@
 \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3904790/}
 }
 \usage{
-GSM1182890_d3.xist.mus.meanScores
+data(GSM1182890_d3.xist.mus.meanScores)
 }
 \description{
-Mean scores from mm9 chrX
+Mean scores from mm9 chrX inactivation
 GSM1182890_d3.xist.mus.meanScores
 }
 \keyword{datasets}
