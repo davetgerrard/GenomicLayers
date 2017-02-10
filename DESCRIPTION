@@ -1,6 +1,6 @@
 Package: GenomicLayers
 Title: Simple, sequence-based simulation of epi-genomes.
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: person("Dave", "Gerrard", email = "davetgerrard@gmail.com", role = c("aut", "cre"))
 Description: Simulate changes to epigenetic states informed by genomic sequence.
     Predict transcription (or any positional mark) from genome sequence by modelling
@@ -22,7 +22,7 @@ Suggests:
     knitr,
     rmarkdown,
     BSgenome.Mmusculus.UCSC.mm9
-License: MIT
+License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
