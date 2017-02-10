@@ -37,45 +37,30 @@ library(GenomicLayers)
 
 ## Set up chromosome and layers
 ```{r }
-OUTPUTDIR <- "results/mus_X_inactivation/"
+#OUTPUTDIR <- "GL_out/results/mus_X_inactivation/"
 GENOME <- 'mm9'
 
 # load X chromosome sequence 
 genome <- BSgenome.Mmusculus.UCSC.mm9 
-thisChrom <- genome[["chrX"]] 
+
 
 # set up a layerSet on chrom X.
-
-layerSet.X <- list(LAYER.0 = thisChrom)
-layerSet.X[['CpG_island']] <- IRanges()
-layerSet.X[['PRC']] <- IRanges()
-layerSet.X[['H3K27me3']] <- IRanges()
-
-layerList.X <- list(layerSet=layerSet.X, history=NULL)  # add some metadata
-
-
+thisChrom <- genome[["chrX"]] 
+layerList.X <- createLayerList.DNAstring(seq=thisChrom, layerNames=c("CpG_island","PRC","H3K27me3"))
 
 ```
 
 
 ## Load/Create binding factors
 ```{r }
-
+#N.B. temporarily setting a fixed patternLength, because don't know how to implement variable patternLength yet.
+# current effect is that hits < patternLength are discarded
+bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
+                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
 
 bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.rate=0, 
                                            profile.layers = "CpG_island", profile.marks = 1,  
                                            mod.layers = "PRC", mod.marks=1, stateWidth=500)
-
-#bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){50}CG", patternLength=300, profile.layers="H3K27me3",profile.marks=0, mod.layers = "CpG_island", mod.marks=1)
-# needed more seed areas, so took shorter CpG motifs.
-# bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
-#                                                profile.layers="H3K27me3",profile.marks=0, 
-#                                                mod.layers = "CpG_island", mod.marks=1, stateWidth=300)
-bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
-                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
-
-#N.B. temporarily setting a fixed patternLength, because don't know how to implement variable patternLength yet.
-# current effect is that hits < patternLength are discarded
 
 # want a binding factor that creates mods either up or downstream of binding site. New parameter 'offset.method' to accept function as argument
 upDownFunc <- function(x)  {
