@@ -46,23 +46,27 @@ genome <- BSgenome.Mmusculus.UCSC.mm9
 
 # set up a layerSet on chrom X.
 thisChrom <- genome[["chrX"]] 
-layerList.X <- createLayerList.DNAstring(seq=thisChrom, layerNames=c("CpG_island","PRC","H3K27me3"))
+layerList.X <- createLayerList.DNAstring(seq=thisChrom, 
+                                layerNames=c("CpG_island","PRC","H3K27me3"))
 
 ```
 
 
 ## Load/Create binding factors
 ```{r }
-#N.B. temporarily setting a fixed patternLength, because don't know how to implement variable patternLength yet.
+#N.B. temporarily setting a fixed patternLength, 
+# because don't know how to implement variable patternLength yet.
 # current effect is that hits < patternLength are discarded
-bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG", patternLength=20,
-                                               mod.layers = "CpG_island", mod.marks=1, stateWidth=200)
+bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG",
+                                               patternLength=20, mod.layers = "CpG_island", 
+                                               mod.marks=1, stateWidth=200)
 
 bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.rate=0, 
                                            profile.layers = "CpG_island", profile.marks = 1,  
                                            mod.layers = "PRC", mod.marks=1, stateWidth=500)
 
-# want a binding factor that creates mods either up or downstream of binding site. New parameter 'offset.method' to accept function as argument
+# want a binding factor that creates mods either up or downstream of binding site. 
+# New parameter 'offset.method' to accept function as argument
 upDownFunc <- function(x)  {
   return(sample(c(x, -x), 1))
   
@@ -71,7 +75,8 @@ upDownFunc <- function(x)  {
 bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150, mismatch.rate=0, 
                                                  profile.layers = "PRC", profile.marks = 1, 
                                                  mod.layers = "H3K27me3", mod.marks=1, 
-                                                 stateWidth=200,offset=350, offset.method=upDownFunc)
+                                                 stateWidth=200,offset=350, 
+                                                 offset.method=upDownFunc)
 
 
 ```
@@ -88,12 +93,14 @@ bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150,
 n.waves <- 10
 n.iters <- 2000
 
-XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
+XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, 
+              bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
 
 XFS.10 <- rep(XFS, times=n.waves)
 n.iters <- 2000 * 10
 
-modLayer <- runLayerBinding( layerList=layerList.X, factorSet = XFS.10, iterations =n.iters)
+modLayer <- runLayerBinding( layerList=layerList.X, factorSet = XFS.10,
+                             iterations =n.iters)
 
 # inspect the result
 modLayer

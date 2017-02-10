@@ -87,7 +87,7 @@ window.length <- 1*1000*1000
 
 bin.starts <- seq(1, window.end, by=0.1*1000*1000)
 # read in bedGraph Data from Simon et al.
-fileName <- "C:/Users/Dave/data/Simon_etal_2013_MusXist/bedGraphs/GSM1182890_d3.xist.mus.bedGraph.gz"
+fileName <- "C:/Users/Dave/datasets/Simon_etal_2013_MusXist/bedGraphs/GSM1182890_d3.xist.mus.bedGraph.gz"
 
 bg <- read.table(fileName, header=F, skip=1, sep= " ")
 
