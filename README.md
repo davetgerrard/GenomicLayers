@@ -22,16 +22,16 @@ in R:-
 
 The above may take several minutes and requires several dependencies. If it does not work, or you are in a hurry, leave out the 'build_vignettes'.
 
-  install_github(repo="davetgerrard/GenomicLayers")
+	install_github(repo="davetgerrard/GenomicLayers")
 
 
 To view the introduction vignette, type
 
-  vignette("GenomicLayersIntroduction")
+	vignette("GenomicLayersIntroduction")
 
 To view what vignettes are available, type
 
-  vignette(package="GenomicLayers")
+	vignette(package="GenomicLayers")
 
 
 ## TODO List
