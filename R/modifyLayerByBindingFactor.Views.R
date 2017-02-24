@@ -1,13 +1,22 @@
-# Layers are now Views or Iranges objects. marks (1) are contiguous ranges, absence of marks (0) are gaps between.
-# hits is now a Views object
-# TODO, edit to alter layerset IN-PLACE i.e. modifyLayerByBindingFactor.Views(layerSet, position.vec,bindingFactor)
-# function
-# description
-# Parameters:-
-# layerSet,
-# hits,
-# bindingFactor,
-# verbose=FALSE
+#' Modify a layerSet object
+#'
+#' Modify a layerSet object according to a bindingFactor and a pre-calculated set of hits.
+#'
+#' @param layerSet method to do something to (\code{"hsv"} or \code{"cluster"})
+#' @param hits a \code{"Views"} object representing the places the bindingFactor can bind.
+#' @param bindingFactor  The \code{"bindingFactor"}
+#' @param verbose you get the idea
+#'
+#' @return \code{"layerSet"}
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @import GenomicRanges
+#' @import Biostrings
+#' 
+#'
+#' @export
 modifyLayerByBindingFactor.Views <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
   require(Biostrings)
   newLayerSet <- layerSet

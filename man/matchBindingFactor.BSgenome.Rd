@@ -8,15 +8,15 @@ matchBindingFactor.BSgenome(layerSet, bindingFactor, clusterGap = 10,
   max.window = 1e+07, verbose = FALSE)
 }
 \arguments{
-\item{layerSet}{method to do something to (\code{"hsv"} or \code{"cluster"})}
+\item{layerSet}{the \code{"layerSet"} target}
 
-\item{bindingFactor}{description of that param}
+\item{bindingFactor}{the \code{"bindingFactor"} to match}
 
-\item{clusterGap}{=10 you get the idea}
+\item{clusterGap}{=10 NOT IMPLEMENTED}
 
-\item{max.window}{=10000000 you get the idea}
+\item{max.window}{=10000000 on less powerful computers, break up the search into windows of this size.}
 
-\item{verbose}{you get the idea}
+\item{verbose}{output more information to the screen}
 }
 \value{
 \code{"hits"}

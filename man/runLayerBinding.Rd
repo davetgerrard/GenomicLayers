@@ -10,21 +10,21 @@ runLayerBinding(layerList, factorSet, iterations = 1,
   target.layer = 2, verbose = FALSE, ...)
 }
 \arguments{
-\item{layerList}{method to do something to (\code{"hsv"} or \code{"cluster"})}
+\item{layerList}{a \code{"Layerlist"} object}
 
-\item{factorSet}{description of that param}
+\item{factorSet}{a \code{"list"} of \code{"bindingFactor"} objects}
 
-\item{iterations}{you get the idea}
+\item{iterations}{how many changes to make  NEED TO RENAME THIS}
 
-\item{bindingFactorFreqs}{you get the idea}
+\item{bindingFactorFreqs}{the relative proportions of each \code{"bindingFactor"} in \code{"factorSet"}}
 
-\item{watch.function}{you get the idea}
+\item{watch.function}{have this function execute during each iteration e.g. print something}
 
-\item{collect.stats}{you get the idea}
+\item{collect.stats}{collect a table of stats each iteration}
 
-\item{target.layer}{you get the idea}
+\item{target.layer}{NOT IMPLEMENTED}
 
-\item{verbose}{you get the idea}
+\item{verbose}{give more output}
 }
 \value{
 \code{"LayerList"}

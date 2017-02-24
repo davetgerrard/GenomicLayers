@@ -69,11 +69,21 @@ To view what vignettes are available, type
 | TODO | 2016-10-19 | 1 | Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT. |
 | TODO | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement. __N.B.__ but where to store as matchBindingFactor intersects on the other layers and does not retain or return the pure hits. |
 | STARTED | 2017-01-27 | 1 | Document with Roxygen2 |
+| TODO | 2017-02-20 | 1 | Heuristics for a better world: Would be good to have a semi-automated model building and improvement. e.g. which promoters have TATA but not expression not explained by TATA alone? Group and find further commonalities. Too many possibilities? |
 | TODO | 201X-XX-XX | 1 |  |
 
 
 
 ### Notes (reverse chronological)
+
+
+__2017-02-20__ 
+
+Have done quite some work moving to and allowing install from github,  getting vignettes to load. An example vignette will be mus X chromosome inactivation.
+
+
+
+
 
 __2017-01-26__ 
 
