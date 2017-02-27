@@ -39,7 +39,6 @@ To view what vignettes are available, type
 
 | DateComplete | DateAdded | Priority | Description |
 | ------ | ------------- | ----- | -------------------------- |
-| 2017-01-27 | 2015-12-22 | 1 | GitHub repo (requires open access?) |
 | TODO | 2015-12-22 | 1 | CRAN/Bioconductor |
 | TODO | 2015-12-22 | 1 | Implement factor abundance on a scale from 0 to max. Then mods can be applied by the proportion of each factor.  |
 | TODO | 2015-12-22 | 1 | FactorSet abundances are mutable |
@@ -51,12 +50,9 @@ To view what vignettes are available, type
 | TODO | 2015-12-22 | 1 | no long range in-cis effect (could be added in by enabling offset parameter in bindingFactor). What about using any nearby marks as offset, rather than precise number of bases?  (e.g. mark the nearest mark to the left, or pick one within range). |
 | TODO | 2015-12-22 | 1 | FactorSet needs to be encapsulated to carry the optimScores table (and in future other data) returned by optimiseFactorSet() |
 | TODO | 2015-12-22 | 1 | Factors can be converted from common motifs formats (e.g. meme). Enables use of libraries. How to handle layer specificities? |
-| 2015-12-22 | 2015-12-22 | 1 | Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once.  |
 | TODO | 2015-12-22 | 1 | Test if system can rediscover some promoter motifs (e.g. HNF4A in liver specific promoters). Might be better to use existing data from similar papers. |
-| 2015-12-23 | 2015-12-22 | 1 |  Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits). |
 | TODO | 2015-12-22 | 1 |  Separate factor names from indexes within a factorSet, allow multiple factors to share names (and, hence abundance).  Hmmmm, design issue here.  |
 | TODO | 2015-12-22 | 1 |  Overhaul factorSet objects |
-| 2015-12-22 | 2015-12-22 | 1 |  Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE |
 | TODO | 2015-12-22 | 1 |  Alter optimise(), createBindingFactor and mutateBindingFactor to use a prefix to name factors. For optimise, this could be the run and iteration name. |
 | STARTED | 2015-12-22 | 1 |  Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R |
 | TODO | 2016-02-16 | 1 |  Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two? |
@@ -71,6 +67,10 @@ To view what vignettes are available, type
 | STARTED | 2017-01-27 | 1 | Document with Roxygen2 |
 | TODO | 2017-02-20 | 1 | Heuristics for a better world: Would be good to have a semi-automated model building and improvement. e.g. which promoters have TATA but not expression not explained by TATA alone? Group and find further commonalities. Too many possibilities? |
 | TODO | 201X-XX-XX | 1 |  |
+| 2015-12-22 | 2015-12-22 | 1 | Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once.  |
+| 2015-12-22 | 2015-12-22 | 1 |  Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE |
+| 2015-12-23 | 2015-12-22 | 1 |  Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits). |
+| 2017-01-27 | 2015-12-22 | 1 | GitHub repo (requires open access?) |
 
 
 

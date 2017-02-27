@@ -13,13 +13,85 @@ vignette: >
 
 This will be an introductory vignette on how and why to use GenomicLayers.
 
+### Introduction
 
-```{r load-libs, echo=FALSE}
-library(Biostrings)  # why is this not automatic?
+
+
+### Installation
+
+You may have already done this but if not, you can install the _GenomicLayers_ package direct from GitHub if you have already have the _devtools_ package installed and working. For _devtools_ see here: ...
+
+If you already have _devtools_, then the following commands should install _GenomicLayers_:-
+
+```{r install-coms, echo=FALSE}
+
+```
+
+
+
+### Set up the target sequence or genome
+Load the Biostrings library (this command outputs a lot of information, which is hidden here). 
+
+```{r load_libs, echo=TRUE, message=FALSE}
+library(Biostrings)
+
+```
+
+This can be based on a single DNA sequence or on a entire genome. If the latter, it must be loaded as a BSgenome object.  See ...
+
+_GenomicLayers_ is designed to work on whole eukaryotic genomes including human and mouse but as these are rather large, for the purpose of demonstration we will use a shorter sequence as an example.  The SacCer chr1 is included in the _Biostrings_ package, which should have been installed along with _GenomicLayers_
+
+```{r load-yeast, echo=TRUE}
+data("yeastSEQCHR1")   # from Biostrings package
+class(yeastSEQCHR1)
+nchar(yeastSEQCHR1)
+targetSeq <- DNAString(yeastSEQCHR1)
+targetSeq 
+```
+The chromosome is now stored as a _DNAString_ object, which gives us access to a range of pattern searching functions provided by the _Biostrings_ package.
+
+To use larger sequences and genomes comprised of multiple chromosomes we expect users to make use of the Bioconductor BSgenome packages. For more on this, see the section __Using larger genomes__ below.
+
+
+### Create some layers on our sequence.
+
+This is where we use the sequence and build some layers on it. 
+
+```{r new_layers, echo=TRUE}
 library(GenomicLayers)
+#layers1 <- createLayerList.DNAstring(targetSeq, layerNames=c("promoter"))
+#layers1
 ```
 
-```{r first-para}
-first.bf <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
-print(first.bf)
+### Create some binding factors  
+
+This is where we specify some binding factors that can bind to the sequence and, optionally, modify the layers (but not the sequence).
+
+If you want to learn about pattern matching against DNA sequences, we recommend that you check out the vignettes in the Biostrings package. Perhaps also have a look at PWMenrich, MOTIV etc.
+
+
+```{r new_bf}
+bf1 <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
+print(bf1)
 ```
+
+
+### Run a sequence of layer binding
+
+Run a simulation and collect the output
+
+```{r run_lb}
+
+```
+
+### Visualise the results
+
+What happened in the simulation?  
+
+
+
+
+### Using larger genomes
+
+Get to know the BSgenome packages....
+

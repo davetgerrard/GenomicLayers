@@ -2,15 +2,17 @@
 #'
 #' Create a LayerList object from a DNAString object
 #'
-#' @param seq method to do something to (\code{"hsv"} or \code{"cluster"})
-#' @param layerNames description of that param
-#' @param nLayers  =10 you get the idea
-#' @param verbose you get the idea
+#' @param seq a (\code{"DNAString"} object
+#' @param layerNames a character vector of names for the layers. Should be unique 
+#' @param nLayers  How many layers to make. Can be specified _instead_ of _layerNames_
+#' @param verbose Output extra information
 #'
 #' @return \code{"LayerList"}
 #'
 #' @examples
-#' x <- 1   # great!
+#' library(Biostrings)
+#' mySeq <- DNAString("TGACATCGTCTATCGATCG")
+#' createLayerList.DNAstring(seq=mySeq, nLayers=1)
 #'
 #' @import GenomicRanges
 #' @import Biostrings
