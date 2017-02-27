@@ -7,7 +7,7 @@
 \method{print}{bfSet}(factorSet)
 }
 \arguments{
-\item{factorSet}{method to do something to (\code{"hsv"} or \code{"cluster"})}
+\item{factorSet}{the list of binding factors.}
 }
 \description{
 Formatted printing for a set of binding factors

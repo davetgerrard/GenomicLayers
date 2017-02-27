@@ -59,8 +59,8 @@ This is where we use the sequence and build some layers on it.
 
 ```{r new_layers, echo=TRUE}
 library(GenomicLayers)
-#layers1 <- createLayerList.DNAstring(targetSeq, layerNames=c("promoter"))
-#layers1
+layers1 <- createLayerList.DNAstring(targetSeq, layerNames=c("recruiter","promoter"))
+layers1
 ```
 
 ### Create some binding factors  
@@ -69,18 +69,45 @@ This is where we specify some binding factors that can bind to the sequence and,
 
 If you want to learn about pattern matching against DNA sequences, we recommend that you check out the vignettes in the Biostrings package. Perhaps also have a look at PWMenrich, MOTIV etc.
 
+We first create a binding factor that can recognise a DNA motif for at TATA box, we'll call it tata-box and then test it agains the layerSet object we've already created. It should create an IRanges or hits object with the locations or all matches to the sequence TATAA.
 
-```{r new_bf}
-bf1 <- createBindingFactor.DNA_motif("test", patternString = "ACTGGGCTA") 
-print(bf1)
+```{r new_bf1}
+bf1 <- createBindingFactor.DNA_motif(name="tata-box", patternString = "TATAA", profile.layers=NULL, mod.layers="recruiter",mod.marks=1) 
+#print(bf1)
+matchBindingFactor(layerSet=layers1$layerSet, bindingFactor=bf1)
 ```
 
+Then create a second binding factor that does not recognise a particular sequence, but which can bind to marks on the layer called 'recruiter'. If we test this binding factor, it should produce a hits object with no hits.
+
+```{r new_bf2}
+bf2 <- createBindingFactor.layer_region(name="tata-box", profile.layers="recruiter",profile.marks=1,                                                                        mod.layers="promoter",mod.marks=1,  patternLength = 5) 
+#print(bf2)
+matchBindingFactor(layerSet=layers1$layerSet, bindingFactor=bf2)
+```
+
+To use multiple binding factors together in a sequence, we add them into a named list. IMPORTANT: currently, this list must have names, so typically we specify the names when building the list. Then list names do not have to agree with the $name property of the individual binding factors (this allows the same binding factor to be re-used without re-specifying the model).
+
+(Also, nicer formatting for binding factors when printing)
+```{r bf_list}
+bf_list <- list(bf1=bf1, bf2=bf2)
+#print.bfSet(list(bf1))  # not working in package. FIX this .
+```
 
 ### Run a sequence of layer binding
 
 Run a simulation and collect the output
 
 ```{r run_lb}
+modLayers <- runLayerBinding(layerList=layers1, factorSet=bf_list, verbose=TRUE, iter=100)
+modLayers
+
+```
+
+Hopefully, the layer called 'promoter' should now be marked in some places.
+
+```{r inspect_lb}
+
+modLayers$layerSet[['promoter']]
 
 ```
 

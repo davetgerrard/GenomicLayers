@@ -2,7 +2,7 @@
 #'
 #' Formatted printing for a set of binding factors
 #'
-#' @param factorSet method to do something to (\code{"hsv"} or \code{"cluster"})
+#' @param factorSet the list of binding factors.
 #'
 #' @return NULL
 #'

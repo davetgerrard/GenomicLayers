@@ -1,6 +1,7 @@
 devtools::install_github("hadley/devtools")
 library(devtools)
 
+install_github(repo="davetgerrard/GenomicLayers")
 install_github(repo="davetgerrard/GenomicLayers",build_vignettes = TRUE)
 install_github(repo="davetgerrard/GenomicLayers",build_vignettes = TRUE, force=TRUE)
 
