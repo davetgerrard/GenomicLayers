@@ -8,13 +8,13 @@ createLayerList.DNAstring(seq, layerNames = NULL,
   nLayers = length(layerNames), verbose = TRUE)
 }
 \arguments{
-\item{seq}{method to do something to (\code{"hsv"} or \code{"cluster"})}
+\item{seq}{a (\code{"DNAString"} object}
 
-\item{layerNames}{description of that param}
+\item{layerNames}{a character vector of names for the layers. Should be unique}
 
-\item{nLayers}{=10 you get the idea}
+\item{nLayers}{How many layers to make. Can be specified _instead_ of _layerNames_}
 
-\item{verbose}{you get the idea}
+\item{verbose}{Output extra information}
 }
 \value{
 \code{"LayerList"}
@@ -23,7 +23,9 @@ createLayerList.DNAstring(seq, layerNames = NULL,
 Create a LayerList object from a DNAString object
 }
 \examples{
-x <- 1   # great!
+library(Biostrings)
+mySeq <- DNAString("TGACATCGTCTATCGATCG")
+createLayerList.DNAstring(seq=mySeq, nLayers=1)
 
 }
 
