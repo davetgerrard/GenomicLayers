@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dave T. Gerrard" />
 
-<meta name="date" content="2017-02-27" />
+<meta name="date" content="2017-02-28" />
 
 <title>An introduction to the GenomicLayers package</title>
 
@@ -70,25 +70,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">An introduction to the GenomicLayers package</h1>
 <h4 class="author"><em>Dave T. Gerrard</em></h4>
-<h4 class="date"><em>2017-02-27</em></h4>
+<h4 class="date"><em>2017-02-28</em></h4>
 
 
 
 <p>This will be an introductory vignette on how and why to use GenomicLayers.</p>
 <div id="introduction" class="section level3">
 <h3>Introduction</h3>
+<p>Rationale…</p>
+<p><em>GenomicLayers</em> simulates epi-genetic changes to DNA sequence or entire genomes. It does this by linking the DNA sequence, which cannot be changed, with one or more equally sized <em>layers</em>, which can be modified by <em>binding factors</em>. The <em>binding factors</em> may recognise specific DNA sequences or motifs or they may recognise existing modifications already applied to the layers. After binding, the <em>binding factors</em> may then make modifications to any or all of the layers. In this way, some regions of the sequence or genomes may change states (e.g. open vs closed) and permit or deny access to further binding factors.</p>
 </div>
 <div id="installation" class="section level3">
 <h3>Installation</h3>
-<p>You may have already done this but if not, you can install the <em>GenomicLayers</em> package direct from GitHub if you have already have the <em>devtools</em> package installed and working. For <em>devtools</em> see here: …</p>
+<p>You may have already done this but if not, you can install the <em>GenomicLayers</em> package direct from GitHub if you already have the <em>devtools</em> package installed and working. For <em>devtools</em> see here: …</p>
 <p>If you already have <em>devtools</em>, then the following commands should install <em>GenomicLayers</em>:-</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="kw">library</span>(devtools)
+    <span class="kw">install_github</span>(<span class="dt">repo=</span><span class="st">&quot;davetgerrard/GenomicLayers&quot;</span>,<span class="dt">build_vignettes =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<p>The above may take several minutes and requires several dependencies. If it does not work, or you are in a hurry, leave out the ‘build_vignettes’. Hint: make sure <em>devtools</em> is up to the most recent version.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="kw">install_github</span>(<span class="dt">repo=</span><span class="st">&quot;davetgerrard/GenomicLayers&quot;</span>)</code></pre></div>
+<p>To view the introduction vignette, type</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="kw">vignette</span>(<span class="st">&quot;GenomicLayersIntroduction&quot;</span>)</code></pre></div>
+<p>To view what vignettes are available, type</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">    <span class="kw">vignette</span>(<span class="dt">package=</span><span class="st">&quot;GenomicLayers&quot;</span>)</code></pre></div>
 </div>
 <div id="set-up-the-target-sequence-or-genome" class="section level3">
 <h3>Set up the target sequence or genome</h3>
-<p>Load the Biostrings library (this command outputs a lot of information, which is hidden here).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(Biostrings)</code></pre></div>
-<p>This can be based on a single DNA sequence or on a entire genome. If the latter, it must be loaded as a BSgenome object. See …</p>
-<p><em>GenomicLayers</em> is designed to work on whole eukaryotic genomes including human and mouse but as these are rather large, for the purpose of demonstration we will use a shorter sequence as an example. The SacCer chr1 is included in the <em>Biostrings</em> package, which should have been installed along with <em>GenomicLayers</em></p>
+<p>Load the Biostrings library.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(Biostrings)    <span class="co"># (this command outputs a lot of information, which is hidden in this vignette)</span></code></pre></div>
+<p>Our sequence can be based on a single DNA sequence or on a entire genome. For individual sequences we convert them to DNAString objects. If the latter, it must be loaded as a BSgenome object. See …</p>
+<p><em>GenomicLayers</em> is designed to work on whole eukaryotic genomes including human and mouse but as these are rather large, for the purpose of demonstration we will use a shorter sequence as an example. The <em>Saccharomyces cerevisiae</em> (Yeast) chromosome 1 is included in the <em>Biostrings</em> package, which should have been installed along with <em>GenomicLayers</em></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;yeastSEQCHR1&quot;</span>)   <span class="co"># from Biostrings package</span>
 <span class="kw">class</span>(yeastSEQCHR1)</code></pre></div>
 <pre><code>## [1] &quot;character&quot;</code></pre>
@@ -130,32 +140,32 @@ layers1</code></pre></div>
 <h3>Create some binding factors</h3>
 <p>This is where we specify some binding factors that can bind to the sequence and, optionally, modify the layers (but not the sequence).</p>
 <p>If you want to learn about pattern matching against DNA sequences, we recommend that you check out the vignettes in the Biostrings package. Perhaps also have a look at PWMenrich, MOTIV etc.</p>
-<p>We first create a binding factor that can recognise a DNA motif for at TATA box, we’ll call it tata-box and then test it agains the layerSet object we’ve already created. It should create an IRanges or hits object with the locations or all matches to the sequence TATAA.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bf1 &lt;-<span class="st"> </span><span class="kw">createBindingFactor.DNA_motif</span>(<span class="dt">name=</span><span class="st">&quot;tata-box&quot;</span>, <span class="dt">patternString =</span> <span class="st">&quot;TATAA&quot;</span>, <span class="dt">profile.layers=</span><span class="ot">NULL</span>, <span class="dt">mod.layers=</span><span class="st">&quot;recruiter&quot;</span>,<span class="dt">mod.marks=</span><span class="dv">1</span>) 
+<p>We first create a binding factor that can recognise a DNA motif for a TATA box, we’ll call it tata-box and then test it against the layerSet object we’ve already created. It should create an IRanges or hits object with the locations for all matches to the sequence TATAA. We’ll also specify that this binding factor should mark those positions on the layer <em>recruiter</em>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bf1 &lt;-<span class="st"> </span><span class="kw">createBindingFactor.DNA_motif</span>(<span class="dt">name=</span><span class="st">&quot;tata-box&quot;</span>, <span class="dt">patternString =</span> <span class="st">&quot;TATAWAWA&quot;</span>, <span class="dt">profile.layers=</span><span class="ot">NULL</span>, <span class="dt">mod.layers=</span><span class="st">&quot;recruiter&quot;</span>,<span class="dt">mod.marks=</span><span class="dv">1</span>) 
 <span class="co">#print(bf1)</span>
 <span class="kw">matchBindingFactor</span>(<span class="dt">layerSet=</span>layers1$layerSet, <span class="dt">bindingFactor=</span>bf1)</code></pre></div>
-<pre><code>## IRanges object with 363 ranges and 0 metadata columns:
-##             start       end     width
-##         &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
-##     [1]       645       649         5
-##     [2]      1154      1158         5
-##     [3]      1185      1189         5
-##     [4]      1678      1682         5
-##     [5]      1699      1703         5
-##     ...       ...       ...       ...
-##   [359]    227426    227430         5
-##   [360]    227620    227624         5
-##   [361]    227692    227696         5
-##   [362]    227847    227851         5
-##   [363]    229369    229373         5</code></pre>
-<p>Then create a second binding factor that does not recognise a particular sequence, but which can bind to marks on the layer called ‘recruiter’. If we test this binding factor, it should produce a hits object with no hits.</p>
+<pre><code>## IRanges object with 63 ranges and 0 metadata columns:
+##            start       end     width
+##        &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+##    [1]      5012      5019         8
+##    [2]      5522      5529         8
+##    [3]      5975      5982         8
+##    [4]      7087      7094         8
+##    [5]      7134      7143        10
+##    ...       ...       ...       ...
+##   [59]    216239    216246         8
+##   [60]    218254    218261         8
+##   [61]    220878    220887        10
+##   [62]    222989    222996         8
+##   [63]    227426    227433         8</code></pre>
+<p>Then create a second binding factor that does not recognise a particular sequence, but which can bind to marks on the <em>recruiter</em> layer . If we test this binding factor alone, it should produce a hits object with no hits because the <em>recruiter</em> layer starts with not marked regions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bf2 &lt;-<span class="st"> </span><span class="kw">createBindingFactor.layer_region</span>(<span class="dt">name=</span><span class="st">&quot;tata-box&quot;</span>, <span class="dt">profile.layers=</span><span class="st">&quot;recruiter&quot;</span>,<span class="dt">profile.marks=</span><span class="dv">1</span>,                                                                        <span class="dt">mod.layers=</span><span class="st">&quot;promoter&quot;</span>,<span class="dt">mod.marks=</span><span class="dv">1</span>,  <span class="dt">patternLength =</span> <span class="dv">5</span>) 
 <span class="co">#print(bf2)</span>
 <span class="kw">matchBindingFactor</span>(<span class="dt">layerSet=</span>layers1$layerSet, <span class="dt">bindingFactor=</span>bf2)</code></pre></div>
 <pre><code>## IRanges object with 0 ranges and 0 metadata columns:
 ##        start       end     width
 ##    &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;</code></pre>
-<p>To use multiple binding factors together in a sequence, we add them into a named list. IMPORTANT: currently, this list must have names, so typically we specify the names when building the list. Then list names do not have to agree with the $name property of the individual binding factors (this allows the same binding factor to be re-used without re-specifying the model).</p>
+<p>To use multiple binding factors together in a sequence, we add them into a named list. IMPORTANT: currently, this list must have names, so typically we specify the names when building the list. The list names do not have to agree with the <em>$name</em> property of the individual binding factors (this allows the same binding factor to be re-used without re-specifying the model).</p>
 <p>(Also, nicer formatting for binding factors when printing)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">bf_list &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="dt">bf1=</span>bf1, <span class="dt">bf2=</span>bf2)
 <span class="co">#print.bfSet(list(bf1))  # not working in package. FIX this .</span></code></pre></div>
@@ -163,54 +173,33 @@ layers1</code></pre></div>
 <div id="run-a-sequence-of-layer-binding" class="section level3">
 <h3>Run a sequence of layer binding</h3>
 <p>Run a simulation and collect the output</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modLayers &lt;-<span class="st"> </span><span class="kw">runLayerBinding</span>(<span class="dt">layerList=</span>layers1, <span class="dt">factorSet=</span>bf_list, <span class="dt">verbose=</span><span class="ot">TRUE</span>, <span class="dt">iter=</span><span class="dv">100</span>)</code></pre></div>
-<pre><code>## [1] &quot;2017-02-27 15:51:28 runLayerBinding pos 1&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modLayers &lt;-<span class="st"> </span><span class="kw">runLayerBinding</span>(<span class="dt">layerList=</span>layers1, <span class="dt">factorSet=</span>bf_list, <span class="dt">verbose=</span><span class="ot">TRUE</span>, <span class="dt">iter=</span><span class="dv">1000</span>)</code></pre></div>
+<pre><code>## [1] &quot;2017-02-28 16:05:10 runLayerBinding pos 1&quot;
 ## [1] &quot;Sequence of length  230208 , using  1 windows of length 230208&quot;
-## [1] &quot;bf1 363 50&quot;
-## [1] &quot;bf2 50 50&quot;
-## [1] &quot;2017-02-27 15:51:28 runLayerBinding.fast pos 2&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modLayers</code></pre></div>
-<pre><code>## $layerSet
-## $layerSet$LAYER.0
-##   230208-letter &quot;DNAString&quot; instance
-## seq: CCACACCACACCCACACACCCACACACCACACCA...GTGTGGGTGTGGTGTGGGTGTGGTGTGTGTGGG
-## 
-## $layerSet$recruiter
-## IRanges object with 50 ranges and 0 metadata columns:
-##            start       end     width
-##        &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
-##    [1]      5522      5526         5
-##    [2]      5975      5979         5
-##    [3]      6722      6726         5
-##    [4]     21055     21059         5
-##    [5]     21944     21948         5
-##    ...       ...       ...       ...
-##   [46]    211230    211234         5
-##   [47]    215951    215955         5
-##   [48]    220075    220079         5
-##   [49]    227426    227430         5
-##   [50]    227692    227696         5
-## 
-## $layerSet$promoter
-## IRanges object with 50 ranges and 0 metadata columns:
-##            start       end     width
-##        &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
-##    [1]      5522      5526         5
-##    [2]      5975      5979         5
-##    [3]      6722      6726         5
-##    [4]     21055     21059         5
-##    [5]     21944     21948         5
-##    ...       ...       ...       ...
-##   [46]    211230    211234         5
-##   [47]    215951    215955         5
-##   [48]    220075    220079         5
-##   [49]    227426    227430         5
-##   [50]    227692    227696         5</code></pre>
+## [1] &quot;bf1 63 63&quot;
+## [1] &quot;bf2 63 63&quot;
+## [1] &quot;2017-02-28 16:05:10 runLayerBinding.fast pos 2&quot;</code></pre>
 <p>Hopefully, the layer called ‘promoter’ should now be marked in some places.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">modLayers$layerSet[[<span class="st">'promoter'</span>]]</code></pre></div>
+<pre><code>## IRanges object with 63 ranges and 0 metadata columns:
+##            start       end     width
+##        &lt;integer&gt; &lt;integer&gt; &lt;integer&gt;
+##    [1]      5013      5017         5
+##    [2]      5523      5527         5
+##    [3]      5976      5980         5
+##    [4]      7088      7092         5
+##    [5]      7136      7140         5
+##    ...       ...       ...       ...
+##   [59]    216240    216244         5
+##   [60]    218255    218259         5
+##   [61]    220880    220884         5
+##   [62]    222990    222994         5
+##   [63]    227427    227431         5</code></pre>
 </div>
 <div id="visualise-the-results" class="section level3">
 <h3>Visualise the results</h3>
 <p>What happened in the simulation?</p>
+<p>Are the marked regions anywhere near the real Yeast promoters? - No.</p>
 </div>
 <div id="using-larger-genomes" class="section level3">
 <h3>Using larger genomes</h3>

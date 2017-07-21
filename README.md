@@ -77,6 +77,14 @@ To view what vignettes are available, type
 ### Notes (reverse chronological)
 
 
+__2017-07-14__ 
+
+Reading [Veselovska2015Deep](http://www.citeulike.org/user/daveGerrard/article/14390669)  about DNA methylation in oocytes. CpG methylation arranged in blocks. They posit due to transcription. Could be interesting modelling case.
+
+ - TODO see what data they have
+ - Initiate a list of potential models and datasets.
+
+
 __2017-02-20__ 
 
 Have done quite some work moving to and allowing install from github,  getting vignettes to load. An example vignette will be mus X chromosome inactivation.
