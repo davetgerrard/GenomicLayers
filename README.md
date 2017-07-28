@@ -71,7 +71,7 @@ To view what vignettes are available, type
 | 2015-12-22 | 2015-12-22 | 1 |  Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE |
 | 2015-12-23 | 2015-12-22 | 1 |  Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits). |
 | 2017-01-27 | 2015-12-22 | 1 | GitHub repo (requires open access?) |
-
+| TODO | 2017-07-21 | 1 | Cut this TODO list and progress log out into a separate file. |
 
 
 ### Notes (reverse chronological)
