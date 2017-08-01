@@ -15,7 +15,15 @@ The ability of factors to bind changes through this series so that the number an
 
 ## Installation 
 
-in R:-
+
+GenomicLayers depends upon some [Bioconductor](https://www.bioconductor.org/) packages (BSGenome, GenomicRanges, Biostrings). One of the vignettes also depends on the BSgenome package BSgenome.Mmusculus.UCSC.mm9 . If you install this first, it should install all the correct dependencies.
+
+	source("https://bioconductor.org/biocLite.R")
+	biocLite("BSgenome.Mmusculus.UCSC.mm9")
+
+GenomicLayers can be installed direct from GitHub using the [devtools](https://github.com/hadley/devtools) package. See [installing devtools]. You will need the latest version of devtools.
+
+Then to install GenomicLayers from Github:-
 
 	library(devtools)
 	install_github(repo="davetgerrard/GenomicLayers",build_vignettes = TRUE)
