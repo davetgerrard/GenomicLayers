@@ -21,7 +21,7 @@ GenomicLayers depends upon some [Bioconductor](https://www.bioconductor.org/) pa
 	source("https://bioconductor.org/biocLite.R")
 	biocLite("BSgenome.Mmusculus.UCSC.mm9")
 
-GenomicLayers can be installed direct from GitHub using the [devtools](https://github.com/hadley/devtools) package. See [installing devtools]. You will need the latest version of devtools.
+GenomicLayers can be installed direct from GitHub using the [devtools](https://github.com/hadley/devtools) package.  You will need the latest version of devtools.
 
 Then to install GenomicLayers from Github:-
 

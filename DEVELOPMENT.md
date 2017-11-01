@@ -40,6 +40,19 @@
 
 ### Notes (reverse chronological)
 
+__2017-10-06__
+
+Another potential model system are sink effects in Drosophila caused by Y chromosome heterochromatin. Possibly Doris Bachtrog has data. 
+
+PopGroup talk by Doris Bachtrog (Jan 2017) on sink effects of Y chromosome (affecting distribution genome-wide). Is there a paper to go with this? (emailed her today).
+
+http://populationgeneticsgroup.org.uk/wp-content/uploads/2016/06/Programme-for-website.pdf
+
+>Friday 6th January, 09:10 
+>Chromatin sinks & sex-specific aging in Drosophila: a role for the Y chromosome?
+>Doris Bachtrog, Professor of Evolutionary Genomics
+>Department of Integrative Biology, University of California, Berkeley 
+>Heterochromatin suppresses repetitive DNA, and a loss of heterochromatin has been observed in aged  cells  of  several  species,  including  humans  and  Drosophila. Males  often  contain  substantially more  heterochromatic DNA than females, due to the presence of a large, repeat-rich Y chromosome, and  male  flies generally have shorter average life spans  than  females. Despite a lack of active genes, Y  chromosomes  in  Drosophila  influence  expression  of  100s  of  genes  genome-wide,  possibly  by  sequestering key components of  the heterochromatin machinery away  from other positions in  the  genome.  To  directly  test  the  influence  of  the  Y  chromosome  on  the  genome-wide  chromatin  landscape,  we  assayed  the  genomic  distribution  of  histone  modifications  associated  with  heterochromatin (H3K9me2 and H3K9me3) in fruit flies with varying sex chromosome complements  (X0, XY and XYY males; XX and XXY females). We show that both the presence and the number of Y  chromosomes  strongly  influence  genome-wide  enrichment  patterns  of  repressive  chromatin  modifications,  and  the  additional  Y  chromosome  in  XYY  males  and  XXY  females  diminishes  the  heterochromatic signal in normally silenced, repeat-rich regions, which is accompanied by an increase  in expression of Y-linked repeats. Thus, Y chromosomes influence heterochromatin integrity genomewide.  In addition, we show that repetitive DNA becomes de-repressed more rapidly in old male flies  relative to females, and repeats on the Y chromosome are disproportionally re-activated during aging.  This  is  associated  with  a  loss  of  heterochromatin  and  an  enrichment  of  active  histone  marks  at  repetitive elements during aging in male  flies, and a general redistribution of repressive chromatin  marks in aged males away from pericentromeric regions and the Y. By generating flies with different  sex chromosome karyotypes (XXY females and X0 and XYY males), we show that repeat de-repression  and  average  lifespan  is  directly  correlated  with  the  number  of  Y  chromosomes.  Thus,  sex-specific  chromatin differences contribute to sex-specific aging in flies. 
 
 __2017-07-14__ 
 
