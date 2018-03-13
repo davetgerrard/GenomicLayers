@@ -2,11 +2,11 @@
 #'
 #' Generate a list of matches for a binding factor against a layerSet object. 
 #'
-#' @param layerSet method to do something to (\code{"hsv"} or \code{"cluster"})
-#' @param bindingFactor description of that param
-#' @param clusterGap  =10 you get the idea
-#' @param max.window    =10000000 you get the idea
-#' @param verbose you get the idea
+#' @param layerSet the \code{"layerSet"} target
+#' @param bindingFactor the \code{"bindingFactor"} to match
+#' @param clusterGap  =10 NOT IMPLEMENTED
+#' @param max.window    =10000000 on less powerful computers, break up the search into windows of this size.
+#' @param verbose output more information to the screen
 #'
 #' @return \code{"hits"}
 #'

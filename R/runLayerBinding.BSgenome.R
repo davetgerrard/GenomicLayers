@@ -1,15 +1,15 @@
 #' Run the layer binding simulation on a BSgenome object
 #'
-#' Description text here
+#' Simulate layer binding by the binding factor on the layerList
 #'
-#' @param layerList method to do something to (\code{"hsv"} or \code{"cluster"})
-#' @param factorSet description of that param
-#' @param iterations you get the idea
-#' @param bindingFactorFreqs you get the idea
-#' @param watch.function you get the idea
-#' @param collect.stats you get the idea
-#' @param target.layer you get the idea
-#' @param verbose you get the idea
+#' @param layerList a \code{"Layerlist"} object containing a layerSet and other meta-data
+#' @param factorSet a \code{"list"} of \code{"bindingFactor"} objects
+#' @param iterations how many changes to make  NEED TO RENAME THIS
+#' @param bindingFactorFreqs the relative proportions of each \code{"bindingFactor"} in \code{"factorSet"}
+#' @param watch.function have this function execute during each iteration e.g. print something
+#' @param collect.stats collect a table of stats each iteration
+#' @param target.layer NOT IMPLEMENTED
+#' @param verbose give more output
 #'
 #' @return \code{"LayerList"}
 #'

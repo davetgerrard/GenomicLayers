@@ -2,7 +2,7 @@
 #'
 #' Description text here
 #'
-#' @param layerList a \code{"Layerlist"} object
+#' @param layerList a \code{"Layerlist"} object containing a layerSet and other meta-data
 #' @param factorSet a \code{"list"} of \code{"bindingFactor"} objects
 #' @param iterations how many changes to make  NEED TO RENAME THIS
 #' @param bindingFactorFreqs the relative proportions of each \code{"bindingFactor"} in \code{"factorSet"}
@@ -14,7 +14,15 @@
 #' @return \code{"LayerList"}
 #'
 #' @examples
-#' x <- 1   # great!
+#' require(Biostrings)     # hopefully this should be available?!
+#' 
+#' basicLayerList <- createLayerList.DNAstring(seq=DNAString("ACGTTGAAGT"), layerNames=c( "LAYER.1"))
+#' 
+#' simpleBindingFactor <- createBindingFactor.layer_region(name="simpleBF")
+#' 
+#' runLayerBinding(basicLayerList, factorSet= list(simpleBF = simpleBindingFactor))  # not working.
+#' 
+#' 
 #'
 #' @export
 runLayerBinding <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE, ...)  {

@@ -21,14 +21,14 @@
 | STARTED | 2015-12-22 | 1 |  Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R |
 | TODO | 2016-02-16 | 1 |  Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two? |
 | TODO | 2016-02-16 | 1 |  3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track.  |
-| TODO | 2016-09-05 | 1 |  Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it.  |
+| TODO | 2016-09-05 | 2 |  Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it.  |
 | TODO | 2016-09-05 | 1 | createBindingFactor()  where user specifies some or all properties and function fills in the rest. |
 | TODO | 2016-09-05 | 1 | runLayerBinding.BSgenome() for all binding factor types |
 | TODO | 2016-09-06 | 1 | Map which functions are in use by other functions. Begin to deprecate and remove development functions. |
 | TODO | 2016-09-06 | 1 | Write createBindingFactor.XXX functions for other BF types.  |
 | TODO | 2016-10-19 | 1 | Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT. |
 | TODO | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement. __N.B.__ but where to store as matchBindingFactor intersects on the other layers and does not retain or return the pure hits. |
-| STARTED | 2017-01-27 | 1 | Document with Roxygen2 |
+| STARTED | 2017-01-27 | 2 | Document with Roxygen2 |
 | TODO | 2017-02-20 | 1 | Heuristics for a better world: Would be good to have a semi-automated model building and improvement. e.g. which promoters have TATA but not expression not explained by TATA alone? Group and find further commonalities. Too many possibilities? |
 | TODO | 201X-XX-XX | 1 |  |
 | 2015-12-22 | 2015-12-22 | 1 | Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once.  |
@@ -39,6 +39,11 @@
 
 
 ### Notes (reverse chronological)
+
+__2018-03-13__
+
+REST targeting of neuronal genes for silencing using well defined rare motif and recruits polycomb.  Another potential application.
+
 
 __2017-10-06__
 
