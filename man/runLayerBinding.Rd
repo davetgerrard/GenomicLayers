@@ -41,6 +41,22 @@ simpleBindingFactor <- createBindingFactor.layer_region(name="simpleBF")
 
 runLayerBinding(basicLayerList, factorSet= list(simpleBF = simpleBindingFactor))  # not working.
 
+# The above find a match to a single DNA pattern in the sequence and is not different from using matchPattern()
+# Here, we model two layers on the sequence and a second binding factor that only responds to changes 
+# that have already been made to LAYER.1
+
+twoLayerList <- createLayerList.DNAstring(seq=DNAString("ACGTTGCCATAAACGTTGCCATAAGTGT"), 
+layerNames=c( "LAYER.1", "LAYER.2"))
+
+bfList <- list( DNA_A = createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" ) ,
+                LAYER_1_2 = createBindingFactor.layer_region(name="LAYER_1_2", 
+                                                             profile.layers =c("LAYER.1"), profile.marks = c(1), 
+                                                             mod.layers = c("LAYER.2"), mod.marks = c(1)) )
+
+
+
+runLayerBinding(twoLayerList, factorSet= bfList)  
+runLayerBinding(twoLayerList, factorSet= rev(bfList))     # should not produce hits on LAYER.2
 
 
 }
