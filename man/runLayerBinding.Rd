@@ -27,7 +27,7 @@ runLayerBinding(layerList, factorSet, iterations = 1,
 \item{verbose}{give more output}
 }
 \value{
-\code{"LayerList"}
+A list containing a \code{"LayerSet"} and meta-data, a.k.a. a  \code{"LayerList"}
 }
 \description{
 Description text here
@@ -46,7 +46,7 @@ runLayerBinding(basicLayerList, factorSet= list(simpleBF = simpleBindingFactor))
 # that have already been made to LAYER.1
 
 twoLayerList <- createLayerList.DNAstring(seq=DNAString("ACGTTGCCATAAACGTTGCCATAAGTGT"), 
-layerNames=c( "LAYER.1", "LAYER.2"))
+               layerNames=c( "LAYER.1", "LAYER.2"))
 
 bfList <- list( DNA_A = createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" ) ,
                 LAYER_1_2 = createBindingFactor.layer_region(name="LAYER_1_2", 
@@ -59,4 +59,7 @@ runLayerBinding(twoLayerList, factorSet= bfList)
 runLayerBinding(twoLayerList, factorSet= rev(bfList))     # should not produce hits on LAYER.2
 
 
+}
+\seealso{
+\code{\link{runLayerBinding.BSgenome}}
 }

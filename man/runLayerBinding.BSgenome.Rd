@@ -36,3 +36,6 @@ Simulate layer binding by the binding factor on the layerList
 x <- 1   # great!
 
 }
+\seealso{
+\code{\link{runLayerBinding}}
+}

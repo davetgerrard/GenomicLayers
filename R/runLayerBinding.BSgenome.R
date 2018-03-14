@@ -13,6 +13,8 @@
 #'
 #' @return \code{"LayerList"}
 #'
+#' @seealso \code{\link{runLayerBinding}}
+#'
 #' @examples
 #' x <- 1   # great!
 #'

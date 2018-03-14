@@ -11,8 +11,10 @@
 #' @param target.layer NOT IMPLEMENTED
 #' @param verbose give more output
 #'
-#' @return \code{"LayerList"}
+#' @return A list containing a \code{"LayerSet"} and meta-data, a.k.a. a  \code{"LayerList"}
 #'
+#' @seealso \code{\link{runLayerBinding.BSgenome}}
+#' 
 #' @examples
 #' require(Biostrings)     # hopefully this should be available?!
 #' 
@@ -27,7 +29,7 @@
 #' # that have already been made to LAYER.1
 #' 
 #' twoLayerList <- createLayerList.DNAstring(seq=DNAString("ACGTTGCCATAAACGTTGCCATAAGTGT"), 
-#' layerNames=c( "LAYER.1", "LAYER.2"))
+#'                layerNames=c( "LAYER.1", "LAYER.2"))
 #' 
 #' bfList <- list( DNA_A = createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" ) ,
 #'                 LAYER_1_2 = createBindingFactor.layer_region(name="LAYER_1_2", 
