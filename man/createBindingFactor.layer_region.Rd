@@ -53,4 +53,3 @@ Create a new biding factor
 x <- 1   # great!
 
 }
-

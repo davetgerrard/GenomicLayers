@@ -28,4 +28,3 @@ Generate a list of matches for a binding factor against a layerSet object contai
 x <- 1   # great!
 
 }
-

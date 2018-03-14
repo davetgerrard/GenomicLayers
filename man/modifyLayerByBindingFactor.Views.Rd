@@ -26,4 +26,3 @@ Modify a layerSet object according to a bindingFactor and a pre-calculated set o
 x <- 1   # great!
 
 }
-

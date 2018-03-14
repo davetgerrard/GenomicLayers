@@ -52,4 +52,3 @@ Generate a list of matches for a binding factor against a layerSet object.
 x <- 1   # great!
 
 }
-

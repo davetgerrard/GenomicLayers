@@ -10,7 +10,7 @@ runLayerBinding(layerList, factorSet, iterations = 1,
   target.layer = 2, verbose = FALSE, ...)
 }
 \arguments{
-\item{layerList}{a \code{"Layerlist"} object}
+\item{layerList}{a \code{"Layerlist"} object containing a layerSet and other meta-data}
 
 \item{factorSet}{a \code{"list"} of \code{"bindingFactor"} objects}
 
@@ -33,7 +33,14 @@ runLayerBinding(layerList, factorSet, iterations = 1,
 Description text here
 }
 \examples{
-x <- 1   # great!
+require(Biostrings)     # hopefully this should be available?!
+
+basicLayerList <- createLayerList.DNAstring(seq=DNAString("ACGTTGAAGT"), layerNames=c( "LAYER.1"))
+
+simpleBindingFactor <- createBindingFactor.layer_region(name="simpleBF")
+
+runLayerBinding(basicLayerList, factorSet= list(simpleBF = simpleBindingFactor))  # not working.
+
+
 
 }
-

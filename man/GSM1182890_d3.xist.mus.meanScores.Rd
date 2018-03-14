@@ -16,4 +16,3 @@ Mean scores from mm9 chrX inactivation
 GSM1182890_d3.xist.mus.meanScores
 }
 \keyword{datasets}
-

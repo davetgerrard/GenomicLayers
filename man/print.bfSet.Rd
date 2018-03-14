@@ -16,4 +16,3 @@ Formatted printing for a set of binding factors
 x <- 1   # great!
 
 }
-

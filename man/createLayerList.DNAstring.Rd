@@ -28,4 +28,3 @@ mySeq <- DNAString("TGACATCGTCTATCGATCG")
 createLayerList.DNAstring(seq=mySeq, nLayers=1)
 
 }
-
