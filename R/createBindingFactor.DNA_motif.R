@@ -1,31 +1,33 @@
 
-#' Find matches for a binding factor on a layer set
+#' Create a binding factor object to match a given DNA motif
 #'
-#' Generate a list of matches for a binding factor against a layerSet object. 
+#' Create a new binding factor based on a DNA motif that \emph{may}  also require 
+#' marks on others layers and \emph{may} (when used) set marks on other layers.
 #'
-#' @param name method to do something to (\code{"hsv"} or \code{"cluster"})
-#' @param type description of that param
-#' @param patternString  =10 you get the idea
-#' @param patternLength    =10000000 you get the idea
-#' @param stateWidth you get the idea
-#' @param profile.layers you get the idea
-#' @param profile.marks you get the idea
-#' @param mod.layers you get the idea
-#' @param mod.marks you get the idea
-#' @param test.layer0.binding you get the idea
-#' @param test.mismatch.rate you get the idea
-#' @param max.pattern.tries you get the idea
-#' @param min.DM.length you get the idea
-#' @param min.DR.lengt you get the idea
-#' @param verbose you get the idea
+#' @param name give the binding factor a name
+#' @param type = "DNA_motif"  to differentiate from other types
+#' @param patternString  = "N" put motif here (using IUPAC codes for degenerate bases)
+#' @param patternLength   = nchar(patternString)
+#' @param stateWidth the width of pattern to recognise on other layers
+#' @param profile.layers a vector of named layers to set as a match
+#' @param profile.marks a vector of 0/1 to match the layers in profile.layers
+#' @param mod.layers a vector of named layers to alter on a match
+#' @param mod.marks a vector of 0/1 to set on the mod.layers
+#' @param test.layer0.binding when creating, test if the DNA sequence has a match.
+#' @param test.mismatch.rate % mismatches to tolerate when testing
+#' @param max.pattern.tries  NA
+#' @param min.DM.length NA
+#' @param min.DR.lengt NA
+#' @param verbose set to TRUE for more output
 #'
-#' @return \code{"hits"}
-#'
+#' @return \code{"bindingFactor"}
+#' 
+#' @seealso \code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_regexp}}
 #'
 #' @import Biostrings
 #' 
 #' @examples
-#' x <- 1   # great!
+#' DNA_A <- createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" )
 #'
 #' @export
 createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString="N",
