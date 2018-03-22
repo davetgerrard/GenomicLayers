@@ -10,7 +10,7 @@ vignette: >
 ---
 
 
-## Introduction]
+## Introduction
 
 
 A real model of spreading of several factors across the X chromosome.
