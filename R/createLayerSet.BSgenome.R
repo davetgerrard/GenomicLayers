@@ -1,5 +1,22 @@
 # could set some signature methods for this to use createLayerSet for both BSgenomes and arbitrary string collections.
 # this itself could be a class...
+#' Create a genome-wide layerList object
+#'
+#' Convenience wrapper to quickly create a layerList from a BSgenome object.
+#'
+#' @param genome a BSgenome objects
+#' @param n.layers=1
+#' @param layer.names=paste("LAYER",1:n.layers, sep=".")
+#' @param verbose=FALSE
+#'
+#' @return \code{"LayerList"}
+#'
+#' @seealso \code{\link{runLayerBinding.BSgenome}}
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @export
 createLayerSet.BSgenome <- function(genome, n.layers=1, layer.names=paste("LAYER",1:n.layers, sep="."), verbose=FALSE) {
   stopifnot(class(genome) == "BSgenome")
   

@@ -8,6 +8,23 @@
 # hits,
 # bindingFactor,
 # verbose=FALSE
+#' modifyLayerByBindingFactor.BSgenome
+#'
+#'  Modify all hits genome-wide on a layerSet built upon a BSgenome object.
+#'
+#' @param layerSet 
+#' @param hits
+#' @param bindingFactor
+#' @param verbose=FALSE
+#'
+#' @return \code{"LayerList"}
+#'
+#' @seealso \code{\link{runLayerBinding.BSgenome}}
+#'
+#' @examples
+#' x <- 1   # great!
+#'
+#' @export
 modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
   require(Biostrings)
   require(GenomicRanges)
