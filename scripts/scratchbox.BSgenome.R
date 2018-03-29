@@ -1,5 +1,8 @@
 
 
+library(Biostrings)
+library(GenomicLayers)
+
 
 pattern.core <- "GAAAC"
 pattern.long <- "TGAAACR"  # R = puRine (A,G)
@@ -63,7 +66,20 @@ modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verb
 # 2016-09-05 
 
 # with the above configuration, there are 41 possible sites across the genome, setting iterations=30, restricts the number that are marked, so the number of potential sites reduces.
-modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=30)
+modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=30, collect.stats = TRUE)
+
+finalLayer <- scLayerSet
+i <- 1
+statsTrace <- data.frame()
+coverTrace <- data.frame()
+while(i <= 5) {
+  finalLayer <- runLayerBinding.BSgenome(layerList=finalLayer, factorSet=testFS, verbose=TRUE, iterations=30, collect.stats = TRUE)
+  thisRow <- cbind(i, finalLayer$history)
+  statsTrace <- rbind(statsTrace , thisRow)
+  covL <- lapply(coverage(finalLayer$layerSet$LAYER.4), sum)   # get sum of marked regions on specific chromosome
+  coverTrace <- rbind(coverTrace, cbind(i, as.data.frame(covL)))
+  i <- i +1
+}
 
 # TODO convert the above into a test.
 
