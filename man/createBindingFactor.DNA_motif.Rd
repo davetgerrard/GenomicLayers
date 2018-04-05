@@ -14,11 +14,11 @@ createBindingFactor.DNA_motif(name, type = "DNA_motif", patternString = "N",
 \arguments{
 \item{name}{give the binding factor a name}
 
-\item{type}{= "DNA_motif"  to differentiate from other types}
+\item{type}{["DNA_motif"]  to differentiate from other types}
 
-\item{patternString}{= "N" put motif here (using IUPAC codes for degenerate bases)}
+\item{patternString}{["N"] put motif here (using IUPAC codes for degenerate bases)}
 
-\item{patternLength}{= nchar(patternString)}
+\item{patternLength}{length of pattern to be matched [nchar(patternString)]}
 
 \item{stateWidth}{the width of pattern to recognise on other layers}
 
@@ -32,7 +32,7 @@ createBindingFactor.DNA_motif(name, type = "DNA_motif", patternString = "N",
 
 \item{test.layer0.binding}{when creating, test if the DNA sequence has a match.}
 
-\item{test.mismatch.rate}{% mismatches to tolerate when testing}
+\item{test.mismatch.rate}{proportion of mismatches to tolerate when testing [.1]}
 
 \item{max.pattern.tries}{NA}
 
