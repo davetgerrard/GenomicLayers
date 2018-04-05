@@ -102,8 +102,6 @@ while(i <= n.runs) {
 
 
 
-
-
 #plot(statsTrace$i, statsTrace$Coverage.LAYER.4)
 #plot(x=coverTrace$i, y=coverTrace[,-1], )
 
@@ -118,3 +116,7 @@ ggplot(meltCover, aes(x = i, y = value, group = variable, colour = variable)) +
 # trajectories of each chromosome differ (given fixed amount of active substance)
 #  (perhaps should scale for chromosome length).
 dev.off()
+
+
+plot(seqlengths(genome), coverTrace[50, seqnames(genome)])    # coverage is proportional to chromosome length.
+

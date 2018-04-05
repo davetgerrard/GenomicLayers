@@ -5,9 +5,9 @@
 #' Convenience wrapper to quickly create a layerList from a BSgenome object.
 #'
 #' @param genome a BSgenome objects
-#' @param n.layers=1
-#' @param layer.names=paste("LAYER",1:n.layers, sep=".")
-#' @param verbose=FALSE
+#' @param n.layers    1
+#' @param layer.names  paste("LAYER",1:n.layers, sep=".")
+#' @param verbose    Give more output [FALSE]
 #'
 #' @return \code{"LayerList"}
 #'

@@ -10,9 +10,11 @@ createLayerSet.BSgenome(genome, n.layers = 1, layer.names = paste("LAYER",
 \arguments{
 \item{genome}{a BSgenome objects}
 
-\item{layer.names=paste("LAYER", 1:n.layers, }{sep=".")}
+\item{n.layers}{1}
 
-\item{verbose=FALSE}{}
+\item{layer.names}{paste("LAYER",1:n.layers, sep=".")}
+
+\item{verbose}{Give more output [FALSE]}
 }
 \value{
 \code{"LayerList"}

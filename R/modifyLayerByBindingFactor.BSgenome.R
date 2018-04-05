@@ -12,14 +12,14 @@
 #'
 #'  Modify all hits genome-wide on a layerSet built upon a BSgenome object.
 #'
-#' @param layerSet 
-#' @param hits
-#' @param bindingFactor
-#' @param verbose=FALSE
+#' @param layerSet A layerset object
+#' @param hits  The set of hits (GRanges) determined by \code{\link{matchBindingFactor}} or \code{\link{matchBindingFactor.BSgenome}}
+#' @param bindingFactor   An individual bindingFactor object
+#' @param verbose  Give more output
 #'
 #' @return \code{"LayerList"}
 #'
-#' @seealso \code{\link{runLayerBinding.BSgenome}}
+#' @seealso \code{\link{runLayerBinding.BSgenome}}  \code{\link{matchBindingFactor}}  \code{\link{matchBindingFactor.BSgenome}}
 #'
 #' @examples
 #' x <- 1   # great!

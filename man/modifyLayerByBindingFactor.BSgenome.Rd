@@ -8,9 +8,13 @@ modifyLayerByBindingFactor.BSgenome(layerSet, hits, bindingFactor,
   verbose = FALSE)
 }
 \arguments{
-\item{layerSet}{}
+\item{layerSet}{A layerset object}
 
-\item{verbose=FALSE}{}
+\item{hits}{The set of hits (GRanges) determined by \code{\link{matchBindingFactor}} or \code{\link{matchBindingFactor.BSgenome}}}
+
+\item{bindingFactor}{An individual bindingFactor object}
+
+\item{verbose}{Give more output}
 }
 \value{
 \code{"LayerList"}
@@ -23,5 +27,5 @@ x <- 1   # great!
 
 }
 \seealso{
-\code{\link{runLayerBinding.BSgenome}}
+\code{\link{runLayerBinding.BSgenome}}  \code{\link{matchBindingFactor}}  \code{\link{matchBindingFactor.BSgenome}}
 }

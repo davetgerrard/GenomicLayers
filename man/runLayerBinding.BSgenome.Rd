@@ -7,7 +7,7 @@
 runLayerBinding.BSgenome(layerList, factorSet, iterations = 1,
   bindingFactorFreqs = rep(1, length(factorSet)),
   watch.function = function(x) { }, collect.stats = FALSE,
-  target.layer = 2, verbose = FALSE, ...)
+  target.layer = 2, cache.layers = "LAYER.0", verbose = FALSE, ...)
 }
 \arguments{
 \item{layerList}{a \code{"Layerlist"} object containing a layerSet and other meta-data}
@@ -23,6 +23,8 @@ runLayerBinding.BSgenome(layerList, factorSet, iterations = 1,
 \item{collect.stats}{collect a table of stats each iteration}
 
 \item{target.layer}{NOT IMPLEMENTED}
+
+\item{cache.layers}{store hits for these layers if they are immutable (e.g. LAYER.0 sequence) default= "LAYER.0". Set to NULL to prevent caching}
 
 \item{verbose}{give more output}
 }
