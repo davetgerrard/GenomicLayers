@@ -4,6 +4,7 @@
 #'
 #' @param layerSet the \code{"layerSet"} target
 #' @param bindingFactor the \code{"bindingFactor"} to match
+#' @param match.layers  restrict matches to only these named layers (default: all layers in names(bindingFactor$profile))
 #' @param clusterGap  =10 NOT IMPLEMENTED
 #' @param max.window    =10000000 on less powerful computers, break up the search into windows of this size.
 #' @param verbose output more information to the screen
@@ -16,7 +17,9 @@
 #' @import GenomicRanges
 #' 
 #' @export
-matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, max.window=10000000, verbose=FALSE)  {
+matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=names(bindingFactor$profile),
+                                        clusterGap=10, max.window=10000000,
+                                        cache.layers=NULL, verbose=FALSE)  {
   
   require(Biostrings)
   stopifnot( class(layerSet$layerSet[[1]]) == "BSgenome")
@@ -29,9 +32,11 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
   #max.window <- min(max.window, seqRange[2])
   hitList <- list()
   #validHits <-
-  for(thisLayer in names(bindingFactor$profile)) {
+  for(thisLayer in match.layers) {
     thisPattern <- bindingFactor$profile[[thisLayer]]$pattern
     max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
+    if(!(thisLayer %in% cache.layers) | is.null(layerSet$cache[[bindingFactor$name]][[thisLayer]])) {  # this layer has no cache of hits for this factor or is not to be cached
+    if(verbose) print(paste0("Finding matches for ",  bindingFactor$name, " on ", thisLayer)) 
     if(thisLayer == "LAYER.0") {
       patternLength <- bindingFactor$profile[[thisLayer]]$length
       if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
@@ -86,8 +91,17 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, clusterGap=10, 
     # remove those shorter than patternLength (those overlapping the edges.
     hitList[[thisLayer]] <- hitList[[thisLayer]][width(hitList[[thisLayer]]) >= patternLength]
 
+  }  else  {  # attempt to use cached layers
+    if(verbose) print(paste0("Using cached hits for " , bindingFactor$name, " on layer ", thisLayer))
+    if(is.null(layerSet$cache[[bindingFactor$name]][[thisLayer]])) {
+     stop(paste("No cache available for",  bindingFactor$name, "on layer", thisLayer))
+    } else {
+       hitList[[thisLayer]]  <- layerSet$cache[[bindingFactor$name]][[thisLayer]]
+    }
+      
+    
   }
-
+  }  # end of thisLayer loop 
   if(any(lapply(hitList, length) == 0))  {   # one or more of the patterns were not matched.
     validHits <- IRanges()
   } else{

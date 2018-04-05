@@ -9,6 +9,7 @@
 #' @param watch.function have this function execute during each iteration e.g. print something
 #' @param collect.stats collect a table of stats each iteration
 #' @param target.layer NOT IMPLEMENTED
+#' @param cache.layers store hits for these layers if they are immutable (e.g. LAYER.0 sequence) default= "LAYER.0". Set to NULL to prevent caching
 #' @param verbose give more output
 #'
 #' @return \code{"LayerList"}
@@ -19,7 +20,9 @@
 #' x <- 1   # great!
 #'
 #' @export
-runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), watch.function=function(x){}, collect.stats=FALSE, target.layer=2, verbose=FALSE, ...)  {
+runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), 
+                                     watch.function=function(x){}, collect.stats=FALSE, target.layer=2, cache.layers="LAYER.0",
+                                     verbose=FALSE, ...)  {
   if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   
@@ -38,9 +41,14 @@ runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, binding
     stats.table <- NULL
   }
   max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
+  
+  if(!is.null(cache.layers)  & is.null(newLayerList$cache)) {  # generate a new cache of hits for each factor on the specified layers.
+    if(verbose) print("Generating hits cache")
+    newLayerList <- generateHitsCache(newLayerList, factorSet=factorSet, cache.layers=cache.layers, verbose=verbose)
+  }
   for(thisBF in bindingOrder)  {
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
-    theseHits <- matchBindingFactor.BSgenome(newLayerList, factorSet[[thisBF]], verbose=verbose, ...)
+    theseHits <- matchBindingFactor.BSgenome(newLayerList, factorSet[[thisBF]], cache.layers=cache.layers, verbose=verbose, ...)
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
 	#print(length(theseHits))
     if(length(theseHits) < 1) {
