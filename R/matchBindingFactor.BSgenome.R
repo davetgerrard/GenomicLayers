@@ -23,6 +23,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   
   require(Biostrings)
   stopifnot( class(layerSet$layerSet[[1]]) == "BSgenome")
+  if(! all(names(bindingFactor$profile) %in% names(layerSet$layerSet))) stop("binding factor matches layers not present in layerSet")
   genome <- layerSet$layerSet[[1]]
   genome.sl <- seqlengths(genome)
   genome.starts <- rep(1, length(genome))
@@ -42,8 +43,23 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
       if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
         hitList[[thisLayer]] <- GRanges(seqnames(genome), IRanges(start=1, end=seqlengths(genome)),seqinfo=seqinfo(genome))
       } else {
+        if (bindingFactor$type == "DNA_regexp" )  {   # a regular expression on DNA e.g. "(CG.{0,20}){9}CG"
+          bsParams <- new("BSParams", X=genome, FUN=gregexpr)  # set up params for using bsapply
+          grepResultBS <- bsapply(bsParams, pattern=thisPattern)  # run gregexpr over each chromosome separately
+          all.hits <- GRanges(seqinfo=seqinfo(genome))   # empty GRanges to collate the results from different chroms
+          for(chromName in names(grepResultBS)) {  # cycle through chroms and convert matches to GRanges
+            grepResult <- grepResultBS[[chromName]]
+             if(grepResult[[1]][1] == -1 ) {  # no grep hits, do nothing
+              #win.hits <- IRanges() 
+            } else {
+              win.hits <- GRanges(chromName, IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE)))
+            }
+            all.hits <- c(all.hits, win.hits)
+          }
+        } else {
         #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
         all.hits <- vmatchPattern(thisPattern, genome, fixed=F) 
+        }
         hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
         #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
       }

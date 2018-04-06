@@ -21,16 +21,17 @@
 | STARTED | 2015-12-22 | 1 |  Write a reporting function for factorSet that states how many marks are applied for each factor (a) natively (could be none) or (b) when they are applied as part of the factorSet (in order). see pfs.plotting.R |
 | TODO | 2016-02-16 | 1 |  Implement optimisation test between two competing sets of sites (e.g. two sets of tissue-specific genes). Ignore other genome features. Is this one optimisation or two? |
 | TODO | 2016-02-16 | 1 |  3D chromatin structure can be approximated by providing a table of compartments (another bed track?). Then restrict offsetted mods to occur within the compartment.  Compartments could be a modelled layer, or an independent supplied track.  |
-| TODO | 2016-09-05 | 2 |  Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it.  |
-| TODO | 2016-09-05 | 1 | createBindingFactor()  where user specifies some or all properties and function fills in the rest. |
 | TODO | 2016-09-05 | 1 | runLayerBinding.BSgenome() for all binding factor types |
 | TODO | 2016-09-06 | 1 | Map which functions are in use by other functions. Begin to deprecate and remove development functions. |
-| TODO | 2016-09-06 | 1 | Write createBindingFactor.XXX functions for other BF types.  |
 | TODO | 2016-10-19 | 1 | Storage of chromosome sequence as a pointer when saving LayerSet or LayerList objects. ADVANCED, NOT URGENT. |
-| TODO | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement. __N.B.__ but where to store as matchBindingFactor intersects on the other layers and does not retain or return the pure hits. |
 | STARTED | 2017-01-27 | 2 | Document with Roxygen2 |
 | TODO | 2017-02-20 | 1 | Heuristics for a better world: Would be good to have a semi-automated model building and improvement. e.g. which promoters have TATA but not expression not explained by TATA alone? Group and find further commonalities. Too many possibilities? |
+| TODO | 2018-04-05 | 1 | Sort out use of names within bindingFactors and lists of bindingFactors. Some functions use the $name from each bindingFactor and others use the names(list) method. These might not agree so room for confusion/error.  |
 | TODO | 201X-XX-XX | 1 |  |
+| 2018-04-05 | 2016-09-06 | 1 | Write createBindingFactor.XXX functions for other BF types.  |
+| 2018-04-05 | 2016-09-05 | 1 | createBindingFactor()  where user specifies some or all properties and function fills in the rest. |
+| 2018-04-05 | 2016-09-05 | 2 |  Run whole genome layerBinding.   Design?  Was going to use parallelisation to speed things up, but need to assess all chroms for hits before applying them to allow for competition (sink effect etc). May also need weighting factor to apply hits across genome? Hmm, this will probably require another re-design to allow (force) layerSets to be genome wide objects, e.g. layeredGenome with layeredChroms beneath it.  |
+| 2018-04-05 | 2017-01-27 | 1 | RunLayerBinding to optionally cache hits to LAYER.0 (DNA-sequence). Should be a major performance improvement. __N.B.__ but where to store as matchBindingFactor intersects on the other layers and does not retain or return the pure hits. |
 | 2015-12-22 | 2015-12-22 | 1 | Allow duplication/incorporation of the same factor within a factorSet so that it can be applied more than once.  |
 | 2015-12-22 | 2015-12-22 | 1 |  Test if even proportions of mutation types (duplicate, insert, delete) promotes greater numbers of factors. (Can influence be separated from optimisation? - only if number goes down). Could set deletion rate higher than combined duplicate+insert.  - FINE |
 | 2015-12-23 | 2015-12-22 | 1 |  Run with many more factors to find more TSS? Or allow number of factors to mutate (start small, allow to grow within limits). |
@@ -39,6 +40,26 @@
 
 
 ### Notes (reverse chronological)
+
+__2018-04-05__
+
+Spent a day implementing hit caching for runLayerBinding.BSgenome.  New function generateHitsCache() and associated cache.layers parameter for runLayerBinding.BSgenome and matchBindingFactor.BSgenome.  
+_generateHitsCache_ builds a list storing hits object for each bindingFactor on specfic layers (e.g. LAYER.0). Importantly, this is independent of the other layers used in the profile for the bindingFactor i.e. it stores ALL hit positions for a DNA motif in the genome. The cache is attached the layerList object as a sister to the layerSet.
+
+LayerList
+ - $layerSet
+ 	* LAYER.0
+ 	* LAYER.1
+ 	...
+ - $history
+ - $cache
+ 	* bf.name 1
+ 		LAYER.0 hits
+ 	* bf.name 2
+ 		LAYER.0 hits
+ 
+ 
+Speeds up yeast genome sim by x2 and human sim by nearly x5!
 
 __2018-03-13__
 
