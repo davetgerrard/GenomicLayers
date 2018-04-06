@@ -52,7 +52,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
              if(grepResult[[1]][1] == -1 ) {  # no grep hits, do nothing
               #win.hits <- IRanges() 
             } else {
-              win.hits <- GRanges(chromName, IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE)))
+              win.hits <- GRanges(chromName, IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE)),seqinfo=seqinfo(genome))
             }
             all.hits <- c(all.hits, win.hits)
           }
