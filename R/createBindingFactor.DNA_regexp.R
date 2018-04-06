@@ -13,7 +13,7 @@
 #' @param mod.layers a vector of named layers to alter on a match
 #' @param mod.marks a vector of 0/1 to set on the mod.layers
 #' @param test.layer0.binding when creating, test if the DNA sequence has a match.
-#' @param test.mismatch.rate % mismatches to tolerate when testing
+#' @param test.mismatch.rate proportion of mismatches to tolerate when testing
 #' @param max.pattern.tries  NA
 #' @param min.DM.length NA
 #' @param min.DR.lengt NA

@@ -32,7 +32,7 @@ createBindingFactor.DNA_regexp(name, type = "DNA_regexp",
 
 \item{test.layer0.binding}{when creating, test if the DNA sequence has a match.}
 
-\item{test.mismatch.rate}{% mismatches to tolerate when testing}
+\item{test.mismatch.rate}{proportion of mismatches to tolerate when testing}
 
 \item{max.pattern.tries}{NA}
 
