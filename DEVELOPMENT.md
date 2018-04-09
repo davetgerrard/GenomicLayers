@@ -27,6 +27,8 @@
 | STARTED | 2017-01-27 | 2 | Document with Roxygen2 |
 | TODO | 2017-02-20 | 1 | Heuristics for a better world: Would be good to have a semi-automated model building and improvement. e.g. which promoters have TATA but not expression not explained by TATA alone? Group and find further commonalities. Too many possibilities? |
 | TODO | 2018-04-05 | 1 | Sort out use of names within bindingFactors and lists of bindingFactors. Some functions use the $name from each bindingFactor and others use the names(list) method. These might not agree so room for confusion/error.  |
+| TODO | 2018-04-06 | 1 | Decide if and how to implement either/or matching. Can the same factor bind to multiple patterns? |
+| TODO | 2018-04-06 | 1 |  Similarly, is worth having ranked binding sites? Or just have changing threshold filter? Or included variations on a bindingFactor? |
 | TODO | 201X-XX-XX | 1 |  |
 | 2018-04-05 | 2016-09-06 | 1 | Write createBindingFactor.XXX functions for other BF types.  |
 | 2018-04-05 | 2016-09-05 | 1 | createBindingFactor()  where user specifies some or all properties and function fills in the rest. |
@@ -40,6 +42,22 @@
 
 
 ### Notes (reverse chronological)
+
+__2018-04-07__
+
+Completed a run using 20,000 bfs and 10,000 iterations on whole mouse genome. 
+
+Took in total about 17 hours on one cpu. The initial caching  took 94 seconds, but after that the first runs were only 2 seconds. By the end of the the simulation, the runs were taking 8 seconds. 
+
+The resulting coverage supported a properly working reciprocal model in that coverages per chromosome reached 10s millions bp by the end of the sim. However, as some of the mouse chromosomes approach 200Mbp, the same sim might require x10 as many iterations, and perhaps more to get close to saturation.  Perhaps need to quantify time to 50% saturation or rate of spreading. 
+
+__2018-04-06__
+
+Caching appears to be working now for whole mouse genome running the simple X-inactivatino model.  In one run, the first iteration took about 9minutes (inclduing the caching), then subsequent runs took less than five seconds. 
+
+To get this to work I had to implement DNA_regexp type binding factors withing matchBindingFactor.BSgenome(). I think this is working correctly, though I had to fiddle with quite a lot of it. 
+
+After plotting the coverage over each chromosome though, they each seem to stall at less than a megabase (between 200-600k bases). I don't know why.
 
 __2018-04-05__
 

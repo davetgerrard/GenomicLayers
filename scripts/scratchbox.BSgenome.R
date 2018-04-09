@@ -93,3 +93,61 @@ genome <- BSgenome.Hsapiens.UCSC.hg19
 matchPattern("TTTCCCTAATC", genome, fixed=F)
 
 tf.hits <- vmatchPattern("TTTCCCTAATC", genome, fixed=F) 
+library(BSgenome.Scerevisiae.UCSC.sacCer3)
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3   # for convenience
+genome
+seqnames(genome)
+summary(genome)
+organism(genome)
+provider(genome) 
+
+
+tf.hits <- vmatchPattern(pattern.long, genome, fixed=F) 
+
+
+scLayerSet <- createLayerSet.BSgenome(genome=BSgenome.Scerevisiae.UCSC.sacCer3, n.layers = 5, verbose=TRUE)
+
+#genome <- BSgenome.Hsapiens.UCSC.hg19
+genome
+
+
+matchBindingFactor.BSgenome(scLayerSet, bf.CpGisland)
+
+
+  "(CG.{0,20}){9}CG"
+
+  gregexpr("(CG.{0,20}){9}CG",  scLayerSet$layerSet[["LAYER.0"]])
+  gregexpr("(CG.{0,20}){9}CG",  scLayerSet$layerSet[["LAYER.0"]][[1]])
+  bsapply(scLayerSet$layerSet[["LAYER.0"]], FUN=gregexpr, pattern="(CG.{0,20}){9}CG")
+  bsapply(BSgenome.Scerevisiae.UCSC.sacCer3, FUN=gregexpr, pattern="(CG.{0,20}){9}CG")
+  bsapply(genome, FUN=gregexpr, pattern="(CG.{0,20}){9}CG")
+  
+  
+  bsParams <- new("BSParams", X=genome, FUN=gregexpr)
+  grepResultBS <- bsapply(bsParams, pattern="(CG.{0,20}){9}CG")
+  
+  bsGrepGR <- GRanges()
+  for(chromName in names(grepResultBS)) {
+    grepResult <- grepResultBS[[chromName]]
+  #grepResult <- gregexpr(bindingFactor$profile[[thisLayer]]$pattern, layerSet[[thisLayer]][win.starts[i]: win.ends[i]])
+  if(grepResult[[1]][1] == -1 ) {  # no grep hits
+    win.hits <- IRanges() 
+  } else {
+    win.hits <- GRanges(chromName, IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE)))
+  }
+    bsGrepGR <- c(bsGrepGR, win.hits)
+  }
+  
+  grepResult <- gregexpr(bindingFactor$profile[[thisLayer]]$pattern, layerSet[[thisLayer]][win.starts[i]: win.ends[i]])
+  
+  
+  
+  
+  finalLayer <- runLayerBinding.BSgenome(layerList=finalLayer, factorSet=XFS, verbose=TRUE, iterations=30, collect.stats = TRUE)
+  finalLayer <- runLayerBinding.BSgenome(layerList=finalLayer, factorSet=XFS[1], verbose=TRUE, iterations=30, collect.stats = TRUE)
+  finalLayer <- runLayerBinding.BSgenome(layerList=finalLayer, factorSet=XFS[2], verbose=TRUE, iterations=30, collect.stats = TRUE)
+  finalLayer <- runLayerBinding.BSgenome(layerList=finalLayer, factorSet=XFS[3], verbose=TRUE, iterations=30, collect.stats = TRUE)
+  
+  matchBindingFactor.BSgenome(finalLayer, bf.CpGisland)
+  matchBindingFactor.BSgenome(finalLayer, testFactor2)
+  
