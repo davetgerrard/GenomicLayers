@@ -4,8 +4,12 @@
 \alias{modifyLayerByBindingFactor.Views}
 \title{Modify a layerSet object}
 \usage{
-modifyLayerByBindingFactor.Views(layerSet, hits, bindingFactor,
-  verbose = FALSE)
+modifyLayerByBindingFactor.Views(
+  layerSet,
+  hits,
+  bindingFactor,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{layerSet}{method to do something to (\code{"hsv"} or \code{"cluster"})}

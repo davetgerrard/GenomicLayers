@@ -4,8 +4,7 @@
 \alias{generateHitsCache}
 \title{Generate a cache of binding factor within a LayerList}
 \usage{
-generateHitsCache(layerList, factorSet, cache.layers = NULL,
-  verbose = FALSE)
+generateHitsCache(layerList, factorSet, cache.layers = NULL, verbose = FALSE)
 }
 \arguments{
 \item{layerList}{a \code{"Layerlist"} object containing a layerSet and other meta-data}

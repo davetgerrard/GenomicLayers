@@ -4,9 +4,15 @@
 \alias{matchBindingFactor.BSgenome}
 \title{Find matches for a binding factor on a layer set containing a BSgenome sequence}
 \usage{
-matchBindingFactor.BSgenome(layerSet, bindingFactor,
-  match.layers = names(bindingFactor$profile), clusterGap = 10,
-  max.window = 1e+07, cache.layers = NULL, verbose = FALSE)
+matchBindingFactor.BSgenome(
+  layerSet,
+  bindingFactor,
+  match.layers = names(bindingFactor$profile),
+  clusterGap = 10,
+  max.window = 1e+07,
+  cache.layers = NULL,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{layerSet}{the \code{"layerSet"} target}

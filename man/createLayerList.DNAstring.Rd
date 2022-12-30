@@ -4,8 +4,12 @@
 \alias{createLayerList.DNAstring}
 \title{Create a LayerList object from a DNA sequence}
 \usage{
-createLayerList.DNAstring(seq, layerNames = NULL,
-  nLayers = length(layerNames), verbose = TRUE)
+createLayerList.DNAstring(
+  seq,
+  layerNames = NULL,
+  nLayers = length(layerNames),
+  verbose = TRUE
+)
 }
 \arguments{
 \item{seq}{a (\code{"DNAString"} object}

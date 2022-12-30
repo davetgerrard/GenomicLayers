@@ -4,8 +4,13 @@
 \alias{matchBindingFactor}
 \title{Find matches for a binding factor on a layer set}
 \usage{
-matchBindingFactor(layerSet, bindingFactor, clusterGap = 10,
-  max.window = 1e+07, verbose = FALSE)
+matchBindingFactor(
+  layerSet,
+  bindingFactor,
+  clusterGap = 10,
+  max.window = 1e+07,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{layerSet}{the \code{"layerSet"} target}

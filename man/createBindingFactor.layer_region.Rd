@@ -4,13 +4,27 @@
 \alias{createBindingFactor.layer_region}
 \title{Create a new biding factor}
 \usage{
-createBindingFactor.layer_region(name, type = "layer_region",
-  patternLength = 1, patternString = "N", mismatch.rate = 0,
-  stateWidth = patternLength, profile.layers = "LAYER.1",
-  profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1, offset = 0,
-  offset.method = NULL, align = "centre", test.layer0.binding = FALSE,
-  test.mismatch.rate = 0.1, max.pattern.tries = 1000, min.DM.length = 2,
-  min.DR.length = 10, verbose = FALSE)
+createBindingFactor.layer_region(
+  name,
+  type = "layer_region",
+  patternLength = 1,
+  patternString = "N",
+  mismatch.rate = 0,
+  stateWidth = patternLength,
+  profile.layers = "LAYER.1",
+  profile.marks = 0,
+  mod.layers = "LAYER.1",
+  mod.marks = 1,
+  offset = 0,
+  offset.method = NULL,
+  align = "centre",
+  test.layer0.binding = FALSE,
+  test.mismatch.rate = 0.1,
+  max.pattern.tries = 1000,
+  min.DM.length = 2,
+  min.DR.length = 10,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{name}{method to do something to (\code{"hsv"} or \code{"cluster"})}

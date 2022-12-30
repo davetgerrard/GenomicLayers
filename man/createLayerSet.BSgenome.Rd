@@ -4,8 +4,12 @@
 \alias{createLayerSet.BSgenome}
 \title{Create a genome-wide layerList object}
 \usage{
-createLayerSet.BSgenome(genome, n.layers = 1, layer.names = paste("LAYER",
-  1:n.layers, sep = "."), verbose = FALSE)
+createLayerSet.BSgenome(
+  genome,
+  n.layers = 1,
+  layer.names = paste("LAYER", 1:n.layers, sep = "."),
+  verbose = FALSE
+)
 }
 \arguments{
 \item{genome}{a BSgenome objects}

@@ -4,10 +4,18 @@
 \alias{runLayerBinding.BSgenome}
 \title{Run the layer binding simulation on a BSgenome object}
 \usage{
-runLayerBinding.BSgenome(layerList, factorSet, iterations = 1,
+runLayerBinding.BSgenome(
+  layerList,
+  factorSet,
+  iterations = 1,
   bindingFactorFreqs = rep(1, length(factorSet)),
-  watch.function = function(x) { }, collect.stats = FALSE,
-  target.layer = 2, cache.layers = "LAYER.0", verbose = FALSE, ...)
+  watch.function = function(x) { },
+  collect.stats = FALSE,
+  target.layer = 2,
+  cache.layers = "LAYER.0",
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{layerList}{a \code{"Layerlist"} object containing a layerSet and other meta-data}

@@ -4,10 +4,17 @@
 \alias{runLayerBinding}
 \title{Run the layer binding simulation}
 \usage{
-runLayerBinding(layerList, factorSet, iterations = 1,
+runLayerBinding(
+  layerList,
+  factorSet,
+  iterations = 1,
   bindingFactorFreqs = rep(1, length(factorSet)),
-  watch.function = function(x) { }, collect.stats = FALSE,
-  target.layer = 2, verbose = FALSE, ...)
+  watch.function = function(x) { },
+  collect.stats = FALSE,
+  target.layer = 2,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{layerList}{a \code{"Layerlist"} object containing a layerSet and other meta-data}

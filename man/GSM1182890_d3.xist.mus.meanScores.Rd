@@ -4,7 +4,9 @@
 \name{GSM1182890_d3.xist.mus.meanScores}
 \alias{GSM1182890_d3.xist.mus.meanScores}
 \title{Mean scores from mm9 chrX}
-\format{A vector of Mean scores from mm9 chrX}
+\format{
+A vector of Mean scores from mm9 chrX
+}
 \source{
 \url{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3904790/}
 }

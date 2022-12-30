@@ -4,12 +4,23 @@
 \alias{createBindingFactor.DNA_motif}
 \title{Create a binding factor object to match a given DNA motif}
 \usage{
-createBindingFactor.DNA_motif(name, type = "DNA_motif", patternString = "N",
-  patternLength = nchar(patternString), stateWidth = patternLength,
-  profile.layers = "LAYER.1", profile.marks = 0, mod.layers = "LAYER.1",
-  mod.marks = 1, test.layer0.binding = FALSE, test.mismatch.rate = 0.1,
-  max.pattern.tries = 1000, min.DM.length = 2, min.DR.length = 10,
-  verbose = FALSE)
+createBindingFactor.DNA_motif(
+  name,
+  type = "DNA_motif",
+  patternString = "N",
+  patternLength = nchar(patternString),
+  stateWidth = patternLength,
+  profile.layers = "LAYER.1",
+  profile.marks = 0,
+  mod.layers = "LAYER.1",
+  mod.marks = 1,
+  test.layer0.binding = FALSE,
+  test.mismatch.rate = 0.1,
+  max.pattern.tries = 1000,
+  min.DM.length = 2,
+  min.DR.length = 10,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{name}{give the binding factor a name}

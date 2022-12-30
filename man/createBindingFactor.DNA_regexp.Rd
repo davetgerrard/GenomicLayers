@@ -4,12 +4,23 @@
 \alias{createBindingFactor.DNA_regexp}
 \title{Create a binding factor object to match a given pattern of layers}
 \usage{
-createBindingFactor.DNA_regexp(name, type = "DNA_regexp",
-  patternString = "N", patternLength = 0, profile.layers = NULL,
-  profile.marks = NULL, mod.layers = NULL, mod.marks = NULL,
-  stateWidth = patternLength, test.layer0.binding = FALSE,
-  test.mismatch.rate = 0.1, max.pattern.tries = 1000, min.DM.length = 2,
-  min.DR.length = 10, verbose = FALSE)
+createBindingFactor.DNA_regexp(
+  name,
+  type = "DNA_regexp",
+  patternString = "N",
+  patternLength = 0,
+  profile.layers = NULL,
+  profile.marks = NULL,
+  mod.layers = NULL,
+  mod.marks = NULL,
+  stateWidth = patternLength,
+  test.layer0.binding = FALSE,
+  test.mismatch.rate = 0.1,
+  max.pattern.tries = 1000,
+  min.DM.length = 2,
+  min.DR.length = 10,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{name}{give the binding factor a name}

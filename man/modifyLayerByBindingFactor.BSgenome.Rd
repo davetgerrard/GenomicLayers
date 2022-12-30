@@ -4,8 +4,12 @@
 \alias{modifyLayerByBindingFactor.BSgenome}
 \title{modifyLayerByBindingFactor.BSgenome}
 \usage{
-modifyLayerByBindingFactor.BSgenome(layerSet, hits, bindingFactor,
-  verbose = FALSE)
+modifyLayerByBindingFactor.BSgenome(
+  layerSet,
+  hits,
+  bindingFactor,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{layerSet}{A layerset object}
