@@ -2,7 +2,7 @@
 % Please edit documentation in R/createBindingFactor.layer_region.R
 \name{createBindingFactor.layer_region}
 \alias{createBindingFactor.layer_region}
-\title{Create a new biding factor}
+\title{Create a binding factor object to match a given pattern of layers, typically ignoring DNA}
 \usage{
 createBindingFactor.layer_region(
   name,
@@ -27,41 +27,42 @@ createBindingFactor.layer_region(
 )
 }
 \arguments{
-\item{name}{method to do something to (\code{"hsv"} or \code{"cluster"})}
+\item{name}{give the binding factor a name}
 
-\item{type}{description of that param}
+\item{type}{"layer_region"  to differentiate from other types}
 
-\item{patternLength}{=10000000 you get the idea}
+\item{patternLength}{[= 1] length of pattern}
 
-\item{patternString}{=10 you get the idea}
+\item{patternString}{= NOT USED in this case}
 
-\item{stateWidth}{you get the idea}
+\item{stateWidth}{the width of pattern to recognise on other layers, default is same as patternLength}
 
-\item{profile.layers}{you get the idea}
+\item{profile.layers}{a vector of named layers to set as a match}
 
-\item{profile.marks}{you get the idea}
+\item{profile.marks}{a vector of 0/1 to match the layers in profile.layers}
 
-\item{mod.layers}{you get the idea}
+\item{mod.layers}{a vector of named layers to alter on a match}
 
-\item{mod.marks}{you get the idea}
+\item{mod.marks}{a vector of 0/1 to set on the mod.layers}
 
-\item{test.layer0.binding}{you get the idea}
+\item{test.layer0.binding}{when creating, test if the DNA sequence has a match.}
 
-\item{test.mismatch.rate}{you get the idea}
+\item{test.mismatch.rate}{proportion of mismatches to tolerate when testing}
 
-\item{max.pattern.tries}{you get the idea}
+\item{max.pattern.tries}{NA}
 
-\item{min.DM.length}{you get the idea}
+\item{min.DM.length}{NA}
 
-\item{verbose}{you get the idea}
+\item{min.DR.length}{NA}
 
-\item{min.DR.lengt}{you get the idea}
+\item{verbose}{set to TRUE for more output}
 }
 \value{
 \code{"hits"}
 }
 \description{
-Create a new biding factor
+Create a new binding factor based on a simple pattern of 
+marks on others layers and \emph{may} (when used) set marks on other layers.
 }
 \examples{
 x <- 1   # great!
