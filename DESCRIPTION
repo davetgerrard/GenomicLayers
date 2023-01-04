@@ -23,7 +23,8 @@ Suggests:
     parallel,
     knitr,
     rmarkdown,
-    BSgenome.Mmusculus.UCSC.mm9
+    BSgenome.Mmusculus.UCSC.mm9,
+    testthat
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

@@ -13,7 +13,7 @@
 #'
 #' @return A list containing a \code{"LayerSet"} and meta-data, a.k.a. a  \code{"LayerList"}
 #'
-#' @seealso \code{\link{runLayerBinding.BSgenome}}
+#' @seealso \code{\link{runLayerBinding.BSgenome}} \code{\link{matchBindingFactor}} \code{\link{modifyLayerByBindingFactor.Views}}
 #' 
 #' @examples
 #' require(Biostrings)     # hopefully this should be available?!
