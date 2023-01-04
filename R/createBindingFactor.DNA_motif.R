@@ -22,7 +22,7 @@
 #'
 #' @return \code{"bindingFactor"}
 #' 
-#' @seealso \code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_regexp}}
+#' @seealso \code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_regexp}} 
 #'
 #' @import Biostrings
 #' 
@@ -37,16 +37,17 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
                                       min.DM.length=2, min.DR.length=10, verbose=FALSE) {
   
-  
+  # create a list to store the profile that would constitute a match. 
   profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, length=patternLength))
   
   
-  if(length(profile.layers) >0) {
-  for(i in 1:length(profile.layers)) {
-    thisLayer <- profile.layers[i]
-    profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=0.1, length=patternLength)
+  if(length(profile.layers) >0) {  # there are layers to match beyond the sequence layer
+    for(i in 1:length(profile.layers)) {
+      thisLayer <- profile.layers[i]
+      profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=0.1, length=patternLength)
+    }
   }
-  }
+  # now create a second list of intended modifications.
   modList <- list()
   for(i in 1:length(mod.layers)) {
   #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {

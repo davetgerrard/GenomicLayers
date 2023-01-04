@@ -22,7 +22,10 @@
 #' @return \code{"hits"}
 #'
 #' @examples
-#' x <- 1   # great!
+#' bf.LR <- createBindingFactor.layer_region("layerBf", type="layer_region", 
+#'          patternLength = 1, patternString = "N",
+#'           stateWidth = patternLength, profile.layers = "LAYER.1",
+#'           profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
 #'
 #' @export
 createBindingFactor.layer_region <- function(name,  type="layer_region", patternLength=1, patternString="N",

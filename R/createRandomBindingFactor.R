@@ -1,14 +1,36 @@
-# createRandomBindingFactor
-# description
-# Parameters:-
-# name,
-# layerSet,
-# type=c("DNA_motif", "DNA_region","layer_region","layer_island"),
-# test.layer0.binding=FALSE,
-# test.mismatch.rate=.1 ,
-# max.pattern.tries=1000,
-# min.DM.length=2,
-# min.DR.length=10
+#' Randomly generate a binding factor
+#'
+#' Create a new binding factor that \emph{may}  also require 
+#' marks on others layers and \emph{may} (when used) set marks on other layers.
+#' Need to specify the type of factor. 
+#'
+#' @param name give the binding factor a name
+#' @param type  [c("DNA_motif", "DNA_region","layer_region","layer_island")]  to differentiate from other types
+#' @param patternString   ["N"] put motif here (using IUPAC codes for degenerate bases)
+#' @param patternLength   length of pattern to be matched [nchar(patternString)]
+#' @param stateWidth the width of pattern to recognise on other layers
+#' @param profile.layers a vector of named layers to set as a match
+#' @param profile.marks a vector of 0/1 to match the layers in profile.layers
+#' @param mod.layers a vector of named layers to alter on a match
+#' @param mod.marks a vector of 0/1 to set on the mod.layers
+#' @param test.layer0.binding when creating, test if the DNA sequence has a match.
+#' @param test.mismatch.rate  proportion of mismatches to tolerate when testing [.1]
+#' @param max.pattern.tries  1000
+#' @param min.DM.length 2
+#' @param min.DR.lengt 10
+#' @param verbose set to TRUE for more output
+#'
+#' @return \code{"bindingFactor"}
+#' 
+#' @seealso \code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_regexp}} 
+#'
+#' @import Biostrings
+#' 
+#' @examples
+#' rBf <- createRandomBindingFactor(name="DNA_A",type="DNA_motif",patternString = "CAT" )
+#'
+#' @export
+
 createRandomBindingFactor <- function(name, layerSet, type=c("DNA_motif", "DNA_region","layer_region","layer_island"),
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, min.DM.length=2, min.DR.length=10, verbose=FALSE) {
 
