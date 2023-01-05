@@ -14,7 +14,7 @@
 #'
 #' @return \code{"LayerList"}
 #'
-#' @seealso \code{\link{runLayerBinding}} \code{\link{matchBindingFactor.BSgenome}} \code{\link{modifyLayerByBindingFactor.BSgenome}} \code{\link{generateHitsCache}}
+#' @seealso \code{\link{runLayerBinding}} \code{\link{matchBindingFactor.BSgenome}} \code{\link{modifyLayerByBindingFactor.BSgenome}} \code{\link{generateHitsCache}} \code{\link{createLayerSet.BSgenome}} \code{\link{createBindingFactor.DNA_motif}}
 #'
 #' @examples
 #' # test to show whole genome layer binding 
