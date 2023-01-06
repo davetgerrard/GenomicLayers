@@ -68,5 +68,5 @@ runLayerBinding(twoLayerList, factorSet= rev(bfList))     # should not produce h
 
 }
 \seealso{
-\code{\link{runLayerBinding.BSgenome}}
+\code{\link{runLayerBinding.BSgenome}} \code{\link{matchBindingFactor}} \code{\link{modifyLayerByBindingFactor.Views}}
 }

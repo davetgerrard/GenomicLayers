@@ -27,7 +27,11 @@ createLayerSet.BSgenome(
 Convenience wrapper to quickly create a layerList from a BSgenome object.
 }
 \examples{
-x <- 1   # great!
+require(Biostrings)
+require(BSgenome.Scerevisiae.UCSC.sacCer3)  # a relatively small genome
+
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3 
+scLayerSet <- createLayerSet.BSgenome(genome, n.layers=1)
 
 }
 \seealso{

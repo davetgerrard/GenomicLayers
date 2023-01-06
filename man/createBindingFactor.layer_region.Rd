@@ -65,6 +65,9 @@ Create a new binding factor based on a simple pattern of
 marks on others layers and \emph{may} (when used) set marks on other layers.
 }
 \examples{
-x <- 1   # great!
+bf.LR <- createBindingFactor.layer_region("layerBf", type="layer_region", 
+         patternLength = 1, patternString = "N",
+          stateWidth = patternLength, profile.layers = "LAYER.1",
+          profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
 
 }

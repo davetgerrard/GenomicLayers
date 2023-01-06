@@ -27,9 +27,24 @@ modifyLayerByBindingFactor.BSgenome(
 Modify all hits genome-wide on a layerSet built upon a BSgenome object.
 }
 \examples{
-x <- 1   # great!
+require(Biostrings)
+require(BSgenome.Scerevisiae.UCSC.sacCer3)
+
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3   # for convenience
+
+
+scLayerSet <- createLayerSet.BSgenome(genome=genome, n.layers = 5, verbose=TRUE)
+
+testFactor3 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
+                                             mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
+
+listOfHits <- matchBindingFactor.BSgenome(layerSet=scLayerSet, bindingFactor=testFactor3)
+
+moddedLayerSet <- modifyLayerByBindingFactor.BSgenome(layerSet= scLayerSet, hits=listOfHits, bindingFactor=testFactor3)
+
+as.data.frame(lapply(moddedLayerSet$layerSet, length))  # should be hits on LAYER.0 and LAYER.4. Not LAYER.2 as these are set to 0.
 
 }
 \seealso{
-\code{\link{runLayerBinding.BSgenome}}  \code{\link{matchBindingFactor}}  \code{\link{matchBindingFactor.BSgenome}}
+\code{\link{createLayerSet.BSgenome}} \code{\link{createBindingFactor.DNA_motif}} \code{\link{runLayerBinding.BSgenome}}  \code{\link{matchBindingFactor}}  \code{\link{matchBindingFactor.BSgenome}}
 }
