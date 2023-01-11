@@ -45,6 +45,12 @@ createBindingFactor.layer_region(
 
 \item{mod.marks}{a vector of 0/1 to set on the mod.layers}
 
+\item{offset}{0  integer value to indicate relative distance from pattern to apply modifications}
+
+\item{offset.method}{NULL   a function to apply to apply offset.}
+
+\item{align}{"centre"}
+
 \item{test.layer0.binding}{when creating, test if the DNA sequence has a match.}
 
 \item{test.mismatch.rate}{proportion of mismatches to tolerate when testing}
