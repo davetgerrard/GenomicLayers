@@ -12,6 +12,9 @@
 #' @param profile.marks a vector of 0/1 to match the layers in profile.layers
 #' @param mod.layers a vector of named layers to alter on a match
 #' @param mod.marks a vector of 0/1 to set on the mod.layers
+#' @param offset 0  integer value to indicate relative distance from pattern to apply modifications
+#' @param offset.method NULL   a function to apply to apply offset.
+#' @param align "centre"
 #' @param test.layer0.binding when creating, test if the DNA sequence has a match.
 #' @param test.mismatch.rate proportion of mismatches to tolerate when testing
 #' @param max.pattern.tries  NA
