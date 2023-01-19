@@ -79,6 +79,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
             #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
             all.hits <- vmatchPattern(thisPattern, genome, fixed=F) 
           }
+          ###### ToDO make strand specific..  #######
           hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
           #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
         }
@@ -142,12 +143,15 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   # now need to intersect the results. 
   # first test if any required layers are empty as this will mean there are no hits overall. 
   if(any(lapply(hitList, length) == 0))  {   # one or more of the patterns were not matched.
-    validHits <- IRanges()
+    validHits <- GRanges()    #####TODO change IRanges  to GRAnges()  to fix the intersect below.
   } else{
     validHits <- hitList[[1]]
     for(i in 1:length(hitList)) {
       #overlaps <- findOverlaps(validHits, hitList[[i]])
       #validHits <- validHits[unique(queryHits(overlaps))]   # temp value to return
+      ###### TODO: fix this next line to give standed hits. 
+      #   * plus '+' does not preserve strand with ignore.strand=T.  
+      #     With ignore strand=F, then everything becomes "*"
       validHits <- intersect(validHits, hitList[[i]])
     }
     
