@@ -3,6 +3,8 @@
 #'
 #' Create a new binding factor based on a DNA motif that \emph{may}  also require 
 #' marks on others layers and \emph{may} (when used) set marks on other layers.
+#' Makes use of biostrings function \code{\link{vmatchPattern}}
+#' Can use IUPAC codes and allow mismatches 
 #'
 #' @param name give the binding factor a name
 #' @param type  ["DNA_motif"]  to differentiate from other types
@@ -18,6 +20,11 @@
 #' @param max.pattern.tries  NA
 #' @param min.DM.length NA
 #' @param min.DR.lengt NA
+#' @param max.mismatch  0   see \code{\link{vmatchPattern}}
+#' @param min.mismatch  0   see \code{\link{vmatchPattern}}
+#' @param with.indels  FALSE  see \code{\link{vmatchPattern}}
+#' @param fixed  TRUE  see \code{\link{vmatchPattern}}
+#' @param algorithm  "auto"  see \code{\link{vmatchPattern}}
 #' @param verbose set to TRUE for more output
 #'
 #' @return \code{"bindingFactor"}
@@ -29,16 +36,30 @@
 #' @examples
 #' DNA_A <- createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" )
 #'
+#' gc1-2 <- createBindingFactor.DNA_motif(name="gc1-2",
+#'                           patternString="SSSSSSSSSSSSSSSS",
+#'                           max.mismatch= 2, 
+#'                           min.mismatch= 1,
+#'                           fixed="subject",
+#'                           profile.layers = NULL,
+#'                           profile.marks=NULL,
+#'                           mod.layers="LAYER.1", mod.marks = 1)
+#' 
 #' @export
 createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", patternString="N",
                                           patternLength = nchar(patternString), stateWidth=patternLength,
                                           profile.layers="LAYER.1",profile.marks=0,
                                           mod.layers="LAYER.1",mod.marks=1,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
-                                      min.DM.length=2, min.DR.length=10, verbose=FALSE) {
+                                      min.DM.length=2, min.DR.length=10, verbose=FALSE,max.mismatch=0, min.mismatch=0,
+                                      with.indels=FALSE, fixed=TRUE,
+                                      algorithm="auto") {
   
   # create a list to store the profile that would constitute a match. 
-  profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, length=patternLength))
+  # parameters to pass to Biostrings::vmatchPattern()
+  profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, 
+                                   length=patternLength, max.mismatch=max.mismatch, min.mismatch=min.mismatch,
+                                   with.indels=with.indels, fixed=fixed, algorithm=algorithm))
   
   
   if(length(profile.layers) >0) {  # there are layers to match beyond the sequence layer

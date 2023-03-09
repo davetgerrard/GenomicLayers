@@ -77,7 +77,12 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
             }
           } else {
             #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
-            all.hits <- vmatchPattern(thisPattern, genome, fixed=F) 
+            all.hits <- vmatchPattern(thisPattern, genome, 
+                                      fixed=bindingFactor$profile[[thisLayer]]$fixed,
+                                      max.mismatch = bindingFactor$profile[[thisLayer]]$max.mismatch,
+                                      min.mismatch = bindingFactor$profile[[thisLayer]]$min.mismatch, 
+                                      with.indels= bindingFactor$profile[[thisLayer]]$with.indels, 
+                                      algorithm =bindingFactor$profile[[thisLayer]]$algorithm) 
           }
           ###### ToDO make strand specific..  #######
           hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
