@@ -9,7 +9,8 @@ runLayerBinding.BSgenome(
   factorSet,
   iterations = 1,
   bindingFactorFreqs = rep(1, length(factorSet)),
-  watch.function = function(x) { },
+  watch.function = function(x) {
+ },
   collect.stats = FALSE,
   target.layer = 2,
   cache.layers = "LAYER.0",

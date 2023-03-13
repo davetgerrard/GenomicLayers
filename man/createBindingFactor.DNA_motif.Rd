@@ -19,7 +19,12 @@ createBindingFactor.DNA_motif(
   max.pattern.tries = 1000,
   min.DM.length = 2,
   min.DR.length = 10,
-  verbose = FALSE
+  verbose = FALSE,
+  max.mismatch = 0,
+  min.mismatch = 0,
+  with.indels = FALSE,
+  fixed = TRUE,
+  algorithm = "auto"
 )
 }
 \arguments{
@@ -51,6 +56,16 @@ createBindingFactor.DNA_motif(
 
 \item{verbose}{set to TRUE for more output}
 
+\item{max.mismatch}{0   see \code{\link{vmatchPattern}}}
+
+\item{min.mismatch}{0   see \code{\link{vmatchPattern}}}
+
+\item{with.indels}{FALSE  see \code{\link{vmatchPattern}}}
+
+\item{fixed}{TRUE  see \code{\link{vmatchPattern}}}
+
+\item{algorithm}{"auto"  see \code{\link{vmatchPattern}}}
+
 \item{min.DR.lengt}{NA}
 }
 \value{
@@ -59,9 +74,20 @@ createBindingFactor.DNA_motif(
 \description{
 Create a new binding factor based on a DNA motif that \emph{may}  also require 
 marks on others layers and \emph{may} (when used) set marks on other layers.
+Makes use of biostrings function \code{\link{vmatchPattern}}
+Can use IUPAC codes and allow mismatches
 }
 \examples{
 DNA_A <- createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" )
+
+gc1-2 <- createBindingFactor.DNA_motif(name="gc1-2",
+                          patternString="SSSSSSSSSSSSSSSS",
+                          max.mismatch= 2, 
+                          min.mismatch= 1,
+                          fixed="subject",
+                          profile.layers = NULL,
+                          profile.marks=NULL,
+                          mod.layers="LAYER.1", mod.marks = 1)
 
 }
 \seealso{
