@@ -18,7 +18,7 @@ keepBSgenomeSequences <- function(genome, seqnames)
 #sequences_to_keep <- paste0("chr", c(1:20, "X", "Y"))
 sequences_to_keep <- "chr17"
 genomeSub <- keepBSgenomeSequences(genome, sequences_to_keep)
-genomeSub
+genomeSub    # this should now still be a useable BSgenome object but with only one chromosome.  
 
 CGI<- createBindingFactor.DNA_regexp("CGI", patternString="(CG.{0,4}){3}CG", patternLength=20,
                                    mod.layers = "CpG_island", mod.marks=1, stateWidth=20)
@@ -33,7 +33,7 @@ layerPartialGenome <- createLayerSet.BSgenome(genome=genomeSub,
                                            layer.names=c("CpG_island",  "H3K27me1",  "H3K27me2","H3K27me3"),
                                            n.layers=4)
 
-
+# can use system.time() to measure the speed difference of one chromosome vs the whole genome
 system.time(
   newLayerFullGenome <- runLayerBinding.BSgenome(layerList=layerFullGenome, factorSet=bfSet, iterations=100000) 
 )
