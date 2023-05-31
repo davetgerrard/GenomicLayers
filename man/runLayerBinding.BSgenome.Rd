@@ -8,10 +8,11 @@ runLayerBinding.BSgenome(
   layerList,
   factorSet,
   iterations = 1,
-  bindingFactorFreqs = rep(1, length(factorSet)),
+  bf.abundances = rep(10000, length(factorSet)),
   watch.function = function(x) {
  },
   collect.stats = FALSE,
+  keep.stats = TRUE,
   target.layer = 2,
   cache.layers = "LAYER.0",
   verbose = FALSE,
@@ -23,13 +24,15 @@ runLayerBinding.BSgenome(
 
 \item{factorSet}{a \code{"list"} of \code{"bindingFactor"} objects}
 
-\item{iterations}{how many changes to make  NEED TO RENAME THIS}
+\item{iterations}{deprecated - do not use}
 
-\item{bindingFactorFreqs}{the relative proportions of each \code{"bindingFactor"} in \code{"factorSet"}}
+\item{bf.abundances}{10000  the quantities of each \code{"bindingFactor"} in \code{"factorSet"}}
 
 \item{watch.function}{have this function execute during each iteration e.g. print something}
 
-\item{collect.stats}{collect a table of stats each iteration}
+\item{collect.stats}{FALSE collect a table of stats each iteration}
+
+\item{keep.stats}{TRUE  whether to retain data contained in $history.}
 
 \item{target.layer}{NOT IMPLEMENTED}
 
@@ -72,8 +75,8 @@ testFactor4 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", 
 testFS <- list(testFactor2=testFactor2, testFactor3=testFactor3, testFactor4=testFactor4)
 
  
-# with the above configuration, there are 41 possible sites across the genome, setting iterations=30, restricts the number that are marked, so the number of potential sites reduces.
-modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=30)
+# with the above configuration, there are 41 possible sites across the genome, setting bf.abundances=30, restricts the number that are marked, so the number of potential sites reduces.
+modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, bf.abundances=30)
 
 }
 \seealso{

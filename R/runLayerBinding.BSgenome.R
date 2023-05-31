@@ -4,10 +4,11 @@
 #'
 #' @param layerList a \code{"Layerlist"} object containing a layerSet and other meta-data
 #' @param factorSet a \code{"list"} of \code{"bindingFactor"} objects
-#' @param iterations how many changes to make  NEED TO RENAME THIS
-#' @param bindingFactorFreqs the relative proportions of each \code{"bindingFactor"} in \code{"factorSet"}
+#' @param iterations deprecated - do not use
+#' @param bf.abundances 10000  the quantities of each \code{"bindingFactor"} in \code{"factorSet"}
 #' @param watch.function have this function execute during each iteration e.g. print something
-#' @param collect.stats collect a table of stats each iteration
+#' @param collect.stats FALSE collect a table of stats each iteration
+#' @param keep.stats TRUE  whether to retain data contained in $history.
 #' @param target.layer NOT IMPLEMENTED
 #' @param cache.layers store hits for these layers if they are immutable (e.g. LAYER.0 sequence) default= "LAYER.0". Set to NULL to prevent caching
 #' @param verbose give more output
@@ -45,17 +46,21 @@
 #' testFS <- list(testFactor2=testFactor2, testFactor3=testFactor3, testFactor4=testFactor4)
 #' 
 #'  
-#' # with the above configuration, there are 41 possible sites across the genome, setting iterations=30, restricts the number that are marked, so the number of potential sites reduces.
-#' modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, iterations=30)
+#' # with the above configuration, there are 41 possible sites across the genome, setting bf.abundances=30, restricts the number that are marked, so the number of potential sites reduces.
+#' modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verbose=TRUE, bf.abundances=30)
 #'
 #' @export
-runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, bindingFactorFreqs=rep(1, length(factorSet)), 
-                                     watch.function=function(x){}, collect.stats=FALSE, target.layer=2, cache.layers="LAYER.0",
-                                     verbose=FALSE, ...)  {
+runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, bf.abundances=rep(10000, length(factorSet)), 
+                                     watch.function=function(x){}, collect.stats=FALSE, keep.stats=TRUE, 
+                                     target.layer=2, cache.layers="LAYER.0", verbose=FALSE, ...)  {
   if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
   
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
+  if(length(bf.abundances)==1) {   # if a single value is given, assign it to all binding factors. If only one bf, does nothing.
+    bf.abundances <- rep(bf.abundances, length(factorSet))
+  }
+  names(bf.abundances) <- bindingOrder
   newLayerList <- layerList
   #seqRange <- c(start(layerList$layerSet[['LAYER.0']])[1], end(layerList$layerSet[['LAYER.0']])[1])
   genome <- layerList$layerSet[[1]]
@@ -69,13 +74,14 @@ runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, binding
   } else {
     stats.table <- NULL
   }
-  max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
+  #max.hits <- ceiling(iterations/length(factorSet))  # TODO could tailor this to be different for each factor.
   
   if(!is.null(cache.layers)  & is.null(newLayerList$cache)) {  # generate a new cache of hits for each factor on the specified layers.
     if(verbose) print("Generating hits cache")
     newLayerList <- generateHitsCache(newLayerList, factorSet=factorSet, cache.layers=cache.layers, verbose=verbose)
   }
   for(thisBF in bindingOrder)  {
+    max.hits <- bf.abundances[bindingOrder]
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
     theseHits <- matchBindingFactor.BSgenome(newLayerList, factorSet[[thisBF]], cache.layers=cache.layers, verbose=verbose, ...)
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
@@ -105,11 +111,12 @@ runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, binding
 
     newLayerList <-  modifyLayerByBindingFactor.BSgenome(newLayerList, hits=hits.sample, bindingFactor=factorSet[[thisBF]], verbose=verbose)
     watch.function(x= newLayerList$layerSet, ...)
+    stats.table <-  newLayerList$history  # copy the existing stats table if there is one.  
     if(collect.stats) {
       coverages <- unlist(lapply(newLayerList$layerSet[-1], FUN=function(x) sum(width(x))))
       block.counts <- unlist(lapply(newLayerList$layerSet[-1], length))
       #hit.counts <-
-      thisRow <- data.frame(bf=thisBF,hits=length(hits.sample) , target.coverage=sum(width(hits.sample)))
+      thisRow <- data.frame(time=Sys.time(),bf=thisBF,hits=length(hits.sample) , target.coverage=sum(width(hits.sample)))
       thisRow[, paste("Coverage.", names(coverages), sep="")] <- coverages
       thisRow[, paste("nBlocks.", names(block.counts), sep="")] <- block.counts
       stats.table <- rbind(stats.table, thisRow)
