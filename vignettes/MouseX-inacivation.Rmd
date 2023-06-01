@@ -97,10 +97,10 @@ XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spre
               bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
 
 XFS.10 <- rep(XFS, times=n.waves)
-n.iters <- 2000 * 10
+abundances <- 2000  # runLayerBinding will convert this to a vector as long as XFS.10 so each has 2000 "molecules"
 
 modLayer <- runLayerBinding( layerList=layerList.X, factorSet = XFS.10,
-                             iterations =n.iters)
+                             bf.abundances =abundances)
 
 # inspect the result
 modLayer
