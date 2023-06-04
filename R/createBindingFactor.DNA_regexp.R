@@ -24,9 +24,12 @@
 #' @seealso \code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_motif}}
 #'
 #' @examples
-#' LAYER_1_2 <-  createBindingFactor.layer_region(name="LAYER_1_2", 
-#'                                   profile.layers =c("LAYER.1"), profile.marks = c(1), 
-#'                                   mod.layers = c("LAYER.2"), mod.marks = c(1)) 
+#' simpleBF <- createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")
+#' 
+#' # this regular expression finds 4 CpGs with 0-4 bases between them
+#' CGI<- createBindingFactor.DNA_regexp("CGI", patternString="(CG.{0,4}){3}CG", 
+#'                           patternLength=20, mod.layers = "CpG_island",
+#'                           mod.marks=1, stateWidth=20)
 #'
 #' @export
 createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternString="N",patternLength=0, 
@@ -66,4 +69,4 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
 
 
 
-createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")
+#createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")

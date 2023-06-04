@@ -24,7 +24,7 @@
 #' 
 #' scLayerSet <- createLayerSet.BSgenome(genome=genome, n.layers = 5, verbose=TRUE)
 #' 
-#' testFactor3 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
+#' testFactor3 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
 #'                                              mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
 #' 
 #' listOfHits <- matchBindingFactor.BSgenome(layerSet=scLayerSet, bindingFactor=testFactor3)
@@ -61,7 +61,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
         patternLength <- bindingFactor$profile[[thisLayer]]$length
         if(bindingFactor$type == "layer_region"  || bindingFactor$type == "layer_island" || (bindingFactor$type == "DNA_region" && length(grep("^N", bindingFactor$profile$LAYER.0$pattern)) >0 ) ) {     # lAYER.0 does not matter
           hitList[[thisLayer]] <- GRanges(seqnames(genome), IRanges(start=1, end=seqlengths(genome)),seqinfo=seqinfo(genome))
-        } else {
+        } else {    # bf type uses sequence
           if (bindingFactor$type == "DNA_regexp" )  {   # a regular expression on DNA e.g. "(CG.{0,20}){9}CG"
             bsParams <- new("BSParams", X=genome, FUN=gregexpr)  # set up params for using bsapply
             grepResultBS <- bsapply(bsParams, pattern=thisPattern)  # run gregexpr over each chromosome separately
@@ -75,19 +75,36 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
               }
               all.hits <- c(all.hits, win.hits)
             }
-          } else {
+          } else {         # not a DNA_regexp
             #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
+            if(bindingFactor$type == "DNA_consensus")  {
+              # type DNA_consensus, use Biostrings vmatchPattern
             all.hits <- vmatchPattern(thisPattern, genome, 
                                       fixed=bindingFactor$profile[[thisLayer]]$fixed,
                                       max.mismatch = bindingFactor$profile[[thisLayer]]$max.mismatch,
                                       min.mismatch = bindingFactor$profile[[thisLayer]]$min.mismatch, 
                                       with.indels= bindingFactor$profile[[thisLayer]]$with.indels, 
                                       algorithm =bindingFactor$profile[[thisLayer]]$algorithm) 
+            } else { 
+              if(bindingFactor$type == "DNA_motif") {
+                # type DNA_motif, for now use Biostrings vmatchPattern
+                # TODO change this to accept and use pwm
+                all.hits <- vmatchPattern(thisPattern, genome, 
+                                          fixed=bindingFactor$profile[[thisLayer]]$fixed,
+                                          max.mismatch = bindingFactor$profile[[thisLayer]]$max.mismatch,
+                                          min.mismatch = bindingFactor$profile[[thisLayer]]$min.mismatch, 
+                                          with.indels= bindingFactor$profile[[thisLayer]]$with.indels, 
+                                          algorithm =bindingFactor$profile[[thisLayer]]$algorithm)
+              } else {
+              # unknown type of binding factor?
+              stop(paste("Unknown binding factor type",bindingFactor$type ))
+              }
+            }
           }
           ###### ToDO make strand specific..  #######
           hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
           #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
-        }
+        }   # taken out when de-bugging
         #validHits <- hitList[[thisLayer]]
       } else {
         # with binary patterns, take ranges that have value 0 (gaps) 1 (IRanges)

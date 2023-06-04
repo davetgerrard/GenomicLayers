@@ -1,6 +1,6 @@
 Package: GenomicLayers
 Title: Simple, sequence-based simulation of epi-genomes.
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Dave", "Gerrard", email = "davetgerrard@gmail.com", role = c("aut", "cre"))
 Description: Simulate changes to epigenetic states informed by genomic sequence.
     Predict transcription (or any positional mark) from genome sequence by modelling

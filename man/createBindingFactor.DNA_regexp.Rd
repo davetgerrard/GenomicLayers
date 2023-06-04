@@ -61,9 +61,12 @@ Create a new binding factor based on a simple pattern of
 marks on others layers and \emph{may} (when used) set marks on other layers.
 }
 \examples{
-LAYER_1_2 <-  createBindingFactor.layer_region(name="LAYER_1_2", 
-                                  profile.layers =c("LAYER.1"), profile.marks = c(1), 
-                                  mod.layers = c("LAYER.2"), mod.marks = c(1)) 
+simpleBF <- createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")
+
+# this regular expression finds 4 CpGs with 0-4 bases between them
+CGI<- createBindingFactor.DNA_regexp("CGI", patternString="(CG.{0,4}){3}CG", 
+                          patternLength=20, mod.layers = "CpG_island",
+                          mod.marks=1, stateWidth=20)
 
 }
 \seealso{
