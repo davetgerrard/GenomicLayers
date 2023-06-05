@@ -78,6 +78,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
           } else {         # not a DNA_regexp
             #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
             if(bindingFactor$type == "DNA_consensus")  {
+              if(verbose) print("DNA_consensus class, using vmatchPattern()")
               # type DNA_consensus, use Biostrings vmatchPattern
             all.hits <- vmatchPattern(thisPattern, genome, 
                                       fixed=bindingFactor$profile[[thisLayer]]$fixed,
@@ -89,12 +90,13 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
               if(bindingFactor$type == "DNA_motif") {
                 # type DNA_motif, for now use Biostrings vmatchPattern
                 # TODO change this to accept and use pwm
-                all.hits <- vmatchPattern(thisPattern, genome, 
-                                          fixed=bindingFactor$profile[[thisLayer]]$fixed,
-                                          max.mismatch = bindingFactor$profile[[thisLayer]]$max.mismatch,
-                                          min.mismatch = bindingFactor$profile[[thisLayer]]$min.mismatch, 
-                                          with.indels= bindingFactor$profile[[thisLayer]]$with.indels, 
-                                          algorithm =bindingFactor$profile[[thisLayer]]$algorithm)
+                if(verbose) print("DNA_motif class, using matchPWM()")
+                all.hits <- matchPWM(pwm=bindingFactor$profile[[thisLayer]]$pattern,
+                                     subject=genome,
+                                    min.score=bindingFactor$profile[[thisLayer]]$min.score,
+                                     with.score=bindingFactor$profile[[thisLayer]]$with.score)
+                
+                #
               } else {
               # unknown type of binding factor?
               stop(paste("Unknown binding factor type",bindingFactor$type ))

@@ -7,8 +7,10 @@
 createBindingFactor.DNA_motif(
   name,
   type = "DNA_motif",
-  patternString = "N",
-  patternLength = nchar(patternString),
+  pwm,
+  min.score = "80\%",
+  with.score = FALSE,
+  patternLength = ncol(pwm),
   stateWidth = patternLength,
   profile.layers = "LAYER.1",
   profile.marks = 0,
@@ -17,14 +19,7 @@ createBindingFactor.DNA_motif(
   test.layer0.binding = FALSE,
   test.mismatch.rate = 0.1,
   max.pattern.tries = 1000,
-  min.DM.length = 2,
-  min.DR.length = 10,
-  verbose = FALSE,
-  max.mismatch = 0,
-  min.mismatch = 0,
-  with.indels = FALSE,
-  fixed = TRUE,
-  algorithm = "auto"
+  verbose = FALSE
 )
 }
 \arguments{
@@ -32,9 +27,13 @@ createBindingFactor.DNA_motif(
 
 \item{type}{["DNA_motif"]  to differentiate from other types}
 
-\item{patternString}{["N"] put motif here (using IUPAC codes for degenerate bases)}
+\item{pwm}{NULL put motif here as matrix (see biostrings \code{\link{pwm}})}
 
-\item{patternLength}{length of pattern to be matched [nchar(patternString)]}
+\item{min.score}{"80%"   passed to  \code{\link{matchPWM}}}
+
+\item{with.score}{FALSE   passed to  \code{\link{matchPWM}}}
+
+\item{patternLength}{length of pattern to be matched [ncol(pwm)]}
 
 \item{stateWidth}{the width of pattern to recognise on other layers}
 
@@ -50,23 +49,7 @@ createBindingFactor.DNA_motif(
 
 \item{test.mismatch.rate}{proportion of mismatches to tolerate when testing [.1]}
 
-\item{max.pattern.tries}{NA}
-
-\item{min.DM.length}{NA}
-
 \item{verbose}{set to TRUE for more output}
-
-\item{max.mismatch}{0   see \code{\link{vmatchPattern}}}
-
-\item{min.mismatch}{0   see \code{\link{vmatchPattern}}}
-
-\item{with.indels}{FALSE  see \code{\link{vmatchPattern}}}
-
-\item{fixed}{TRUE  see \code{\link{vmatchPattern}}}
-
-\item{algorithm}{"auto"  see \code{\link{vmatchPattern}}}
-
-\item{min.DR.lengt}{NA}
 }
 \value{
 \code{"bindingFactor"}
@@ -78,13 +61,13 @@ Makes use of biostrings function \code{\link{vmatchPattern}}
 Can use IUPAC codes and allow mismatches
 }
 \examples{
-DNA_A <- createBindingFactor.DNA_motif(name="DNA_A",patternString = "CAT" )
 
-gc1-2 <- createBindingFactor.DNA_motif(name="gc1-2",
-                          patternString="SSSSSSSSSSSSSSSS",
-                          max.mismatch= 2, 
-                          min.mismatch= 1,
-                          fixed="subject",
+data(HNF4alpha)    # from Biostrings package
+pwm.HNF4A <- PWM(HNF4alpha)  
+bf_motif.1 <- createBindingFactor.DNA_motif(name="HNFA_match",pwm = pwm.HNF4A )
+
+bf_motif.2 <- createBindingFactor.DNA_motif(name="HNFA_alter",pwm = pwm.HNF4A ,
+                          min.score="80\%", with.score=FALSE,
                           profile.layers = NULL,
                           profile.marks=NULL,
                           mod.layers="LAYER.1", mod.marks = 1)
