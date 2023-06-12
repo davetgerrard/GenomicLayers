@@ -81,7 +81,7 @@ runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, bf.abun
     newLayerList <- generateHitsCache(newLayerList, factorSet=factorSet, cache.layers=cache.layers, verbose=verbose)
   }
   for(thisBF in bindingOrder)  {
-    max.hits <- bf.abundances[bindingOrder]
+    max.hits <- bf.abundances[thisBF]
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast thisBF =", thisBF, factorSet[[thisBF]]$profile$LAYER.0$pattern, sep=" "))
     theseHits <- matchBindingFactor.BSgenome(newLayerList, factorSet[[thisBF]], cache.layers=cache.layers, verbose=verbose, ...)
     #if(verbose) print(paste(Sys.time(), "runLayerBinding.fast n.hits =", length(theseHits), sep=" "))
