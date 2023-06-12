@@ -104,9 +104,11 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
             }
           }
           ###### ToDO make strand specific..  #######
-          hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
-          #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
-        }   # taken out when de-bugging
+          strand(all.hits) <- "*" # v3   - trying not to use reduce() and therefore keep adjacent hits distinct
+          hitList[[thisLayer]] <- all.hits   # v3   - trying not to use reduce() and therefore keep adjacent hits distinct
+          # v2 #hitList[[thisLayer]] <- reduce(all.hits, ignore.strand=TRUE)   # perhaps make strand-specific later.
+          # v1 #hitList[[thisLayer]] <-  as(matchPattern(bindingFactor$profile[[thisLayer]]$pattern,layerSet[[thisLayer]], fixed=FALSE, max.mismatch= max.mismatches), "IRanges") # allows matching with IUPAC codes
+        }   
         #validHits <- hitList[[thisLayer]]
       } else {
         # with binary patterns, take ranges that have value 0 (gaps) 1 (IRanges)
@@ -165,7 +167,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   
   # all layers have been matched or their cached results added to hitList. 
   # now need to intersect the results. 
-  # first test if any required layers are empty as this will mean there are no hits overall. 
+  # first test if any required layers are empty as this will mean there are no hits overall. Remember that profiles looking for '0' will be inverse matches.
   if(any(lapply(hitList, length) == 0))  {   # one or more of the patterns were not matched.
     validHits <- GRanges()    #####TODO change IRanges  to GRAnges()  to fix the intersect below.
   } else{
@@ -176,7 +178,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
       ###### TODO: fix this next line to give standed hits. 
       #   * plus '+' does not preserve strand with ignore.strand=T.  
       #     With ignore strand=F, then everything becomes "*"
-      validHits <- intersect(validHits, hitList[[i]])
+      validHits <- intersect(validHits, hitList[[i]])   #  collapses adjacent regions within a layer. e..g c(1-3,4-6) becomes 1-6
+      #validHits <- pintersect(validHits, hitList[[i]], drop.nohit.ranges=T)  # retains adjacent hits. But does not work across layers as it is a pairwise approach and requires lengths of GRanges are the same.
     }
     
     #overlaps <- findOverlaps(hitList[[1]], hitList[[2]])

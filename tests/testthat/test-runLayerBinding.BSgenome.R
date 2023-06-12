@@ -13,21 +13,22 @@ scLayerSet <- createLayerSet.BSgenome(genome=genome, n.layers = 5, verbose=TRUE)
 
 
 
-testFactor2 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA")
+testFactor2 <- createBindingFactor.DNA_consensus("testFactor2", patternString="ACTGGGCTA")
 
 #results2 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor2)
 
-testFactor3 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
+testFactor3 <- createBindingFactor.DNA_consensus("testFactor3", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
                                              mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
 
 #results3 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor3)
 #mfLayer <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet, hits=results3, bindingFactor=testFactor3)
 
 # check that a profile looking for 1 will not find any.  N.B this WILL bind AFTER testFactor2
-testFactor4 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
+testFactor4 <- createBindingFactor.layer_region("testFactor4", patternLength=5,
+                                              profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
                                              mod.layers = c("LAYER.1", "LAYER.2"), mod.marks=c(0,1))
 
-#results4 <- matchBindingFactor.BSgenome(layerSet = mfLayer, bindingFactor = testFactor4)
+#results4 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor4)
 #mfLayer <- modifyLayerByBindingFactor.BSgenome(layerSet=mfLayer, hits=results4, bindingFactor=testFactor4)
 
 # now can match things genome wide. Need to run layerBinding and modification.
