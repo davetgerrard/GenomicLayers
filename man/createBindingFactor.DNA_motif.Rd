@@ -12,10 +12,10 @@ createBindingFactor.DNA_motif(
   with.score = FALSE,
   patternLength = ncol(pwm),
   stateWidth = patternLength,
-  profile.layers = "LAYER.1",
-  profile.marks = 0,
-  mod.layers = "LAYER.1",
-  mod.marks = 1,
+  profile.layers = NULL,
+  profile.marks = NULL,
+  mod.layers = NULL,
+  mod.marks = NULL,
   test.layer0.binding = FALSE,
   test.mismatch.rate = 0.1,
   max.pattern.tries = 1000,
@@ -29,7 +29,7 @@ createBindingFactor.DNA_motif(
 
 \item{pwm}{NULL put motif here as matrix (see biostrings \code{\link{pwm}})}
 
-\item{min.score}{"80%"   passed to  \code{\link{matchPWM}}}
+\item{min.score}{"80\%"   passed to  \code{\link{matchPWM}}}
 
 \item{with.score}{FALSE   passed to  \code{\link{matchPWM}}}
 

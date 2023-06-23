@@ -9,7 +9,7 @@
 #' @param name give the binding factor a name
 #' @param type  "DNA_motif"  to differentiate from other types
 #' @param pwm   NULL put motif here as matrix (see biostrings \code{\link{pwm}})
-#' @param min.score   "80%"   passed to  \code{\link{matchPWM}}
+#' @param min.score   "80\%"   passed to  \code{\link{matchPWM}}
 #' @param with.score  FALSE   passed to  \code{\link{matchPWM}}
 #' @param patternLength   length of pattern to be matched [ncol(pwm)]
 #' @param stateWidth the width of pattern to recognise on other layers
@@ -43,8 +43,8 @@
 createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
                                           min.score="80%", with.score=FALSE,
                                           patternLength = ncol(pwm), stateWidth=patternLength,
-                                          profile.layers="LAYER.1",profile.marks=0,
-                                          mod.layers="LAYER.1",mod.marks=1,
+                                          profile.layers=NULL,profile.marks=NULL,
+                                          mod.layers=NULL,mod.marks=NULL,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
                                       verbose=FALSE) {
   
