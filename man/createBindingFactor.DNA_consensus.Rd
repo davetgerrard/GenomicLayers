@@ -30,9 +30,9 @@ createBindingFactor.DNA_consensus(
 \arguments{
 \item{name}{give the binding factor a name}
 
-\item{type}{["DNA_consensus"]  to differentiate from other types}
+\item{type}{"DNA_consensus"  to differentiate from other types}
 
-\item{patternString}{["N"] put consensus here (using IUPAC codes for degenerate bases)}
+\item{patternString}{"N" put consensus here (using IUPAC codes for degenerate bases)}
 
 \item{patternLength}{length of pattern to be matched [nchar(patternString)]}
 

@@ -7,7 +7,7 @@
 #' Can use IUPAC codes and allow mismatches 
 #'
 #' @param name give the binding factor a name
-#' @param type  ["DNA_motif"]  to differentiate from other types
+#' @param type  "DNA_motif"  to differentiate from other types
 #' @param pwm   NULL put motif here as matrix (see biostrings \code{\link{pwm}})
 #' @param min.score   "80%"   passed to  \code{\link{matchPWM}}
 #' @param with.score  FALSE   passed to  \code{\link{matchPWM}}

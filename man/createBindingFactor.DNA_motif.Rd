@@ -25,7 +25,7 @@ createBindingFactor.DNA_motif(
 \arguments{
 \item{name}{give the binding factor a name}
 
-\item{type}{["DNA_motif"]  to differentiate from other types}
+\item{type}{"DNA_motif"  to differentiate from other types}
 
 \item{pwm}{NULL put motif here as matrix (see biostrings \code{\link{pwm}})}
 

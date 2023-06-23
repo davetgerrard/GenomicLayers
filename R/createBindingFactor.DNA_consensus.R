@@ -7,8 +7,8 @@
 #' Can use IUPAC codes and allow mismatches 
 #'
 #' @param name give the binding factor a name
-#' @param type  ["DNA_consensus"]  to differentiate from other types
-#' @param patternString   ["N"] put consensus here (using IUPAC codes for degenerate bases)
+#' @param type  "DNA_consensus"  to differentiate from other types
+#' @param patternString   "N" put consensus here (using IUPAC codes for degenerate bases)
 #' @param patternLength   length of pattern to be matched [nchar(patternString)]
 #' @param stateWidth the width of pattern to recognise on other layers
 #' @param profile.layers a vector of named layers to set as a match
