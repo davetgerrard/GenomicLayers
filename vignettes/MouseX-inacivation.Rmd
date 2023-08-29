@@ -4,10 +4,12 @@ author: "Dave T. Gerrard"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{MouseX-inacivation}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+##  THIS CODE IS NOT TESTED AND DOES NOT RUN. BASED ON OUTDATED CODE
 
 
 ## Introduction
@@ -27,7 +29,7 @@ Requires mouse BSgenome.Mmusculus.UCSC.mm9 which can be obtained from Bioconduct
 
 If  _BSgenome.Mmusculus.UCSC.mm9_ and _GenomicLayers_ are installed, the following should not give errors.
 
-```{r load-libs, echo=TRUE}
+```{r load-libs, echo=TRUE, eval =F}
 library(BSgenome.Mmusculus.UCSC.mm9)
 library(GenomicLayers)
 ```
@@ -36,7 +38,7 @@ library(GenomicLayers)
 
 
 ## Set up chromosome and layers
-```{r }
+```{r loadGenome, eval =F}
 #OUTPUTDIR <- "GL_out/results/mus_X_inactivation/"
 GENOME <- 'mm9'
 
@@ -53,7 +55,7 @@ layerList.X <- createLayerList.DNAstring(seq=thisChrom,
 
 
 ## Load/Create binding factors
-```{r }
+```{r createBfs, eval =F}
 #N.B. temporarily setting a fixed patternLength, 
 # because don't know how to implement variable patternLength yet.
 # current effect is that hits < patternLength are discarded
@@ -87,7 +89,7 @@ bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150,
 
 ## Run Layer binding
 
-```{r run-binding, echo=TRUE}
+```{r run-binding, echo=TRUE, eval =F}
 
 
 n.waves <- 10
@@ -110,13 +112,13 @@ modLayer
 
 
 ## Visualise the results
-```{r }
+```{r , eval =F}
 #TODO
 ```
 
 
 
 ## Score against experimental data
-```{r }
+```{r , eval =F}
 #TODO
 ```

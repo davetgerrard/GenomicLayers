@@ -91,7 +91,7 @@ If you want to learn about pattern matching against DNA sequences, we recommend 
 We first create a binding factor that can recognise a DNA motif for a TATA box, we'll call it tata-box and then test it against the layerSet object we've already created. It should create an IRanges or hits object with the locations for all matches to the sequence TATAA. We'll also specify that this binding factor should mark those positions on the layer _recruiter_.
 
 ```{r new_bf1}
-bf1 <- createBindingFactor.DNA_motif(name="tata-box", patternString = "TATAWAWA", profile.layers=NULL, mod.layers="recruiter",mod.marks=1) 
+bf1 <- createBindingFactor.DNA_consensus(name="tata-box", patternString = "TATAWAWA", profile.layers=NULL, mod.layers="recruiter",mod.marks=1) 
 #print(bf1)
 matchBindingFactor(layerSet=layers1$layerSet, bindingFactor=bf1)
 ```
