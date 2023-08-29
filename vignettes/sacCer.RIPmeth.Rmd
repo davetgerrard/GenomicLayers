@@ -1,0 +1,111 @@
+---
+title: "Yeast RIP methylation driven mutation"
+author: "Dave T. Gerrard"
+date: "`r Sys.Date()`"
+bibliography: GenomicLayersRefs.bib
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Yeast RIP methylation driven mutation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+Some fungal species silence transposable elements in their genome by recognising the high local AT sequence content of the repeats and then targetting DNA methylation to Cytosines within these regions.  Some species contain a RID mechanism to then "mutate" methylated cytosines and permanently silence the transposons. See [@he_pattern_2020] In this vignette, we will simulate the two-step recruitment of silencing machinery and methylation but not the mutation.  We will use the S.cerevisae genome even though it does not feature this silencing mechanism but because the genome is small and available as a BSgenome package. 
+
+
+  
+This is a citation[@he_pattern_2020] and this is a (link to the paper)[ https://www.mdpi.com/2076-2607/8/2/227]
+
+First we load required libraries. The output is hidden in this vignette as you may see many messages caused by loading dependent packages. 
+
+```{r load-libs, echo=TRUE, message=F}
+library(GenomicLayers)
+library(BSgenome.Scerevisiae.UCSC.sacCer3)
+```
+
+Create a named link to the genome, inspect it and remind ourselves of the degenerate IUPAC codes.
+
+```{r checkGenome, echo=TRUE}
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3
+
+seqinfo(genome)
+IUPAC_CODE_MAP   # check the IUPAC codes.
+```
+
+## Create a "layerSet" object to store results linked to the genome. 
+
+We will want to store hits on the genome as Layers that can act as context for the selection of further sites of activity. These could be areas of open or closed chromatin, specific epigenetic marks, or any user-defined region of activity. Here we will create layers to represent the presence of H3K9me3 and DNA-methylation.  In this simulation, both layers begin with no regions, but they could be pre-populated with GRanges objects.
+
+```{r createLayerSet, echo=TRUE}
+sacCer.LS <- createLayerSet.BSgenome(BSgenome.Scerevisiae.UCSC.sacCer3,
+                                     n.layer=2, 
+                                     layer.names=c("H3K9me3", "DNA-meth"))
+
+```
+
+
+## Create binding factors
+
+The first binding factor will bind to regions of the genome of 400bp that have an AT% greater than or equal to 70%. Where it binds, it will set the H3K9me3 layer to state 1 (rather than 0 or empty).
+
+```{r createDIM5, echo=TRUE}
+DIM5.ATpc <- createBindingFactor.DNA_consensus(name="DIM5.ATpc",    
+                    patternString = paste0(rep("W", 400), collapse =""), 
+                    fixed=FALSE , max.mismatch=400*.3  ,  
+                    profile.layers=c("H3K9me3", "DNA-meth"),
+                    profile.marks=c(0,0),
+                    mod.layers=c("H3K9me3"), mod.marks=1 )
+```
+
+It is worth checking what a binding factor will bind and we can use the function matchBindingFactor.BSgenome for this.
+
+```{r testBF, echo=TRUE}
+# check DIM5.ATpc is finding some regions.
+
+(testtemp <- matchBindingFactor.BSgenome( layerSet=sacCer.LS, 
+                                          bindingFactor=DIM5.ATpc))
+
+# check that they have high AT richness
+getSeq(genome, names=testtemp[1:5])
+```
+
+Create a second binding factor to recognise regions that can be methylated (and subsequently mutated). RIP mutation primarily happens at (A/Tp)Cp(A/T) so we will use the degenerate code "WCW" where "W" can mean "A" or "T".  Combine both binding factors into a list ready to use them together.
+```{r create2ndBF, echo=TRUE}
+RID <- createBindingFactor.DNA_consensus(name="RID",    
+          patternString = "WCW", fixed=FALSE ,   
+          max.mismatch=0  ,  profile.layers=c("H3K9me3"),
+          profile.marks=1,
+          mod.layers=c("DNA-meth"), mod.marks=1 , stateWidth=1)
+                                  
+bfList <- list(DIM5.ATpc=DIM5.ATpc, RID=RID)                                  
+```
+
+## The simulation
+
+Now we have the layerSet and the list of binding factors, we are ready to run the simulation. The default behaviour is for each binding factor to be applied in turn (in the order of the list) and for 1000 suitable regions to be selected for each. 
+
+```{r runLayerBinding, echo=TRUE}
+resultLayerGenome <- runLayerBinding.BSgenome(  layerList=sacCer.LS, 
+                            factorSet= bfList)
+```
+
+The object resultLayerGenome is a list and now contains marks on the layers H3K9me3 and DNA-meth.  Each set of results is GRanges object and can be extracted and compared using the many functions available in the GenomicRanges package.
+
+```{r inspectResult, echo=TRUE}
+resultLayerGenome
+```
+
+The sub-list "$cache" contains a record of possible matches for binding factors that recognise LAYER.0 (the genome). Further simulations using the same result object (resultLayerGenome) can re-use this cache and will save some time.
+
+This vignette contains just two parts of this repressive mechanism.  
+
+- H3K9me3 at areas of high AT  DIM-5/KMT1
+- Methylation of Cs within these regions.  DIM-2
+
+It could be further extended to incorporate spreading of the H3K9me3 mark by HP1.  At time of writing, the BSgenome is immutable, so we cannot "mutate" the methylated Cytosines. 
+
+
+## References 
+
