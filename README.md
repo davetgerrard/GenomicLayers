@@ -16,13 +16,13 @@ The ability of factors to bind changes through this series so that the number an
 ## Installation 
 
 
-GenomicLayers depends upon some [Bioconductor](https://www.bioconductor.org/) packages (BSGenome, GenomicRanges, Biostrings). One of the vignettes also depends on the BSgenome package BSgenome.Mmusculus.UCSC.mm9 . If you install this first, it should install all the correct dependencies.
+GenomicLayers depends upon some [Bioconductor](https://www.bioconductor.org/) packages (BSGenome, GenomicRanges, Biostrings). One of the vignettes also depends on the BSgenome package BSgenome.Scerevisiae.UCSC.sacCer3 . If you install this first, it should install all the correct dependencies.
 
 	if (!require("BiocManager", quietly = TRUE))
 	  install.packages("BiocManager")
 	BiocManager::install(version = "3.16")
 	
-	BiocManager::install("BSgenome.Mmusculus.UCSC.mm9") 
+	BiocManager::install("BSgenome.Scerevisiae.UCSC.sacCer3") 
 
 GenomicLayers can be installed direct from GitHub using the [devtools](https://github.com/hadley/devtools) package.  You will need the latest version of devtools.
 
