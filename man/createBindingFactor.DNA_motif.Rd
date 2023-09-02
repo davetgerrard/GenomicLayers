@@ -61,7 +61,7 @@ Makes use of biostrings function \code{\link{vmatchPattern}}
 Can use IUPAC codes and allow mismatches
 }
 \examples{
-
+require(Biostrings)
 data(HNF4alpha)    # from Biostrings package
 pwm.HNF4A <- PWM(HNF4alpha)  
 bf_motif.1 <- createBindingFactor.DNA_motif(name="HNFA_match",pwm = pwm.HNF4A )

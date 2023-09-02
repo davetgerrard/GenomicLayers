@@ -2,8 +2,9 @@
 #' 
 #' Create a BSgenome object with some sequences (chromosomes) removed. 
 #' This is useful when wanting to work without mitochondria or unplaced chromosomes.
-#' This function was posted by Hervé Pagès on the bioconductor support pages around 2016
-#' \link{https://support.bioconductor.org/p/83588/}
+#' This function was posted by Hervé Pagès on the
+#'  [bioconductor support pages around 2016](https://support.bioconductor.org/p/83588/) 
+#'  but I cannot find a version within his BSgenome package.
 #' 
 #' @param genome  a BSgenome object
 #' @param seqnames  names of chromosomes to keep

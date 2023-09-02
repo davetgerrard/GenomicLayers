@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dave T. Gerrard" />
 
-<meta name="date" content="2023-08-29" />
+<meta name="date" content="2023-08-30" />
 
 <title>Yeast RIP methylation driven mutation</title>
 
@@ -362,7 +362,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Yeast RIP methylation driven mutation</h1>
 <h4 class="author">Dave T. Gerrard</h4>
-<h4 class="date">2023-08-29</h4>
+<h4 class="date">2023-08-30</h4>
 
 
 
@@ -385,8 +385,11 @@ vignette as you may see many messages caused by loading dependent
 packages.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GenomicLayers)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(BSgenome.Scerevisiae.UCSC.sacCer3)</span></code></pre></div>
-<p>Create a named link to the genome, inspect it and remind ourselves of
-the degenerate IUPAC codes.</p>
+<p>Create a named link to the genome, inspect it and create a subset
+version without chrM. We only want to use the nuclear chromosomes
+because chrM is not targetted by the same mechanisms and exists in a
+very different copy number in the cell. There is a utility function in
+GenomicLayers to subset a BSgenome.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>genome <span class="ot">&lt;-</span> BSgenome.Scerevisiae.UCSC.sacCer3</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">seqinfo</span>(genome)</span></code></pre></div>
@@ -403,11 +406,26 @@ the degenerate IUPAC codes.</p>
 ##   chrXV       1091291      FALSE sacCer3
 ##   chrXVI       948066      FALSE sacCer3
 ##   chrM          85779       TRUE sacCer3</code></pre>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>IUPAC_CODE_MAP   <span class="co"># check the IUPAC codes.</span></span></code></pre></div>
-<pre><code>##      A      C      G      T      M      R      W      S      Y      K      V 
-##    &quot;A&quot;    &quot;C&quot;    &quot;G&quot;    &quot;T&quot;   &quot;AC&quot;   &quot;AG&quot;   &quot;AT&quot;   &quot;CG&quot;   &quot;CT&quot;   &quot;GT&quot;  &quot;ACG&quot; 
-##      H      D      B      N 
-##  &quot;ACT&quot;  &quot;AGT&quot;  &quot;CGT&quot; &quot;ACGT&quot;</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">seqnames</span>(genome)</span></code></pre></div>
+<pre><code>##  [1] &quot;chrI&quot;    &quot;chrII&quot;   &quot;chrIII&quot;  &quot;chrIV&quot;   &quot;chrV&quot;    &quot;chrVI&quot;   &quot;chrVII&quot; 
+##  [8] &quot;chrVIII&quot; &quot;chrIX&quot;   &quot;chrX&quot;    &quot;chrXI&quot;   &quot;chrXII&quot;  &quot;chrXIII&quot; &quot;chrXIV&quot; 
+## [15] &quot;chrXV&quot;   &quot;chrXVI&quot;  &quot;chrM&quot;</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sequences_to_keep <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">seqnames</span>(genome), <span class="st">&quot;chrM&quot;</span>)   <span class="co"># nuclear chroms only</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>genomeNuc <span class="ot">&lt;-</span> <span class="fu">keepBSgenomeSequences</span>(genome, sequences_to_keep)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">seqinfo</span>(genomeNuc)</span></code></pre></div>
+<pre><code>## Seqinfo object with 16 sequences from sacCer3 genome:
+##   seqnames seqlengths isCircular  genome
+##   chrI         230218      FALSE sacCer3
+##   chrII        813184      FALSE sacCer3
+##   chrIII       316620      FALSE sacCer3
+##   chrIV       1531933      FALSE sacCer3
+##   chrV         576874      FALSE sacCer3
+##   ...             ...        ...     ...
+##   chrXII      1078177      FALSE sacCer3
+##   chrXIII      924431      FALSE sacCer3
+##   chrXIV       784333      FALSE sacCer3
+##   chrXV       1091291      FALSE sacCer3
+##   chrXVI       948066      FALSE sacCer3</code></pre>
 </div>
 <div id="create-a-layerset-object-to-store-results-linked-to-the-genome." class="section level2">
 <h2>Create a “layerSet” object to store results linked to the
@@ -419,65 +437,124 @@ user-defined region of activity. Here we will create layers to represent
 the presence of H3K9me3 and DNA-methylation. In this simulation, both
 layers begin with no regions, but they could be pre-populated with
 GRanges objects.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sacCer.LS <span class="ot">&lt;-</span> <span class="fu">createLayerSet.BSgenome</span>(BSgenome.Scerevisiae.UCSC.sacCer3,</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">n.layer=</span><span class="dv">2</span>, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">layer.names=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>, <span class="st">&quot;DNA-meth&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sacCer.LS <span class="ot">&lt;-</span> <span class="fu">createLayerSet.BSgenome</span>(genomeNuc,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">n.layer=</span><span class="dv">2</span>, </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">layer.names=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>, <span class="st">&quot;DNA-meth&quot;</span>))</span></code></pre></div>
 </div>
 <div id="create-binding-factors" class="section level2">
 <h2>Create binding factors</h2>
 <p>The first binding factor will bind to regions of the genome of 400bp
 that have an AT% greater than or equal to 70%. Where it binds, it will
-set the H3K9me3 layer to state 1 (rather than 0 or empty).</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>DIM5.ATpc <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.DNA_consensus</span>(<span class="at">name=</span><span class="st">&quot;DIM5.ATpc&quot;</span>,    </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">patternString =</span> <span class="fu">paste0</span>(<span class="fu">rep</span>(<span class="st">&quot;W&quot;</span>, <span class="dv">400</span>), <span class="at">collapse =</span><span class="st">&quot;&quot;</span>), </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fixed=</span><span class="cn">FALSE</span> , <span class="at">max.mismatch=</span><span class="dv">400</span><span class="sc">*</span>.<span class="dv">3</span>  ,  </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">profile.layers=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>, <span class="st">&quot;DNA-meth&quot;</span>),</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">profile.marks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mod.layers=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>), <span class="at">mod.marks=</span><span class="dv">1</span> )</span></code></pre></div>
+set the H3K9me3 layer to state 1 (rather than 0 or empty). For A/T, we
+will need the IUPAC code, W, and create a string of Ws of length
+400.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>IUPAC_CODE_MAP   <span class="co"># remind ourselves of the the IUPAC codes.</span></span></code></pre></div>
+<pre><code>##      A      C      G      T      M      R      W      S      Y      K      V 
+##    &quot;A&quot;    &quot;C&quot;    &quot;G&quot;    &quot;T&quot;   &quot;AC&quot;   &quot;AG&quot;   &quot;AT&quot;   &quot;CG&quot;   &quot;CT&quot;   &quot;GT&quot;  &quot;ACG&quot; 
+##      H      D      B      N 
+##  &quot;ACT&quot;  &quot;AGT&quot;  &quot;CGT&quot; &quot;ACGT&quot;</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>DIM5.ATpc <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.DNA_consensus</span>(<span class="at">name=</span><span class="st">&quot;DIM5.ATpc&quot;</span>,    </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">patternString =</span> <span class="fu">paste0</span>(<span class="fu">rep</span>(<span class="st">&quot;W&quot;</span>, <span class="dv">400</span>), <span class="at">collapse =</span><span class="st">&quot;&quot;</span>), </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">fixed=</span><span class="cn">FALSE</span> , <span class="at">max.mismatch=</span><span class="dv">400</span><span class="sc">*</span>.<span class="dv">3</span>  ,  </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">profile.layers=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>, <span class="st">&quot;DNA-meth&quot;</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">profile.marks=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">mod.layers=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>), <span class="at">mod.marks=</span><span class="dv">1</span> )</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>DIM5.ATpc   <span class="co"># take a look at what has been created.</span></span></code></pre></div>
+<pre><code>## $name
+## [1] &quot;DIM5.ATpc&quot;
+## 
+## $type
+## [1] &quot;DNA_consensus&quot;
+## 
+## $profile
+## $profile$LAYER.0
+## $profile$LAYER.0$pattern
+## 400-letter DNAString object
+## seq: WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW...WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+## 
+## $profile$LAYER.0$mismatch.rate
+## [1] 0
+## 
+## $profile$LAYER.0$length
+## [1] 400
+## 
+## $profile$LAYER.0$max.mismatch
+## [1] 120
+## 
+## $profile$LAYER.0$min.mismatch
+## [1] 0
+## 
+## $profile$LAYER.0$with.indels
+## [1] FALSE
+## 
+## $profile$LAYER.0$fixed
+## [1] FALSE
+## 
+## $profile$LAYER.0$algorithm
+## [1] &quot;auto&quot;
+## 
+## 
+## $profile$H3K9me3
+## $profile$H3K9me3$pattern
+## [1] 0
+## 
+## $profile$H3K9me3$mismatch.rate
+## [1] 0.1
+## 
+## $profile$H3K9me3$length
+## [1] 400
+## 
+## 
+## $profile$`DNA-meth`
+## $profile$`DNA-meth`$pattern
+## [1] 0
+## 
+## $profile$`DNA-meth`$mismatch.rate
+## [1] 0.1
+## 
+## $profile$`DNA-meth`$length
+## [1] 400
+## 
+## 
+## 
+## $mods
+## $mods$H3K9me3
+## $mods$H3K9me3$state
+## [1] 1
+## 
+## $mods$H3K9me3$stateWidth
+## [1] 400
+## 
+## $mods$H3K9me3$offset
+## [1] 0
+## 
+## $mods$H3K9me3$align
+## [1] &quot;centre&quot;</code></pre>
 <p>It is worth checking what a binding factor will bind and we can use
 the function matchBindingFactor.BSgenome for this.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check DIM5.ATpc is finding some regions.</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>(testtemp <span class="ot">&lt;-</span> <span class="fu">matchBindingFactor.BSgenome</span>( <span class="at">layerSet=</span>sacCer.LS, </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">bindingFactor=</span>DIM5.ATpc))</span></code></pre></div>
-<pre><code>## Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 232 out-of-bound ranges located on sequence
-##   chrM. Note that ranges located on a sequence whose length is unknown
-##   (NA) or on a circular sequence are not considered out-of-bound (use
-##   seqlengths() and isCircular() to get the lengths and circularity flags
-##   of the underlying sequences). You can use trim() to trim these ranges.
-##   See ?`trim,GenomicRanges-method` for more information.
-
-## Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 232 out-of-bound ranges located on sequence
-##   chrM. Note that ranges located on a sequence whose length is unknown
-##   (NA) or on a circular sequence are not considered out-of-bound (use
-##   seqlengths() and isCircular() to get the lengths and circularity flags
-##   of the underlying sequences). You can use trim() to trim these ranges.
-##   See ?`trim,GenomicRanges-method` for more information.
-
-## Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 232 out-of-bound ranges located on sequence
-##   chrM. Note that ranges located on a sequence whose length is unknown
-##   (NA) or on a circular sequence are not considered out-of-bound (use
-##   seqlengths() and isCircular() to get the lengths and circularity flags
-##   of the underlying sequences). You can use trim() to trim these ranges.
-##   See ?`trim,GenomicRanges-method` for more information.</code></pre>
-<pre><code>## GRanges object with 730332 ranges and 0 metadata columns:
-##            seqnames      ranges strand
-##               &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt;
-##        [1]     chrI   4327-4726      *
-##        [2]     chrI   4328-4727      *
-##        [3]     chrI   4329-4728      *
-##        [4]     chrI   4330-4729      *
-##        [5]     chrI   4331-4730      *
-##        ...      ...         ...    ...
-##   [730328]     chrM 85376-85775      *
-##   [730329]     chrM 85377-85776      *
-##   [730330]     chrM 85378-85777      *
-##   [730331]     chrM 85379-85778      *
-##   [730332]     chrM 85380-85779      *
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check DIM5.ATpc is finding some regions.</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>(testtemp <span class="ot">&lt;-</span> <span class="fu">matchBindingFactor.BSgenome</span>( <span class="at">layerSet=</span>sacCer.LS, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                                          <span class="at">bindingFactor=</span>DIM5.ATpc))</span></code></pre></div>
+<pre><code>## GRanges object with 565280 ranges and 0 metadata columns:
+##            seqnames        ranges strand
+##               &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt;
+##        [1]     chrI     4327-4726      *
+##        [2]     chrI     4328-4727      *
+##        [3]     chrI     4329-4728      *
+##        [4]     chrI     4330-4729      *
+##        [5]     chrI     4331-4730      *
+##        ...      ...           ...    ...
+##   [565276]   chrXVI 942211-942610      *
+##   [565277]   chrXVI 942212-942611      *
+##   [565278]   chrXVI 942213-942612      *
+##   [565279]   chrXVI 942214-942613      *
+##   [565280]   chrXVI 942215-942614      *
 ##   -------
-##   seqinfo: 17 sequences (1 circular) from sacCer3 genome</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check that they have high AT richness</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getSeq</span>(genome, <span class="at">names=</span>testtemp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div>
+##   seqinfo: 16 sequences from sacCer3 genome</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># check that they have high AT richness</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">getSeq</span>(genome, <span class="at">names=</span>testtemp[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>])</span></code></pre></div>
 <pre><code>## DNAStringSet object of length 5:
 ##     width seq
 ## [1]   400 ACTACATGACAAGCAACTCATAATTTAAGTGGAT...TGGATAACCAGATCGTACATCTCTGATAAACAA
@@ -490,13 +567,13 @@ methylated (and subsequently mutated). RIP mutation primarily happens at
 (A/Tp)Cp(A/T) so we will use the degenerate code “WCW” where “W” can
 mean “A” or “T”. Combine both binding factors into a list ready to use
 them together.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>RID <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.DNA_consensus</span>(<span class="at">name=</span><span class="st">&quot;RID&quot;</span>,    </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">patternString =</span> <span class="st">&quot;WCW&quot;</span>, <span class="at">fixed=</span><span class="cn">FALSE</span> ,   </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">max.mismatch=</span><span class="dv">0</span>  ,  <span class="at">profile.layers=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>),</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">profile.marks=</span><span class="dv">1</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">mod.layers=</span><span class="fu">c</span>(<span class="st">&quot;DNA-meth&quot;</span>), <span class="at">mod.marks=</span><span class="dv">1</span> , <span class="at">stateWidth=</span><span class="dv">1</span>)</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                                  </span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>bfList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DIM5.ATpc=</span>DIM5.ATpc, <span class="at">RID=</span>RID)                                  </span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>RID <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.DNA_consensus</span>(<span class="at">name=</span><span class="st">&quot;RID&quot;</span>,    </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">patternString =</span> <span class="st">&quot;WCW&quot;</span>, <span class="at">fixed=</span><span class="cn">FALSE</span> ,   </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">max.mismatch=</span><span class="dv">0</span>  ,  <span class="at">profile.layers=</span><span class="fu">c</span>(<span class="st">&quot;H3K9me3&quot;</span>),</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">profile.marks=</span><span class="dv">1</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">mod.layers=</span><span class="fu">c</span>(<span class="st">&quot;DNA-meth&quot;</span>), <span class="at">mod.marks=</span><span class="dv">1</span> , <span class="at">stateWidth=</span><span class="dv">1</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                                  </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>bfList <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">DIM5.ATpc=</span>DIM5.ATpc, <span class="at">RID=</span>RID)                                  </span></code></pre></div>
 </div>
 <div id="the-simulation" class="section level2">
 <h2>The simulation</h2>
@@ -504,34 +581,14 @@ them together.</p>
 ready to run the simulation. The default behaviour is for each binding
 factor to be applied in turn (in the order of the list) and for 1000
 suitable regions to be selected for each.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>resultLayerGenome <span class="ot">&lt;-</span> <span class="fu">runLayerBinding.BSgenome</span>(  <span class="at">layerList=</span>sacCer.LS, </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">factorSet=</span> bfList)</span></code></pre></div>
-<pre><code>## Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 232 out-of-bound ranges located on sequence
-##   chrM. Note that ranges located on a sequence whose length is unknown
-##   (NA) or on a circular sequence are not considered out-of-bound (use
-##   seqlengths() and isCircular() to get the lengths and circularity flags
-##   of the underlying sequences). You can use trim() to trim these ranges.
-##   See ?`trim,GenomicRanges-method` for more information.
-
-## Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 232 out-of-bound ranges located on sequence
-##   chrM. Note that ranges located on a sequence whose length is unknown
-##   (NA) or on a circular sequence are not considered out-of-bound (use
-##   seqlengths() and isCircular() to get the lengths and circularity flags
-##   of the underlying sequences). You can use trim() to trim these ranges.
-##   See ?`trim,GenomicRanges-method` for more information.
-
-## Warning in valid.GenomicRanges.seqinfo(x, suggest.trim = TRUE): GRanges object contains 232 out-of-bound ranges located on sequence
-##   chrM. Note that ranges located on a sequence whose length is unknown
-##   (NA) or on a circular sequence are not considered out-of-bound (use
-##   seqlengths() and isCircular() to get the lengths and circularity flags
-##   of the underlying sequences). You can use trim() to trim these ranges.
-##   See ?`trim,GenomicRanges-method` for more information.</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>resultLayerGenome <span class="ot">&lt;-</span> <span class="fu">runLayerBinding.BSgenome</span>(  <span class="at">layerList=</span>sacCer.LS, </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>                            <span class="at">factorSet=</span> bfList)</span></code></pre></div>
 <pre><code>## ..[1] &quot;&quot;</code></pre>
 <p>The object resultLayerGenome is a list and now contains marks on the
 layers H3K9me3 and DNA-meth. Each set of results is GRanges object and
 can be extracted and compared using the many functions available in the
 GenomicRanges package.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>resultLayerGenome</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>resultLayerGenome</span></code></pre></div>
 <pre><code>## $layerSet
 ## $layerSet$LAYER.0
 ## Yeast genome:
@@ -539,88 +596,88 @@ GenomicRanges package.</p>
 ## # genome: sacCer3
 ## # provider: UCSC
 ## # release date: April 2011
-## # 17 sequences:
+## # 16 sequences:
 ## #   chrI    chrII   chrIII  chrIV   chrV    chrVI   chrVII  chrVIII chrIX  
-## #   chrX    chrXI   chrXII  chrXIII chrXIV  chrXV   chrXVI  chrM           
+## #   chrX    chrXI   chrXII  chrXIII chrXIV  chrXV   chrXVI                 
 ## # (use &#39;seqnames()&#39; to see all the sequence names, use the &#39;$&#39; or &#39;[[&#39; operator
 ## # to access a given sequence)
 ## 
 ## $layerSet$H3K9me3
-## GRanges object with 1427 ranges and 0 metadata columns:
+## GRanges object with 1496 ranges and 0 metadata columns:
 ##          seqnames        ranges strand
 ##             &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt;
-##      [1]     chrI     4406-4805      *
-##      [2]     chrI     6466-7245      *
-##      [3]     chrI    9857-10491      *
-##      [4]     chrI   10963-11612      *
-##      [5]     chrI   16659-17598      *
+##      [1]     chrI     4332-4765      *
+##      [2]     chrI     6466-7331      *
+##      [3]     chrI    9767-10483      *
+##      [4]     chrI   11037-11626      *
+##      [5]     chrI   16661-17594      *
 ##      ...      ...           ...    ...
-##   [1423]   chrXVI 937189-937606      *
-##   [1424]   chrXVI 942101-942594      *
-##   [1425]     chrM      45-14110      *
-##   [1426]     chrM   14161-16579      *
-##   [1427]     chrM   16787-85757      *
+##   [1492]   chrXVI 932843-934012      *
+##   [1493]   chrXVI 935601-936073      *
+##   [1494]   chrXVI 937224-937623      *
+##   [1495]   chrXVI 937843-938300      *
+##   [1496]   chrXVI 942114-942583      *
 ##   -------
-##   seqinfo: 17 sequences (1 circular) from sacCer3 genome
+##   seqinfo: 16 sequences from sacCer3 genome
 ## 
 ## $layerSet$`DNA-meth`
 ## GRanges object with 10000 ranges and 0 metadata columns:
 ##           seqnames    ranges strand
 ##              &lt;Rle&gt; &lt;IRanges&gt;  &lt;Rle&gt;
-##       [1]     chrI      4553      *
-##       [2]     chrI      4605      *
-##       [3]     chrI      4658      *
-##       [4]     chrI      4728      *
-##       [5]     chrI      6565      *
+##       [1]     chrI      4392      *
+##       [2]     chrI      4588      *
+##       [3]     chrI      4633      *
+##       [4]     chrI      4684      *
+##       [5]     chrI      6550      *
 ##       ...      ...       ...    ...
-##    [9996]     chrM     83358      *
-##    [9997]     chrM     83953      *
-##    [9998]     chrM     84696      *
-##    [9999]     chrM     85058      *
-##   [10000]     chrM     85397      *
+##    [9996]   chrXVI    942276      *
+##    [9997]   chrXVI    942337      *
+##    [9998]   chrXVI    942354      *
+##    [9999]   chrXVI    942448      *
+##   [10000]   chrXVI    942484      *
 ##   -------
-##   seqinfo: 17 sequences (1 circular) from sacCer3 genome
+##   seqinfo: 16 sequences from sacCer3 genome
 ## 
 ## 
 ## $cache
 ## $cache$DIM5.ATpc
 ## $cache$DIM5.ATpc$LAYER.0
-## GRanges object with 730332 ranges and 0 metadata columns:
-##            seqnames      ranges strand
-##               &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt;
-##        [1]     chrI   4327-4726      *
-##        [2]     chrI   4328-4727      *
-##        [3]     chrI   4329-4728      *
-##        [4]     chrI   4330-4729      *
-##        [5]     chrI   4331-4730      *
-##        ...      ...         ...    ...
-##   [730328]     chrM 85376-85775      *
-##   [730329]     chrM 85377-85776      *
-##   [730330]     chrM 85378-85777      *
-##   [730331]     chrM 85379-85778      *
-##   [730332]     chrM 85380-85779      *
+## GRanges object with 565280 ranges and 0 metadata columns:
+##            seqnames        ranges strand
+##               &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt;
+##        [1]     chrI     4327-4726      *
+##        [2]     chrI     4328-4727      *
+##        [3]     chrI     4329-4728      *
+##        [4]     chrI     4330-4729      *
+##        [5]     chrI     4331-4730      *
+##        ...      ...           ...    ...
+##   [565276]   chrXVI 942211-942610      *
+##   [565277]   chrXVI 942212-942611      *
+##   [565278]   chrXVI 942213-942612      *
+##   [565279]   chrXVI 942214-942613      *
+##   [565280]   chrXVI 942215-942614      *
 ##   -------
-##   seqinfo: 17 sequences (1 circular) from sacCer3 genome
+##   seqinfo: 16 sequences from sacCer3 genome
 ## 
 ## 
 ## $cache$RID
 ## $cache$RID$LAYER.0
-## GRanges object with 1764582 ranges and 0 metadata columns:
-##             seqnames      ranges strand
-##                &lt;Rle&gt;   &lt;IRanges&gt;  &lt;Rle&gt;
-##         [1]     chrI         3-5      *
-##         [2]     chrI        8-10      *
-##         [3]     chrI       14-16      *
-##         [4]     chrI       16-18      *
-##         [5]     chrI       22-24      *
-##         ...      ...         ...    ...
-##   [1764578]     chrM 85671-85673      *
-##   [1764579]     chrM 85677-85679      *
-##   [1764580]     chrM 85705-85707      *
-##   [1764581]     chrM 85731-85733      *
-##   [1764582]     chrM 85747-85749      *
+## GRanges object with 1758765 ranges and 0 metadata columns:
+##             seqnames        ranges strand
+##                &lt;Rle&gt;     &lt;IRanges&gt;  &lt;Rle&gt;
+##         [1]     chrI           3-5      *
+##         [2]     chrI          8-10      *
+##         [3]     chrI         14-16      *
+##         [4]     chrI         16-18      *
+##         [5]     chrI         22-24      *
+##         ...      ...           ...    ...
+##   [1758761]   chrXVI 948004-948006      *
+##   [1758762]   chrXVI 948006-948008      *
+##   [1758763]   chrXVI 948009-948011      *
+##   [1758764]   chrXVI 948020-948022      *
+##   [1758765]   chrXVI 948062-948064      *
 ##   -------
-##   seqinfo: 17 sequences (1 circular) from sacCer3 genome</code></pre>
+##   seqinfo: 16 sequences from sacCer3 genome</code></pre>
 <p>The sub-list “$cache” contains a record of possible matches for
 binding factors that recognise LAYER.0 (the genome). Further simulations
 using the same result object (resultLayerGenome) can re-use this cache
@@ -631,9 +688,11 @@ mechanism.</p>
 <li>H3K9me3 at areas of high AT DIM-5/KMT1</li>
 <li>Methylation of Cs within these regions. DIM-2</li>
 </ul>
-<p>It could be further extended to incorporate spreading of the H3K9me3
-mark by HP1. At time of writing, the BSgenome is immutable, so we cannot
-“mutate” the methylated Cytosines.</p>
+<p>Here we do not attempt to alter the genome (via mutation) as we are
+interested in the position of potential sites. Alteration at single base
+pairs could be achieved using the function injectSNPs() in the BSgenome
+package. The simulation could also be extended to incorporate spreading
+of the H3K9me3 mark by HP1.</p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>

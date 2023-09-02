@@ -25,13 +25,18 @@ library(GenomicLayers)
 library(BSgenome.Scerevisiae.UCSC.sacCer3)
 ```
 
-Create a named link to the genome, inspect it and remind ourselves of the degenerate IUPAC codes.
+Create a named link to the genome, inspect it and create a subset version without chrM. We only want to use the nuclear chromosomes because chrM is not targetted by the same mechanisms and exists in a very different copy number in the cell. There is a utility function in GenomicLayers to subset a BSgenome. 
 
 ```{r checkGenome, echo=TRUE}
 genome <- BSgenome.Scerevisiae.UCSC.sacCer3
 
 seqinfo(genome)
-IUPAC_CODE_MAP   # check the IUPAC codes.
+seqnames(genome)
+sequences_to_keep <- setdiff(seqnames(genome), "chrM")   # nuclear chroms only
+genomeNuc <- keepBSgenomeSequences(genome, sequences_to_keep)
+seqinfo(genomeNuc)
+
+
 ```
 
 ## Create a "layerSet" object to store results linked to the genome. 
@@ -39,7 +44,7 @@ IUPAC_CODE_MAP   # check the IUPAC codes.
 We will want to store hits on the genome as Layers that can act as context for the selection of further sites of activity. These could be areas of open or closed chromatin, specific epigenetic marks, or any user-defined region of activity. Here we will create layers to represent the presence of H3K9me3 and DNA-methylation.  In this simulation, both layers begin with no regions, but they could be pre-populated with GRanges objects.
 
 ```{r createLayerSet, echo=TRUE}
-sacCer.LS <- createLayerSet.BSgenome(BSgenome.Scerevisiae.UCSC.sacCer3,
+sacCer.LS <- createLayerSet.BSgenome(genomeNuc,
                                      n.layer=2, 
                                      layer.names=c("H3K9me3", "DNA-meth"))
 
@@ -48,15 +53,19 @@ sacCer.LS <- createLayerSet.BSgenome(BSgenome.Scerevisiae.UCSC.sacCer3,
 
 ## Create binding factors
 
-The first binding factor will bind to regions of the genome of 400bp that have an AT% greater than or equal to 70%. Where it binds, it will set the H3K9me3 layer to state 1 (rather than 0 or empty).
+The first binding factor will bind to regions of the genome of 400bp that have an AT% greater than or equal to 70%. Where it binds, it will set the H3K9me3 layer to state 1 (rather than 0 or empty). For A/T, we will need the IUPAC code, W, and create a string of Ws of length 400. 
 
 ```{r createDIM5, echo=TRUE}
+IUPAC_CODE_MAP   # remind ourselves of the the IUPAC codes.
+
 DIM5.ATpc <- createBindingFactor.DNA_consensus(name="DIM5.ATpc",    
                     patternString = paste0(rep("W", 400), collapse =""), 
                     fixed=FALSE , max.mismatch=400*.3  ,  
                     profile.layers=c("H3K9me3", "DNA-meth"),
                     profile.marks=c(0,0),
                     mod.layers=c("H3K9me3"), mod.marks=1 )
+
+DIM5.ATpc   # take a look at what has been created.
 ```
 
 It is worth checking what a binding factor will bind and we can use the function matchBindingFactor.BSgenome for this.
@@ -104,8 +113,8 @@ This vignette contains just two parts of this repressive mechanism.
 - H3K9me3 at areas of high AT  DIM-5/KMT1
 - Methylation of Cs within these regions.  DIM-2
 
-It could be further extended to incorporate spreading of the H3K9me3 mark by HP1.  At time of writing, the BSgenome is immutable, so we cannot "mutate" the methylated Cytosines. 
 
+Here we do not attempt to alter the genome (via mutation) as we are interested in the position of potential sites.  Alteration at single base pairs could be achieved using the function injectSNPs() in the BSgenome package. The simulation could also be extended to incorporate spreading of the H3K9me3 mark by HP1.  
 
 ## References 
 

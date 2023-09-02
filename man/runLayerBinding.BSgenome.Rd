@@ -58,13 +58,13 @@ genome <- BSgenome.Scerevisiae.UCSC.sacCer3   # for convenience
 
 scLayerSet <- createLayerSet.BSgenome(genome=genome, n.layers = 5, verbose=TRUE)
 
-testFactor2 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA")
+testFactor2 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA")
 
-testFactor3 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
+testFactor3 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
                                              mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
 
 # check that a profile looking for 1 will not find any.  N.B this WILL bind AFTER testFactor2
-testFactor4 <- createBindingFactor.DNA_motif("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
+testFactor4 <- createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA", profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
                                              mod.layers = c("LAYER.1", "LAYER.2"), mod.marks=c(0,1))
 
  
