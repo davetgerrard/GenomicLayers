@@ -20,7 +20,6 @@ GenomicLayers depends upon some [Bioconductor](https://www.bioconductor.org/) pa
 
 	if (!require("BiocManager", quietly = TRUE))
 	  install.packages("BiocManager")
-	BiocManager::install(version = "3.16")
 	
 	BiocManager::install("BSgenome.Scerevisiae.UCSC.sacCer3") 
 

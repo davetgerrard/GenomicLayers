@@ -9,9 +9,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-##  THIS CODE IS NOT TESTED AND DOES NOT RUN. BASED ON OUTDATED CODE
-
-
 ## Introduction
 
 
@@ -20,8 +17,10 @@ A real model of spreading of several factors across the X chromosome.
 
 Requires mouse BSgenome.Mmusculus.UCSC.mm9 which can be obtained from Bioconductor
 
-  source("https://bioconductor.org/biocLite.R")
-  biocLite("BSgenome.Mmusculus.UCSC.mm9")
+  if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+  BiocManager::install("BSgenome.Mmusculus.UCSC.mm9")
 
 
 ## Load prerequisites
@@ -45,11 +44,21 @@ GENOME <- 'mm9'
 # load X chromosome sequence 
 genome <- BSgenome.Mmusculus.UCSC.mm9 
 
+seqinfo(genome)
+seqnames(genome)
+#sequences_to_keep <- paste0("chr", c(1:19, "X", "Y"))   # nuclear chroms only
+sequences_to_keep <- "chrX"   # nuclear chroms only
+genomeNuc <- keepBSgenomeSequences(genome, sequences_to_keep)
+seqinfo(genomeNuc)
+
+
 
 # set up a layerSet on chrom X.
-thisChrom <- genome[["chrX"]] 
-layerList.X <- createLayerList.DNAstring(seq=thisChrom, 
-                                layerNames=c("CpG_island","PRC","H3K27me3"))
+
+nucLayerSet.X <- createLayerSet.BSgenome( genome=genomeNuc, 
+                n.layers= 3,layer.names = c("CpG_island","PRC","H3K27me3"))
+
+
 
 ```
 
@@ -59,13 +68,20 @@ layerList.X <- createLayerList.DNAstring(seq=thisChrom,
 #N.B. temporarily setting a fixed patternLength, 
 # because don't know how to implement variable patternLength yet.
 # current effect is that hits < patternLength are discarded
-bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", patternString="(CG.{0,20}){9}CG",
-                                               patternLength=20, mod.layers = "CpG_island", 
-                                               mod.marks=1, stateWidth=200)
+bf.CpGisland <- createBindingFactor.DNA_regexp("CpGisland", 
+                patternString="(CG.{0,20}){9}CG",  
+                patternLength=20, mod.layers = "CpG_island", 
+                mod.marks=1, stateWidth=200)
 
-bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=200, mismatch.rate=0, 
-                                           profile.layers = "CpG_island", profile.marks = 1,  
-                                           mod.layers = "PRC", mod.marks=1, stateWidth=500)
+bf.EZH2 <- createBindingFactor.layer_region("EZH2",  patternLength=100, mismatch.rate=0, 
+                  profile.layers = "CpG_island", profile.marks = 1,  
+                  mod.layers = "PRC", mod.marks=1, stateWidth=150)
+bf.EZH2$profile$LAYER.0 <- NULL
+
+bf.PRC <- createBindingFactor.layer_region("PRC",  patternLength=100, mismatch.rate=0, 
+                  profile.layers = "PRC", profile.marks = 1,  
+                  mod.layers = "H3K27me3", mod.marks=1, stateWidth=150)
+bf.PRC$profile$LAYER.0 <- NULL
 
 # want a binding factor that creates mods either up or downstream of binding site. 
 # New parameter 'offset.method' to accept function as argument
@@ -74,12 +90,21 @@ upDownFunc <- function(x)  {
   
 }
 
-bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150, mismatch.rate=0, 
-                                                 profile.layers = "PRC", profile.marks = 1, 
-                                                 mod.layers = "H3K27me3", mod.marks=1, 
-                                                 stateWidth=200,offset=350, 
-                                                 offset.method=upDownFunc)
+bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=100,
+                  mismatch.rate=0, 
+                  profile.layers = "H3K27me3", profile.marks = 1, 
+                  mod.layers = "PRC", mod.marks=1, 
+                  stateWidth=150,offset=350, 
+                  offset.method=upDownFunc)
+bf.spreadRep$profile$LAYER.0 <- NULL
 
+bf.spreadRep2 <- createBindingFactor.layer_region("spreadRep2", patternLength=100,
+                  mismatch.rate=0, 
+                  profile.layers = "H3K27me3", profile.marks = 1, 
+                  mod.layers = "PRC", mod.marks=1, 
+                  stateWidth=150,offset=500, 
+                  offset.method=upDownFunc)
+bf.spreadRep2$profile$LAYER.0 <- NULL
 
 ```
 
@@ -92,20 +117,36 @@ bf.spreadRep <- createBindingFactor.layer_region("spreadRep", patternLength=150,
 ```{r run-binding, echo=TRUE, eval =F}
 
 
-n.waves <- 10
-n.iters <- 2000
 
-XFS <- list(bf.CpGisland =bf.CpGisland , bf.PRC.1=bf.PRC, bf.spreadRep.1=bf.spreadRep, 
-              bf.PRC.2=bf.PRC, bf.spreadRep.2=bf.spreadRep)
 
-XFS.10 <- rep(XFS, times=n.waves)
-abundances <- 2000  # runLayerBinding will convert this to a vector as long as XFS.10 so each has 2000 "molecules"
 
-modLayer <- runLayerBinding( layerList=layerList.X, factorSet = XFS.10,
-                             bf.abundances =abundances)
+XFS <- list(bf.CpGisland =bf.CpGisland ,bf.EZH2=bf.EZH2, bf.PRC=bf.PRC, 
+            bf.spreadRep=bf.spreadRep , bf.spreadRep2=bf.spreadRep2 )
 
+
+abundances <- c(500,5000,5000, 5000,2000)   #
+
+n.iters <- 20
+#n.iters <- 2000  #  
+                
+for (i in 1: n.iters) {
+  if(i%%10 == 0)  {
+    
+    print(i)
+  } else {
+    #cat(".") 
+  }
+  nucLayerSet.X <- runLayerBinding.BSgenome( layerList=nucLayerSet.X, 
+                                             factorSet = XFS, bf.abundances =abundances, 
+                                             collect.stats=T, keep.stats = T)
+  
+}
 # inspect the result
-modLayer
+nucLayerSet.X$history
+
+### saturates CpG islands within about 10 iterations but the spread rate slows 
+### to cover 2.5Mb (166Mb chrX) after 50 iterations. 7Mb after 200. 20Mb after 2000
+### will take a lot more to cover the whole chromosome. 
 
 ```
 
@@ -114,6 +155,13 @@ modLayer
 ## Visualise the results
 ```{r , eval =F}
 #TODO
+plot(nucLayerSet.X$history[,"nBlocks.CpG_island"])
+plot(nucLayerSet.X$history[,"Coverage.CpG_island"])
+plot(nucLayerSet.X$history[,"nBlocks.PRC"])
+plot(nucLayerSet.X$history[,"nBlocks.H3K27me3"])
+plot(nucLayerSet.X$history[,"Coverage.PRC"])
+plot(nucLayerSet.X$history[,"Coverage.H3K27me3"])
+plot(nucLayerSet.X$history[,"time"])
 ```
 
 
