@@ -62,11 +62,13 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
   }
   # now create a second list of intended modifications.
   modList <- list()
-  for(i in 1:length(mod.layers)) {
-  #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
-    thisLayer <- mod.layers[i]
-    modState <- mod.marks[i]
-    modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=0, align="centre")   #  make stateWidth independent of patternLength
+  if(length(mod.layers) >0) { 
+    for(i in 1:length(mod.layers)) {
+      #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
+      thisLayer <- mod.layers[i]
+      modState <- mod.marks[i]
+      modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=0, align="centre")   #  make stateWidth independent of patternLength
+    }
   }
   
   bindingFactor <- list(name=name, type=type,

@@ -48,8 +48,8 @@
 #' @export
 createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patternString="N",
                                           patternLength = nchar(patternString), stateWidth=patternLength,
-                                          profile.layers="LAYER.1",profile.marks=0,
-                                          mod.layers="LAYER.1",mod.marks=1,
+                                          profile.layers=NULL,profile.marks=NULL,
+                                          mod.layers=NULL,mod.marks=NULL,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
                                       min.DM.length=2, min.DR.length=10, verbose=FALSE,max.mismatch=0, min.mismatch=0,
                                       with.indels=FALSE, fixed=TRUE,
@@ -70,11 +70,13 @@ createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patte
   }
   # now create a second list of intended modifications.
   modList <- list()
-  for(i in 1:length(mod.layers)) {
-  #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
-    thisLayer <- mod.layers[i]
-    modState <- mod.marks[i]
-    modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=0, align="centre")   #  make stateWidth independent of patternLength
+  if(length(mod.layers) >0) { 
+    for(i in 1:length(mod.layers)) {
+      #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
+      thisLayer <- mod.layers[i]
+      modState <- mod.marks[i]
+      modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=0, align="centre")   #  make stateWidth independent of patternLength
+    }
   }
   
   bindingFactor <- list(name=name, type=type,

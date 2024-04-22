@@ -33,7 +33,7 @@
 #'
 #' @export
 createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternString="N",patternLength=0, 
-					profile.layers=NULL,profile.marks=NULL,
+					                              profile.layers=NULL,profile.marks=NULL,
                                         mod.layers=NULL,mod.marks=NULL, stateWidth=patternLength,
                                       	test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000,
                                       	min.DM.length=2, min.DR.length=10, verbose=FALSE) {
@@ -52,12 +52,12 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
   }
   modList <- list()
   if(length(mod.layers) >0) {
-  for(i in 1:length(mod.layers)) {
-  #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
-    thisLayer <- mod.layers[i]
-    modState <- mod.marks[i]
-    modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=0, align="centre")   # TODO make stateWidth independent of patternLength
-  }
+    for(i in 1:length(mod.layers)) {
+      #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
+      thisLayer <- mod.layers[i]
+      modState <- mod.marks[i]
+      modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=0, align="centre")   # TODO make stateWidth independent of patternLength
+    }
   }
   bindingFactor <- list(name=name, type=type,
                         profile=profileList,

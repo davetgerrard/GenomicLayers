@@ -39,7 +39,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   
   require(Biostrings)
   stopifnot( class(layerSet$layerSet[[1]]) == "BSgenome")
-  if(! all(names(bindingFactor$profile) %in% names(layerSet$layerSet))) stop("binding factor matches layers not present in layerSet")
+  if(! all(names(bindingFactor$profile) %in% names(layerSet$layerSet))) stop("binding factor profile matches layers not present in layerSet")
+  if(! all(names(bindingFactor$mods) %in% names(layerSet$layerSet))) stop("binding factor mods list matches layers not present in layerSet")
   # capture data from the genome
   genome <- layerSet$layerSet[[1]]
   genome.sl <- seqlengths(genome)
