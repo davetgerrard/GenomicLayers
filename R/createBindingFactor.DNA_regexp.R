@@ -38,6 +38,13 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
                                       	test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000,
                                       	min.DM.length=2, min.DR.length=10, verbose=FALSE) {
   
+  
+  # check input  
+  stopifnot(exprs = {
+    "profile.layers has non-unique names" = length(profile.layers) == length(unique(profile.layers))
+    "mod.layers has non-unique names" = length(mod.layers) == length(unique(mod.layers))
+  })  
+  
   # patternLength will be variable for regular expressions. Need separate parameter for modLength and may become a vector or list with different lengths for each layer.
   #patternLength <- nchar(patternString)
   #TODO sort out how to define patternLength or re-write other functions to accomodate variable patternLength
@@ -45,6 +52,7 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
   
   
   if(length(profile.layers) >0) {
+    stopifnot("profile.marks does not match length of profile.layers" = length(profile.layers) == length(profile.marks))  
   for(i in 1:length(profile.layers)) {
     thisLayer <- profile.layers[i]
     profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=0.1, length=patternLength)
@@ -52,6 +60,7 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
   }
   modList <- list()
   if(length(mod.layers) >0) {
+    stopifnot("mod.marks does not match length of mod.layers" = length(mod.layers) == length(mod.marks))
     for(i in 1:length(mod.layers)) {
       #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
       thisLayer <- mod.layers[i]

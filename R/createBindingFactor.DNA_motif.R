@@ -48,6 +48,12 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
                                       verbose=FALSE) {
   
+  # check input  
+  stopifnot(exprs = {
+    "profile.layers has non-unique names" = length(profile.layers) == length(unique(profile.layers))
+    "mod.layers has non-unique names" = length(mod.layers) == length(unique(mod.layers))
+  })  
+  
   # create a list to store the profile that would constitute a match. 
   # parameters to pass to Biostrings::vmatchPattern()
   profileList <- list(LAYER.0=list(pattern=pwm , min.score="80%", with.score=FALSE,
@@ -55,6 +61,7 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
   
   
   if(length(profile.layers) >0) {  # there are layers to match beyond the sequence layer
+    stopifnot("profile.marks does not match length of profile.layers" = length(profile.layers) == length(profile.marks))  
     for(i in 1:length(profile.layers)) {
       thisLayer <- profile.layers[i]
       profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=0.1, length=patternLength)
@@ -63,6 +70,7 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
   # now create a second list of intended modifications.
   modList <- list()
   if(length(mod.layers) >0) { 
+    stopifnot("mod.marks does not match length of mod.layers" = length(mod.layers) == length(mod.marks))
     for(i in 1:length(mod.layers)) {
       #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
       thisLayer <- mod.layers[i]

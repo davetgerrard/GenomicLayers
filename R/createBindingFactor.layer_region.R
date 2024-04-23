@@ -43,11 +43,18 @@ createBindingFactor.layer_region <- function(name,  type="layer_region", pattern
                                             test.layer0.binding=FALSE, test.mismatch.rate=.1 , 
                                             max.pattern.tries=1000, min.DM.length=2, min.DR.length=10, verbose=FALSE) {
   
+  # check input  
+  stopifnot(exprs = {
+    "profile.layers has non-unique names" = length(profile.layers) == length(unique(profile.layers))
+    "mod.layers has non-unique names" = length(mod.layers) == length(unique(mod.layers))
+  })  
+  
   #patternLength <- nchar(patternString)
   #profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, length=patternLength))
   profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=mismatch.rate, length=patternLength))
   
   if(length(profile.layers) >0) {  # there are layers to match beyond the sequence layer. Should always be true unless you want to match the whole chromosome.
+    stopifnot("profile.marks does not match length of profile.layers" = length(profile.layers) == length(profile.marks))  
     for(i in 1:length(profile.layers)) {
       thisLayer <- profile.layers[i]
       profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=mismatch.rate, length=patternLength)
@@ -56,6 +63,7 @@ createBindingFactor.layer_region <- function(name,  type="layer_region", pattern
   
   modList <- list()
   if(length(mod.layers) >0) {
+    stopifnot("mod.marks does not match length of mod.layers" = length(mod.layers) == length(mod.marks))
     for(i in 1:length(mod.layers)) {
       #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
       thisLayer <- mod.layers[i]

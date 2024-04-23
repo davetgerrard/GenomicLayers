@@ -54,7 +54,13 @@ createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patte
                                       min.DM.length=2, min.DR.length=10, verbose=FALSE,max.mismatch=0, min.mismatch=0,
                                       with.indels=FALSE, fixed=TRUE,
                                       algorithm="auto") {
-  
+
+  # check input  
+  stopifnot(exprs = {
+    "profile.layers has non-unique names" = length(profile.layers) == length(unique(profile.layers))
+    "mod.layers has non-unique names" = length(mod.layers) == length(unique(mod.layers))
+    })  
+
   # create a list to store the profile that would constitute a match. 
   # parameters to pass to Biostrings::vmatchPattern()
   profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, 
@@ -63,6 +69,7 @@ createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patte
   
   
   if(length(profile.layers) >0) {  # there are layers to match beyond the sequence layer
+    stopifnot("profile.marks does not match length of profile.layers" = length(profile.layers) == length(profile.marks))  
     for(i in 1:length(profile.layers)) {
       thisLayer <- profile.layers[i]
       profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=0.1, length=patternLength)
@@ -71,6 +78,7 @@ createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patte
   # now create a second list of intended modifications.
   modList <- list()
   if(length(mod.layers) >0) { 
+    stopifnot("mod.marks does not match length of mod.layers" = length(mod.layers) == length(mod.marks)) 
     for(i in 1:length(mod.layers)) {
       #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
       thisLayer <- mod.layers[i]
@@ -90,3 +98,4 @@ createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patte
 
 
 #createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA")
+#createBindingFactor.DNA_consensus("test", patternString="ACTGGGCTA" , profile.layers=c("bob", "bob"))  # should give error
