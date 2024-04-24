@@ -1,7 +1,7 @@
 #' Find matches for a binding factor on a layer set containing a BSgenome sequence
 #'
 #' Generate a list of matches for a binding factor against a layerSet object containing a BSgenome sequence. 
-#' For this (.BSgenome) form, the \code{"Hits"} object returned is likely to be a \code{"GRanges"} object
+#' For this (.BSgenome) form, the \code{"Hits"} object returned will be a \code{"GRanges"} object
 #'
 #' @param layerSet the \code{"layerSet"} target
 #' @param bindingFactor the \code{"bindingFactor"} to match
@@ -11,7 +11,7 @@
 #' @param cache.layers NULL which named layers to cache hits on (default NULL). Only use for fixed matches (e.g. to genome sequence "LAYER.0")
 #' @param verbose output more information to the screen
 #'
-#' @return \code{"Hits"}
+#' @return \code{"GRanges"}
 #' 
 #' @seealso \code{\link{runLayerBinding}} \code{\link{runLayerBinding.BSgenome}} \code{\link{modifyLayerByBindingFactor.BSgenome}}
 #'
@@ -38,9 +38,13 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
                                         cache.layers=NULL, verbose=FALSE)  {
   
   require(Biostrings)
-  stopifnot( class(layerSet$layerSet[[1]]) == "BSgenome")
-  if(! all(names(bindingFactor$profile) %in% names(layerSet$layerSet))) stop("binding factor profile matches layers not present in layerSet")
-  if(! all(names(bindingFactor$mods) %in% names(layerSet$layerSet))) stop("binding factor mods list matches layers not present in layerSet")
+  # check input  
+  stopifnot(exprs = {
+        "LayerSet does not have a BSgenome in LAYER.0" = class(layerSet$layerSet[[1]]) == "BSgenome"
+        "binding factor profile.layers matches layers not present in layerSet" = all(names(bindingFactor$profile) %in% names(layerSet$layerSet))
+        "binding factor mod.layers list matches layers not present in layerSet" = all(names(bindingFactor$mods) %in% names(layerSet$layerSet))
+    })
+
   # capture data from the genome
   genome <- layerSet$layerSet[[1]]
   genome.sl <- seqlengths(genome)
@@ -112,6 +116,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
         }   
         #validHits <- hitList[[thisLayer]]
       } else {
+        # NOT LAYER.0
         # with binary patterns, take ranges that have value 0 (gaps) 1 (IRanges)
         patternLength <- bindingFactor$profile[[thisLayer]]$length
         pattern <- bindingFactor$profile[[thisLayer]]$pattern
@@ -131,6 +136,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
           
           # would need to be inverted for negative islands.
         } else {
+          # not a layer_island
           these.hits <- layerSet$layerSet[[thisLayer]][width(layerSet$layerSet[[thisLayer]]) >= patternLength]
           these.gaps <- gaps(layerSet$layerSet[[thisLayer]])[width(gaps(layerSet$layerSet[[thisLayer]]))>=patternLength]   # TODO include length of feature..
           if(pattern == 1) {
@@ -154,7 +160,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
       # remove those shorter than patternLength (those overlapping the edges.
       hitList[[thisLayer]] <- hitList[[thisLayer]][width(hitList[[thisLayer]]) >= patternLength]
       
-    }  else  {  # attempt to use cached layers
+    }  else  {  
+      # attempt to use cached layers
       if(verbose) print(paste0("Using cached hits for " , bindingFactor$name, " on layer ", thisLayer))
       if(is.null(layerSet$cache[[bindingFactor$name]][[thisLayer]])) {
         stop(paste("No cache available for",  bindingFactor$name, "on layer", thisLayer))
@@ -168,7 +175,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   
   # all layers have been matched or their cached results added to hitList. 
   # now need to intersect the results. 
-  # first test if any required layers are empty as this will mean there are no hits overall. Remember that profiles looking for '0' will be inverse matches.
+  # first test if any required layers are empty as this will mean there are no hits overall. 
+  # Remember that profiles looking for '0' will be inverse matches.
   if(any(lapply(hitList, length) == 0))  {   # one or more of the patterns were not matched.
     validHits <- GRanges()    #####TODO change IRanges  to GRAnges()  to fix the intersect below.
   } else{

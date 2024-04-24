@@ -56,7 +56,7 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
   
   # create a list to store the profile that would constitute a match. 
   # parameters to pass to Biostrings::vmatchPattern()
-  profileList <- list(LAYER.0=list(pattern=pwm , min.score="80%", with.score=FALSE,
+  profileList <- list(LAYER.0=list(pattern=pwm , min.score=min.score, with.score=with.score,
                                    length=patternLength))
   
   
@@ -64,7 +64,7 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
     stopifnot("profile.marks does not match length of profile.layers" = length(profile.layers) == length(profile.marks))  
     for(i in 1:length(profile.layers)) {
       thisLayer <- profile.layers[i]
-      profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=0.1, length=patternLength)
+      profileList[[thisLayer]] <- list(pattern=profile.marks[i], mismatch.rate=test.mismatch.rate, length=patternLength)
     }
   }
   # now create a second list of intended modifications.
