@@ -202,6 +202,8 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
     } else {  # LAYER.0 matches are not important and can be intersected and reduced
       # generate slidingWindowHits of length patternLength within every valid hit.
       validHits <- unlist(slidingWindows(validHits, width=patternLength, step=1))
+      #slidingWindows can truncate the last window if it does not fit
+      validHits <- validHits[width(validHits) >= patternLength]
       #validHits <- intersect(validHits, hitList[["LAYER.0"]]) 
     }
   } 
