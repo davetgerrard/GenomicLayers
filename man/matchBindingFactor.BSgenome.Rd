@@ -30,11 +30,11 @@ matchBindingFactor.BSgenome(
 \item{verbose}{output more information to the screen}
 }
 \value{
-\code{"Hits"}
+\code{"GRanges"}
 }
 \description{
 Generate a list of matches for a binding factor against a layerSet object containing a BSgenome sequence. 
-For this (.BSgenome) form, the \code{"Hits"} object returned is likely to be a \code{"GRanges"} object
+For this (.BSgenome) form, the \code{"Hits"} object returned will be a \code{"GRanges"} object
 }
 \examples{
 require(Biostrings)

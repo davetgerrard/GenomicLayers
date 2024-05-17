@@ -11,10 +11,10 @@ createBindingFactor.layer_region(
   patternString = "N",
   mismatch.rate = 0,
   stateWidth = patternLength,
-  profile.layers = "LAYER.1",
-  profile.marks = 0,
-  mod.layers = "LAYER.1",
-  mod.marks = 1,
+  profile.layers = NULL,
+  profile.marks = NULL,
+  mod.layers = NULL,
+  mod.marks = NULL,
   offset = 0,
   offset.method = NULL,
   align = "centre",
@@ -73,7 +73,11 @@ marks on others layers and \emph{may} (when used) set marks on other layers.
 \examples{
 bf.LR <- createBindingFactor.layer_region("layerBf", type="layer_region", 
          patternLength = 1, patternString = "N",
-          stateWidth = patternLength, profile.layers = "LAYER.1",
+          stateWidth = 9, profile.layers = "LAYER.1",
           profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
+         
+ bf.LR1 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",  profile.layers = "LAYER.1", profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
+ bf.LR2 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",  profile.layers = "LAYER.1", profile.marks = 0)  # profile but no mods
+ bf.LR3 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",   mod.layers = "LAYER.1", mod.marks = 1)  # no profile beyond LAYER.0 (genome)
 
 }
