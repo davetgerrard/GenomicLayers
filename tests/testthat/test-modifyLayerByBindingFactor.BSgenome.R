@@ -1,6 +1,3 @@
-# test to show whole genome layer binding 
-# three factors are created (2,3,4), the third can only hit after the first has modified.
-# TODO this set of tests is important but needs tidying up 
 # Important to use an actual BSgenome object in tests
 # However, tests should be more deterministic and rely on known motifs
 #   Some layers could be pre-populated with specific ranges to test conditional matching.
@@ -13,16 +10,47 @@ genome <- BSgenome.Scerevisiae.UCSC.sacCer3   # for convenience
 scLayerSet <- createLayerSet.BSgenome(genome=genome, n.layers = 5, verbose=TRUE)
 
 
-
 testFactor2 <- createBindingFactor.DNA_consensus("testFactor2", patternString="ACTGGGCTA")  # 41 matches across SacCer3
 
 results2 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor2)
 
+# a factor to change some layer to match.
 testFactor3 <- createBindingFactor.DNA_consensus("testFactor3", patternString="ACTGGGCTA", profile.layers = c("LAYER.1", "LAYER.3"), profile.marks = c(0,0), 
-                                                 mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(0,1))
+                                                 mod.layers = c("LAYER.2", "LAYER.4"), mod.marks=c(1,1))
 
 results3 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor3)
 #mfLayer <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet, hits=results3, bindingFactor=testFactor3)
+
+scLayerSet3 <- modifyLayerByBindingFactor.BSgenome(layerSet = scLayerSet, hits= results3, bindingFactor=testFactor3)
+
+# changes to LAYER.2 and LAYER.4 should match results3 but need to be ordered to be "identical"
+
+
+test_that("modified layer matches simple hits with same bf", {
+  expect_true(identical(results3[order(results3)], scLayerSet3$layerSet$LAYER.2[order(scLayerSet3$layerSet$LAYER.2)])
+)
+})
+
+# modify hits to increase them in size
+testFactor4 <- createBindingFactor.layer_region("testFactor4", patternLength=9,
+                                                profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
+                                                mod.layers = c( "LAYER.3"), mod.marks=c(1),
+                                                stateWidth = 500)
+results4 <- matchBindingFactor.BSgenome(layerSet = scLayerSet3, bindingFactor = testFactor4)
+scLayerSet4 <- modifyLayerByBindingFactor.BSgenome(layerSet = scLayerSet3, hits= results4, bindingFactor=testFactor4)
+
+testFactor5 <- createBindingFactor.layer_region("testFactor5", patternLength=9,
+                                                profile.layers = c("LAYER.1", "LAYER.4"), profile.marks = c(0,1), 
+                                                mod.layers = c( "LAYER.1"), mod.marks=c(1),
+                                                stateWidth = 5)
+results5 <- matchBindingFactor.BSgenome(layerSet = scLayerSet3, bindingFactor = testFactor5)
+scLayerSet5 <- modifyLayerByBindingFactor.BSgenome(layerSet = scLayerSet3, hits= results5, bindingFactor=testFactor5)
+
+
+test_that("binding factor can change size of regions during modification", {
+  expect_true(all(width(scLayerSet4$layerSet$LAYER.3) == 500))
+  expect_true(all(width(scLayerSet5$layerSet$LAYER.1) == 5))
+})
 
 # check that a profile looking for 1 will not find any.  N.B this WILL bind AFTER testFactor2
 testFactor4 <- createBindingFactor.layer_region("testFactor4", patternLength=5,
@@ -31,29 +59,6 @@ testFactor4 <- createBindingFactor.layer_region("testFactor4", patternLength=5,
 
 results4 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor4)
 #mfLayer <- modifyLayerByBindingFactor.BSgenome(layerSet=mfLayer, hits=results4, bindingFactor=testFactor4)
-
-# create a factor that matches an empty layer all of the genome
-testFactor40 <- createBindingFactor.layer_region("testFactor40", patternLength=1,
-                                                profile.layers = c("LAYER.1"), profile.marks = c(0), 
-                                                mod.layers = c("LAYER.1", "LAYER.2"), mod.marks=c(0,1))
-# check that the matches equal the length of the chromosome (tiled every 1bp)
-results40 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor40)
-
-test_that("Zero matches tile whole genome", {  # this test could be faster if limited to one chromosome.
-  expect_true(sum(seqlengths(genome))  == length( results40))
-})
-
-testFactor41 <- testFactor40
-testFactor41$profile <- NULL
-
-
-
-# check that the matches equal the length of the chromosome (tiled every 1bp)
-results41 <- matchBindingFactor.BSgenome(layerSet = scLayerSet, bindingFactor = testFactor41)
-
-test_that("No profile creates no matches", {  # this test could be faster if limited to one chromosome.
-  expect_true(0  == length( results41))
-})
 
 # test that a bindingFactor with profile layer not in the layerSet will not match.
 testFactor5 <- createBindingFactor.layer_region("testFactor5", patternLength=5,
@@ -156,3 +161,52 @@ test_that("intersects are correct", {
   expect_true(length(results8)  == 1 )
   expect_true(min(width(results10)) == 40)
   })
+
+
+# SECTION testing the offset function
+
+upDownFuncRnorm <- function(n, offset.mean, offset.sd)  {
+  y <- round(rnorm(n, mean=offset.mean, sd=offset.sd))
+  z <- sample(c(1, -1), length(y), replace=T)  # random vector of 1,-1  to negate half the values
+  
+  return(round(y*z))
+}
+
+# mods layer 3 with NO offset
+testFactor40 <- createBindingFactor.layer_region("testFactor40", patternLength=9,
+                                                 profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
+                                                 mod.layers = c( "LAYER.3"), mod.marks=c(1)
+                                                 )                                                
+results40 <- matchBindingFactor.BSgenome(layerSet = scLayerSet3, bindingFactor = testFactor40)
+scLayerSet340 <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet3, hits=results40, bindingFactor=testFactor40)
+
+# 41 is same as 40 but offsets results by -8 (to give 1bp overlap)
+testFactor41 <- createBindingFactor.layer_region("testFactor41", patternLength=9,
+                                                 profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
+                                                 mod.layers = c( "LAYER.3"), mod.marks=c(1),
+                                                 offset = -8)  
+results41 <- matchBindingFactor.BSgenome(layerSet = scLayerSet3, bindingFactor = testFactor41)
+scLayerSet341 <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet3, hits=results41, bindingFactor=testFactor41)
+
+ov340.341 <- intersect(scLayerSet340$layerSet$LAYER.3, scLayerSet341$layerSet$LAYER.3)
+table(width(ov340.341))  # should be a count table showing all values are '1'
+sumDiff340_341 <- sum(start(scLayerSet340$layerSet$LAYER.3) - end(scLayerSet341$layerSet$LAYER.3))
+
+test_that("fixed offsets are working", {
+  expect_true(sumDiff340_341  == 0 )
+})
+
+# next is a demonstration of using a function to dynamically generate offset according to a distribution
+# as it involves randomisation and quite variable results, I'm not sure a unit test is appropriate.
+testFactor43 <- createBindingFactor.layer_region("testFactor43", patternLength=9,
+                                                profile.layers = c("LAYER.3", "LAYER.4"), profile.marks = c(0,1), 
+                                                mod.layers = c( "LAYER.3"), mod.marks=c(1),
+                                                offset.method=upDownFuncRnorm, 
+                                                offset.params=list(offset.mean=c(5,20), offset.sd=c(1:4))                                                )
+results43 <- matchBindingFactor.BSgenome(layerSet = scLayerSet3, bindingFactor = testFactor43)
+
+scLayerSet343 <- modifyLayerByBindingFactor.BSgenome(layerSet=scLayerSet3, hits=results43, bindingFactor=testFactor43, verbose=T)
+
+diff340_343 <- start(scLayerSet340$layerSet$LAYER.3) - start(scLayerSet343$layerSet$LAYER.3)
+sum(diff340_343)
+    

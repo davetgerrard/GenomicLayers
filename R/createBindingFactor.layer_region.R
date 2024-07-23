@@ -13,7 +13,8 @@
 #' @param mod.layers a vector of named layers to alter on a match
 #' @param mod.marks a vector of 0/1 to set on the mod.layers
 #' @param offset 0  integer value to indicate relative distance from pattern to apply modifications
-#' @param offset.method NULL   a function to apply to apply offset.
+#' @param offset.method NULL   a \code{function} to apply to apply offset.
+#' @param offset.params NULL  a \code{list} of named parameters to pass to offset.method function
 #' @param align "centre"
 #' @param test.layer0.binding when creating, test if the DNA sequence has a match.
 #' @param test.mismatch.rate proportion of mismatches to tolerate when testing
@@ -35,11 +36,12 @@
 #'  bf.LR3 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",   mod.layers = "LAYER.1", mod.marks = 1)  # no profile beyond LAYER.0 (genome)
 #'
 #' @export
-createBindingFactor.layer_region <- function(name,  type="layer_region", patternLength=1, patternString="N",
+createBindingFactor.layer_region <- function(name,  type="layer_region", patternLength=1, patternString=NULL,
                                              mismatch.rate=0, stateWidth=patternLength,
                                              profile.layers=NULL,  profile.marks=NULL,
                                              mod.layers=NULL,mod.marks=NULL,
-                                             offset=0, offset.method=NULL, align="centre",
+                                             offset=0, offset.method=NULL, offset.params=NULL,
+                                             align="centre",
                                             test.layer0.binding=FALSE, test.mismatch.rate=.1 , 
                                             max.pattern.tries=1000, min.DM.length=2, min.DR.length=10, verbose=FALSE) {
   
@@ -49,9 +51,15 @@ createBindingFactor.layer_region <- function(name,  type="layer_region", pattern
     "mod.layers has non-unique names" = length(mod.layers) == length(unique(mod.layers))
   })  
   
+  if(!is.null(offset.method)) stopifnot(exprs = { "offset.method if provided must be a function" = is.function(offset.method)   })
+  
   #patternLength <- nchar(patternString)
   #profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=0, length=patternLength))
-  profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=mismatch.rate, length=patternLength))
+  if(is.null(patternString)) {
+    profileList <- list()
+  } else {  # want to phase this out and have no DNA matching for this type
+    profileList <- list(LAYER.0=list(pattern=DNAString(patternString) , mismatch.rate=mismatch.rate, length=patternLength))
+  }
   
   if(length(profile.layers) >0) {  # there are layers to match beyond the sequence layer. Should always be true unless you want to match the whole chromosome.
     stopifnot("profile.marks does not match length of profile.layers" = length(profile.layers) == length(profile.marks))  
@@ -68,7 +76,9 @@ createBindingFactor.layer_region <- function(name,  type="layer_region", pattern
       #for(thisLayer in sample(names(layerSet)[-1], n.modPatterns, replace=F)) {
       thisLayer <- mod.layers[i]
       modState <- mod.marks[i]
-      modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, offset=offset, offset.method=offset.method,align=align)   # TODO make stateWidth independent of patternLength
+      modList[[thisLayer]] <- list(state=modState, stateWidth=stateWidth, 
+                                   offset=offset, offset.method=offset.method,
+                                   offset.params=offset.params, align=align)   # TODO make stateWidth independent of patternLength
     }
   }
   

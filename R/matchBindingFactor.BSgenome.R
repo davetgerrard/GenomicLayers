@@ -51,6 +51,7 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   genome.starts <- rep(1, length(genome))
   names(genome.starts) <- seqnames(genome)
   genome.ends <- genome.sl
+  if(is.null(match.layers))  return( GRanges(seqinfo=seqinfo(genome)))   # in the case that the BF has no profile.
   #seqRange <- c(start(layerSet[['LAYER.0']])[1], end(layerSet[['LAYER.0']])[1])
   #max.window <- min(max.window, seqRange[2])
   hitList <- list() # list to store hits for each layer

@@ -36,7 +36,28 @@
 modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, verbose=FALSE) {
   require(Biostrings)
   require(GenomicRanges)
-  newLayerSet <- layerSet
+  
+  # if bindFactor has no mods, return the layerSet unchanged
+  if(length(bindingFactor$mods) < 1)  return(layerSet)
+  
+  # resolve offset if required. 
+  # here using common offset method for all layers.
+  # May need to adapt if want to mod each layer with different offset or algorithm. 
+  if(is.null(bindingFactor$mods[[1]]$offset.method)) {
+    #if(verbose) print("no offset method provided")  # for debugging
+    # use the simple offset
+    offsetValues <-  bindingFactor$mods[[1]]$offset
+  } else {  # generate offsets dynamically using offset.method
+    #if(verbose) print("generating dynamic offsets using function provided")
+    sendFunc <- bindingFactor$mods[[1]][['offset.method']]
+    sendParams <- bindingFactor$mods[[1]][['offset.params']]
+    sendParams$n <- 1:length(hits)   # add a parameter value(s) to be used by the method.
+    offsetValues <-  do.call(what=sendFunc, args=sendParams)
+    #if(verbose) print(offsetValues)
+    #coreFunction(param1=NULL, param2=NULL, userFunc = sendFunc,   userFuncParam=sendParams)
+  }
+  
+  #newLayerSet <- layerSet   # redundant so removed
   for(thisLayer in names(bindingFactor$mods))  {
 
 
@@ -45,18 +66,18 @@ modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, v
 
     stateWidth <- bindingFactor$mods[[thisLayer]]$stateWidth
     hits <- resize(hits, width=stateWidth, fix="center")    # adjust the width
-    thisOffset <- bindingFactor$mods[[thisLayer]]$offset
-    hits <- shift(hits, shift=thisOffset)                 # move up- or downstream
+    #thisOffset <- bindingFactor$mods[[thisLayer]]$offset
+    hits <- shift(hits, shift=offsetValues)                 # move up- or downstream
 
     # restrict hits to range
 
 
-    newLayerSet$layerSet[[thisLayer]] <- switch(as.character(thisState),
-                                       "1" = reduce(union(newLayerSet$layerSet[[thisLayer]], hits), ignore.strand=TRUE),
-                                       "0" = setdiff(newLayerSet$layerSet[[thisLayer]], hits, ignore.strand=TRUE),
+    layerSet$layerSet[[thisLayer]] <- switch(as.character(thisState),
+                                       "1" = reduce(union(layerSet$layerSet[[thisLayer]], hits), ignore.strand=TRUE),
+                                       "0" = setdiff(layerSet$layerSet[[thisLayer]], hits, ignore.strand=TRUE),
                                        stop(paste("unknown state", thisState)))
 
 
   }
-  return(newLayerSet)
+  return(layerSet)
 }
