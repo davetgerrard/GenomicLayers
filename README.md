@@ -41,7 +41,7 @@ To view the introduction vignette, type
 
 To view what vignettes are available, type
 
-	vignette(package="GenomicLayers")
+	browseVignettes("GenomicLayers")
 
 
 
