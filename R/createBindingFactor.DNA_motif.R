@@ -17,6 +17,9 @@
 #' @param profile.marks a vector of 0/1 to match the layers in profile.layers
 #' @param mod.layers a vector of named layers to alter on a match
 #' @param mod.marks a vector of 0/1 to set on the mod.layers
+#' @param offset 0  integer value to indicate relative distance from pattern to apply modifications. Very simple. 
+#' @param offset.method NULL   a \code{function} to apply to apply offset. MUST have parameter "n" that is used internally to represent the number of hits. 
+#' @param offset.params NULL  a \code{list} of named parameters to pass to offset.method function
 #' @param test.layer0.binding when creating, test if the DNA sequence has a match.
 #' @param test.mismatch.rate  proportion of mismatches to tolerate when testing [.1]
 #' @param verbose set to TRUE for more output
@@ -45,6 +48,7 @@ createBindingFactor.DNA_motif <- function(name,  type="DNA_motif", pwm,
                                           patternLength = ncol(pwm), stateWidth=patternLength,
                                           profile.layers=NULL,profile.marks=NULL,
                                           mod.layers=NULL,mod.marks=NULL,
+                                          offset=0, offset.method=NULL, offset.params=NULL,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
                                       verbose=FALSE) {
   

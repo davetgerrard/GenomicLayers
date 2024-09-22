@@ -12,8 +12,8 @@
 #' @param profile.marks a vector of 0/1 to match the layers in profile.layers
 #' @param mod.layers a vector of named layers to alter on a match
 #' @param mod.marks a vector of 0/1 to set on the mod.layers
-#' @param offset 0  integer value to indicate relative distance from pattern to apply modifications
-#' @param offset.method NULL   a \code{function} to apply to apply offset.
+#' @param offset 0  integer value to indicate relative distance from pattern to apply modifications. Very simple. 
+#' @param offset.method NULL   a \code{function} to apply to apply offset. MUST have parameter "n" that is used internally to represent the number of hits. 
 #' @param offset.params NULL  a \code{list} of named parameters to pass to offset.method function
 #' @param align "centre"
 #' @param test.layer0.binding when creating, test if the DNA sequence has a match.
@@ -26,15 +26,29 @@
 #' @return \code{"hits"}
 #'
 #' @examples
-#' bf.LR <- createBindingFactor.layer_region("layerBf", type="layer_region", 
-#'          patternLength = 1, patternString = "N",
+#' bf.LR <- createBindingFactor.layer_region("bf.LR", type="layer_region", 
+#'          patternLength = 1, 
 #'           stateWidth = 9, profile.layers = "LAYER.1",
 #'           profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
 #'          
-#'  bf.LR1 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",  profile.layers = "LAYER.1", profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
-#'  bf.LR2 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",  profile.layers = "LAYER.1", profile.marks = 0)  # profile but no mods
-#'  bf.LR3 <- createBindingFactor.layer_region("layerBf", type="layer_region",  patternLength = 1, patternString = "N",   mod.layers = "LAYER.1", mod.marks = 1)  # no profile beyond LAYER.0 (genome)
-#'
+#'  bf.LR1 <- createBindingFactor.layer_region("bf.LR1", type="layer_region",  patternLength = 1, patternString = "N",  profile.layers = "LAYER.1", profile.marks = 0, mod.layers = "LAYER.1", mod.marks = 1)
+#'  bf.LR2 <- createBindingFactor.layer_region("bf.LR2", type="layer_region",  patternLength = 1, patternString = "N",  profile.layers = "LAYER.1", profile.marks = 0)  # profile but no mods
+#'  bf.LR3 <- createBindingFactor.layer_region("bf.LR3", type="layer_region",  patternLength = 1, patternString = "N",   mod.layers = "LAYER.1", mod.marks = 1)  # no profile beyond LAYER.0 (genome)
+#'  
+#'  # example of using an offset.method to pass a function 
+#'  upDownFuncRnorm <- function(n, offset.mean, offset.sd)  {
+#'   y <- round(rnorm(n, mean=offset.mean, sd=offset.sd))
+#'   z <- sample(c(1, -1), length(y), replace=T)  # random vector of 1,-1  to negate half the values
+#'  
+#'   return(round(y*z))
+#'  }
+#'  
+#'  bf.LR4 <- createBindingFactor.layer_region("bf.LR4", type="layer_region",  
+#'                     patternLength = 10,  profile.layers = "LAYER.1", profile.marks = 1, 
+#'                     mod.layers = "LAYER.1", mod.marks = 1,
+#'                    offset.method=upDownFuncRnorm, 
+#'                    offset.params=list(offset.mean=50, offset.sd=15))
+#'  
 #' @export
 createBindingFactor.layer_region <- function(name,  type="layer_region", patternLength=1, patternString=NULL,
                                              mismatch.rate=0, stateWidth=patternLength,

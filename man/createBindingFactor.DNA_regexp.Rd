@@ -13,6 +13,9 @@ createBindingFactor.DNA_regexp(
   profile.marks = NULL,
   mod.layers = NULL,
   mod.marks = NULL,
+  offset = 0,
+  offset.method = NULL,
+  offset.params = NULL,
   stateWidth = patternLength,
   test.layer0.binding = FALSE,
   test.mismatch.rate = 0.1,
@@ -38,6 +41,12 @@ createBindingFactor.DNA_regexp(
 \item{mod.layers}{a vector of named layers to alter on a match}
 
 \item{mod.marks}{a vector of 0/1 to set on the mod.layers}
+
+\item{offset}{0  integer value to indicate relative distance from pattern to apply modifications. Very simple.}
+
+\item{offset.method}{NULL   a \code{function} to apply to apply offset. MUST have parameter "n" that is used internally to represent the number of hits.}
+
+\item{offset.params}{NULL  a \code{list} of named parameters to pass to offset.method function}
 
 \item{stateWidth}{the width of pattern to recognise on other layers}
 

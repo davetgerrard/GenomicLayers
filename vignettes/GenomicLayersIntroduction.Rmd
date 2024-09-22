@@ -49,37 +49,38 @@ To view what vignettes are available, type
 ```
 
 ### Set up the target sequence or genome
-Load the Biostrings library. 
+Load the GenomicLayers library. 
 
 ```{r load_libs, echo=TRUE, message=FALSE}
-library(Biostrings)    # (this command outputs a lot of information, which is hidden in this vignette)
+library(GenomicLayers)    # (this command outputs a lot of information, which is hidden in this vignette)
 
 ```
 
-Our sequence can be based on a single DNA sequence or on a entire genome. For individual sequences we convert them to DNAString objects. If the latter, it must be loaded as a BSgenome object.  See ...
-
-_GenomicLayers_ is designed to work on whole eukaryotic genomes including human and mouse but as these are rather large, for the purpose of demonstration we will use a shorter sequence as an example.  The _Saccharomyces cerevisiae_ (Yeast)  chromosome 1 is included in the _Biostrings_ package, which should have been installed along with _GenomicLayers_
+_GenomicLayers_ is designed to work on whole eukaryotic genomes including human and mouse but as these are rather large, for the purpose of demonstration we will use a few chromosomes from the _Saccharomyces cerevisiae_ (Yeast) SacCer3.
 
 ```{r load-yeast, echo=TRUE}
-data("yeastSEQCHR1")   # from Biostrings package
-class(yeastSEQCHR1)
-nchar(yeastSEQCHR1)
-targetSeq <- DNAString(yeastSEQCHR1)
-targetSeq 
+library(BSgenome.Scerevisiae.UCSC.sacCer3)
+genome <- BSgenome.Scerevisiae.UCSC.sacCer3
+seqinfo(genome)
+
+sequences_to_keep <- c("chrI", "chrII", "chrIII")   
+# chrIII also contains the mating type loci HMR and HML
+genomeSub <- keepBSgenomeSequences(genome, sequences_to_keep)
+genomeSub    # this should now still be a useable BSgenome object but with only three  chromosomes.  
+
+
 ```
-The chromosome is now stored as a _DNAString_ object, which gives us access to a range of pattern searching functions provided by the _Biostrings_ package.
-
-To use larger sequences and genomes comprised of multiple chromosomes we expect users to make use of the Bioconductor BSgenome packages. For more on this, see the section __Using larger genomes__ below.
 
 
-### Create some layers on our sequence.
+### Create some layers on our genome
 
 This is where we use the sequence and build some layers on it. 
 
 ```{r new_layers, echo=TRUE}
-library(GenomicLayers)
-layers1 <- createLayerList.DNAstring(targetSeq, layerNames=c("recruiter","promoter"))
-layers1
+
+sacCer.LS <- createLayerSet.BSgenome(genomeSub,
+                                     n.layer=2, 
+                                     layer.names=c("recruiter", "promoter"))
 ```
 
 ### Create some binding factors  
@@ -88,28 +89,31 @@ This is where we specify some binding factors that can bind to the sequence and,
 
 If you want to learn about pattern matching against DNA sequences, we recommend that you check out the vignettes in the Biostrings package. Perhaps also have a look at PWMenrich, MOTIV etc.
 
-We first create a binding factor that can recognise a DNA motif for a TATA box, we'll call it tata-box and then test it against the layerSet object we've already created. It should create an IRanges or hits object with the locations for all matches to the sequence TATAA. We'll also specify that this binding factor should mark those positions on the layer _recruiter_.
+We first create a binding factor that can recognise a DNA motif for a TATA box, we'll call it bf1.tata and then test it against the layerSet object we've already created. It should create an GRanges or hits object with the locations for all matches to the sequence TATAA. We'll also specify that this binding factor should mark those positions on the layer _recruiter_. "TATAWAWA"
 
 ```{r new_bf1}
-bf1 <- createBindingFactor.DNA_consensus(name="tata-box", patternString = "TATAWAWA", profile.layers=NULL, mod.layers="recruiter",mod.marks=1) 
+bf1.tata <- createBindingFactor.DNA_consensus(name="bf1.tata", patternString = "TATAWAWA", fixed =FALSE,  mod.layers="recruiter",mod.marks=1) 
 #print(bf1)
-matchBindingFactor(layerSet=layers1$layerSet, bindingFactor=bf1)
+matchBindingFactor.BSgenome(layerSet=sacCer.LS, bindingFactor=bf1.tata)
 ```
 
 Then create a second binding factor that does not recognise a particular sequence, but which can bind to marks on the _recruiter_ layer . If we test this binding factor alone, it should produce a hits object with no hits because the _recruiter_ layer starts with not marked regions.
 
 ```{r new_bf2}
-bf2 <- createBindingFactor.layer_region(name="tata-box", profile.layers="recruiter",profile.marks=1,                                                                        mod.layers="promoter",mod.marks=1,  patternLength = 5) 
+bf2.tataBox <- createBindingFactor.layer_region(name="bf2.tataBox", 
+                          profile.layers="recruiter",profile.marks=1,                                                   mod.layers="promoter",mod.marks=1,  patternLength = 5) 
 #print(bf2)
-matchBindingFactor(layerSet=layers1$layerSet, bindingFactor=bf2)
+matchBindingFactor.BSgenome(layerSet=sacCer.LS, bindingFactor=bf2.tataBox)
 ```
 
 To use multiple binding factors together in a sequence, we add them into a named list. IMPORTANT: currently, this list must have names, so typically we specify the names when building the list. The list names do not have to agree with the _$name_ property of the individual binding factors (this allows the same binding factor to be re-used without re-specifying the model).
 
-(Also, nicer formatting for binding factors when printing)
+Additionally, create a vector of integer abundances that determine the effective activity of each binding factor. This can be fixed or varied throughout the simulation.
 ```{r bf_list}
-bf_list <- list(bf1=bf1, bf2=bf2)
+bf_list <- list(bf1.tata=bf1.tata, bf2.tataBox=bf2.tataBox)
 #print.bfSet(list(bf1))  # not working in package. FIX this .
+
+bf_abund <- structure(c(500, 500), names=names(bf_list))
 ```
 
 ### Run a sequence of layer binding
@@ -117,7 +121,8 @@ bf_list <- list(bf1=bf1, bf2=bf2)
 Run a simulation and collect the output
 
 ```{r run_lb}
-modLayers <- runLayerBinding(layerList=layers1, factorSet=bf_list, verbose=TRUE, iter=1000)
+sim.sacCer.LS <- runLayerBinding.BSgenome(layerList=sacCer.LS, factorSet=bf_list,
+                                          bf.abundances = bf_abund, verbose=TRUE)
 
 ```
 
@@ -125,7 +130,7 @@ Hopefully, the layer called 'promoter' should now be marked in some places.
 
 ```{r inspect_lb}
 
-modLayers$layerSet[['promoter']]
+sim.sacCer.LS$layerSet[['promoter']]
 
 ```
 
