@@ -57,9 +57,9 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
   hitList <- list() # list to store hits for each layer
   #validHits <-
   for(thisLayer in match.layers) {
-    thisPattern <- bindingFactor$profile[[thisLayer]]$pattern   # content will vary depending on bf type and layer. Could be regular expression?
+    #thisPattern <- bindingFactor$profile[[thisLayer]]$pattern   # content will vary depending on bf type and layer. Could be regular expression?
     # calculate as integer the length of mismatch to tolerate.
-    max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
+    #max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
     if(!(thisLayer %in% cache.layers) | is.null(layerSet$cache[[bindingFactor$name]][[thisLayer]])) {  
       # this layer has no cache of hits for this factor or is not to be cached
       if(verbose) print(paste0("Finding matches for ",  bindingFactor$name, " on ", thisLayer)) 
@@ -69,23 +69,27 @@ matchBindingFactor.BSgenome <- function(layerSet, bindingFactor, match.layers=na
           hitList[[thisLayer]] <- GRanges(seqnames(genome), IRanges(start=1, end=seqlengths(genome)),seqinfo=seqinfo(genome))
         } else {    # bf type uses sequence
           if (bindingFactor$type == "DNA_regexp" )  {   # a regular expression on DNA e.g. "(CG.{0,20}){9}CG"
-            bsParams <- new("BSParams", X=genome, FUN=gregexpr)  # set up params for using bsapply
-            grepResultBS <- bsapply(bsParams, pattern=thisPattern)  # run gregexpr over each chromosome separately
-            all.hits <- GRanges(seqinfo=seqinfo(genome))   # empty GRanges to collate the results from different chroms
-            for(chromName in names(grepResultBS)) {  # cycle through chroms and convert matches to GRanges
-              grepResult <- grepResultBS[[chromName]]
-              if(grepResult[[1]][1] == -1 ) {  # no grep hits, do nothing
-                #win.hits <- IRanges() 
-              } else {
-                win.hits <- GRanges(chromName, IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE)),seqinfo=seqinfo(genome))
-              }
-              all.hits <- c(all.hits, win.hits)
-            }
+           all.hits <- matchRegExp.BSgenome(genome=genome, forRegExp = bindingFactor$profile[[thisLayer]]$forRegExp, revRegExp = bindingFactor$profile[[thisLayer]]$revRegExp)
+            #  bsParams <- new("BSParams", X=genome, FUN=gregexpr)  # set up params for using bsapply
+            # grepResultBS <- bsapply(bsParams, pattern=thisPattern)  # run gregexpr over each chromosome separately
+            # all.hits <- GRanges(seqinfo=seqinfo(genome))   # empty GRanges to collate the results from different chroms
+            # for(chromName in names(grepResultBS)) {  # cycle through chroms and convert matches to GRanges
+            #   grepResult <- grepResultBS[[chromName]]
+            #   if(grepResult[[1]][1] == -1 ) {  # no grep hits, do nothing
+            #     #win.hits <- IRanges() 
+            #   } else {
+            #     win.hits <- GRanges(chromName, IRanges(start= as.integer(grepResult[[1]]), width = attr(grepResult[[1]], which="match.length", exact=TRUE)),seqinfo=seqinfo(genome))
+            #   }
+            #   all.hits <- c(all.hits, win.hits)
+            # }
           } else {         # not a DNA_regexp
             #if(verbose) print(paste("Sequence of length ", seqRange[2], ", using ",length(win.starts) ,"windows of length", max.window))
             if(bindingFactor$type == "DNA_consensus")  {
               if(verbose) print("DNA_consensus class, using vmatchPattern()")
               # type DNA_consensus, use Biostrings vmatchPattern
+              thisPattern <- bindingFactor$profile[[thisLayer]]$pattern   # content will vary depending on bf type and layer. Could be regular expression?
+              # calculate as integer the length of mismatch to tolerate.
+              max.mismatches <- round(bindingFactor$profile[[thisLayer]]$mismatch.rate * nchar(thisPattern))
             all.hits <- vmatchPattern(thisPattern, genome, 
                                       fixed=bindingFactor$profile[[thisLayer]]$fixed,
                                       max.mismatch = bindingFactor$profile[[thisLayer]]$max.mismatch,

@@ -1,4 +1,20 @@
-
+#' Simple plotting function to monitor positions of features on a layerSet
+#'
+#' Simple plotting function to monitor positions of features on a layerSet
+#'
+#' @param layerSet the \code{"layerSet"} target
+#' @param laayerNames  which layers to plot
+#' @param chrom    which chromosome to plot
+#' @param xlim   a vector with start and end coordinates for the plotting window
+#'
+#' 
+#'
+#' @examples
+#'
+#'
+#' @import GenomicRanges
+#' 
+#' @export
 
 plotLayers <- function(layerSet, layerNames, chrom, xlim) {
   

@@ -70,7 +70,7 @@ modifyLayerByBindingFactor.BSgenome <- function(layerSet, hits, bindingFactor, v
     hits <- shift(hits, shift=offsetValues)                 # move up- or downstream
 
     # restrict hits to range
-
+    hits <- trim(hits)   # depends on genome seqlengths being set.
 
     layerSet$layerSet[[thisLayer]] <- switch(as.character(thisState),
                                        "1" = reduce(union(layerSet$layerSet[[thisLayer]], hits), ignore.strand=TRUE),

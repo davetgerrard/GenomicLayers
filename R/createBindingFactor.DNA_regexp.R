@@ -5,8 +5,9 @@
 #'
 #' @param name give the binding factor a name
 #' @param type "DNA_regexp"  to differentiate from other types
-#' @param patternString  = NOT USED in this case
-#' @param patternLength   [= 0] length of pattern
+#' @param forRegExp  = regular expression to match DNA sequence
+#' @param revRegExp  = reverse complement of forRegExp
+#' @param patternLength   [= 0] an approximate length of match but may not be the actual matched length, which may vary for regular expression matches
 #' @param stateWidth the width of pattern to recognise on other layers
 #' @param profile.layers a vector of named layers to set as a match
 #' @param profile.marks a vector of 0/1 to match the layers in profile.layers
@@ -33,9 +34,14 @@
 #' CGI<- createBindingFactor.DNA_regexp("CGI", patternString="(CG.{0,4}){3}CG", 
 #'                           patternLength=20, mod.layers = "CpG_island",
 #'                           mod.marks=1, stateWidth=20)
+#'                           
+#' RAP1 <- createBindingFactor.DNA_regexp("RAP1", forRegExp="GGTGT(.{0,3})GGTGT",
+#'                                     revRegExp="ACACC(.{0,3})ACACC",patternLength=20, 
+#'                                     mod.layers = "RAP1_bound", mod.marks=1, stateWidth=20)                         
 #'
 #' @export
-createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternString="N",patternLength=0, 
+createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", forRegExp="N",
+                                           revRegExp="N", patternLength=0, 
 					                              profile.layers=NULL,profile.marks=NULL,
                                         mod.layers=NULL,mod.marks=NULL, 
 					                              offset=0, offset.method=NULL, offset.params=NULL, stateWidth=patternLength,
@@ -52,7 +58,7 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
   # patternLength will be variable for regular expressions. Need separate parameter for modLength and may become a vector or list with different lengths for each layer.
   #patternLength <- nchar(patternString)
   #TODO sort out how to define patternLength or re-write other functions to accomodate variable patternLength
-  profileList <- list(LAYER.0=list(pattern=patternString , mismatch.rate=0, length=patternLength))
+  profileList <- list(LAYER.0=list(forRegExp=forRegExp , revRegExp=revRegExp, mismatch.rate=0, length=patternLength))
   
   
   if(length(profile.layers) >0) {
@@ -82,4 +88,4 @@ createBindingFactor.DNA_regexp <- function(name,  type="DNA_regexp", patternStri
 
 
 
-#createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")
+#createBindingFactor.DNA_regexp("test", forRegExp="GGTGT(.{0,3})GGTGT",revRegExp="ACACC(.{0,3})ACACC", patternLength = 10)
