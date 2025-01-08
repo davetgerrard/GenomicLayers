@@ -25,9 +25,9 @@
 #'                                           layer.names=c( "H3K4me","H4K16ac"),
 #'                                           n.layers=4)
 #' # do something that creates data on the layers (e.g. run \code{"runLayerBinding"}                                          
-#' layerGenomeNuc$layerSet[["H3K4me"]]    <- GRanges(seqnames="chrI", IRanges(start=c(400, 1000, 5000), end=c(600, 2000, 8000))                    
+#' layerGenomeNuc$layerSet[["H3K4me"]]    <- GRanges(seqnames="chrI", IRanges(start=c(400, 1000, 5000), end=c(600, 2000, 8000)))                    
 #'                                                   
-#' plotLayers(layerGenomeNuc, layerNames=c( "H3K4me","H4K16ac"), chrom="chrI", xlim=c(1,10000)    
+#' plotLayers(layerGenomeNuc, layerNames=c( "H3K4me","H4K16ac"), chrom="chrI", xlim=c(1,10000))    
 #'}
 #' @import GenomicRanges
 #' 

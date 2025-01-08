@@ -222,9 +222,9 @@ Hopefully you can see that for the chrIII telomere, there are fewer initial seed
 
 
 
-# NOT run
+## Running many versions of the same simulation
 
-GenomicLayers is even more useful if the simulation is run many times and then results are combined across runs.  This can be used to generate scores for every bp of the genomes - i.e. in how many simulations did a particular nucleotide gain a particular mark.  In practice, we use a high performance compute cluster to run many simulations quickly. We then use a package called plotGardener to show the coverage plots after many sets of results have been combined. 
+GenomicLayers is even more useful if the simulation is run many times and then results are combined across runs.  This can be used to generate scores for every bp of the genomes - i.e. in how many simulations did a particular nucleotide gain a particular mark.  In practice, we use a high performance compute cluster to run many simulations quickly. We then use a package called [plotGardener](https://www.bioconductor.org/packages/release/bioc/html/plotgardener.html) to show the coverage plots after many sets of results have been combined. 
 
 To repeat a simulation many times, it is useful to put it into a script and feed in parameters such as the number of iterations and the frequency with which to save the results.  For this, I recommend the *getopt* package. See below for how we use this.
 To make a general script of running one of the above models, use the getopt library
