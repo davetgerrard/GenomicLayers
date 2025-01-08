@@ -7,7 +7,8 @@
 createBindingFactor.DNA_regexp(
   name,
   type = "DNA_regexp",
-  patternString = "N",
+  forRegExp = "N",
+  revRegExp = "N",
   patternLength = 0,
   profile.layers = NULL,
   profile.marks = NULL,
@@ -30,9 +31,11 @@ createBindingFactor.DNA_regexp(
 
 \item{type}{"DNA_regexp"  to differentiate from other types}
 
-\item{patternString}{= NOT USED in this case}
+\item{forRegExp}{= regular expression to match DNA sequence}
 
-\item{patternLength}{[= 0] length of pattern}
+\item{revRegExp}{= reverse complement of forRegExp}
+
+\item{patternLength}{[= 0] an approximate length of match but may not be the actual matched length, which may vary for regular expression matches}
 
 \item{profile.layers}{a vector of named layers to set as a match}
 
@@ -76,6 +79,10 @@ simpleBF <- createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")
 CGI<- createBindingFactor.DNA_regexp("CGI", patternString="(CG.{0,4}){3}CG", 
                           patternLength=20, mod.layers = "CpG_island",
                           mod.marks=1, stateWidth=20)
+                          
+RAP1 <- createBindingFactor.DNA_regexp("RAP1", forRegExp="GGTGT(.{0,3})GGTGT",
+                                    revRegExp="ACACC(.{0,3})ACACC",patternLength=20, 
+                                    mod.layers = "RAP1_bound", mod.marks=1, stateWidth=20)                         
 
 }
 \seealso{

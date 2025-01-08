@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Dave T. Gerrard" />
+
+<meta name="date" content="2025-01-07" />
+
+<title>Two models of Sir spreading from Rap1 binding sites in Saccharomyces cerevisae</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">
+
+div.csl-bib-body { }
+div.csl-entry {
+clear: both;
+margin-bottom: 0em;
+}
+.hanging div.csl-entry {
+margin-left:2em;
+text-indent:-2em;
+}
+div.csl-left-margin {
+min-width:2em;
+float:left;
+}
+div.csl-right-inline {
+margin-left:2em;
+padding-left:1em;
+}
+div.csl-indent {
+margin-left: 2em;
+}
+</style>
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Two models of Sir spreading from Rap1
+binding sites in Saccharomyces cerevisae</h1>
+<h4 class="author">Dave T. Gerrard</h4>
+<h4 class="date">2025-01-07</h4>
+
+
+
+<p>This vignette aims to model a series of epigenetic changes starting
+from seeding events by a transcription factor (RAP1) leading to the
+recruitment of a chromatin binding protein complex (Sir), which then
+spreads itself along the chromosome. The model will use the sequence of
+all nuclear chromosomes (~ 12 million bps) of <em>Saccharomyces
+cerevisae</em> (Brewer’s yeast).</p>
+<p>We will build two versions of the model differing in the sequence
+motif that RAP1 binds to DNA. These models are based on the following
+literature: <span class="citation">(Lustig et al. 1996)</span> <span class="citation">(Wahlin and Cohn 2000)</span> <span class="citation">(Rusche, Kirchmaier, and Rine 2003)</span>. More is
+known about this system and the models presented here could be extended
+to try to include greater complexity.</p>
+<div id="specify-binding-factors-for-rap1-and-sir3" class="section level2">
+<h2>Specify Binding factors for RAP1 and Sir3</h2>
+<p>Here we are going to create two versions of the DNA-binding protein,
+RAP1 to be used in two slightly different models. Both will bind the DNA
+sequence GGTGT (or ACACC) but the second version (here ‘bf.RAP1.4’) will
+require two adjacent motifs separated by up to 3 bp. The variable length
+of the gap (0-3 bp) is achieved using a regular expression notation,
+which is accepted by some types of Biostrings searches. To use these in
+GenomicLayers, we need to use the <em>createBindingFactor.regexp</em>
+function to create the binding factor.</p>
+<p>Additionally, we are going to create here another binding factor to
+represent Sir3, a key part of the Sir complex that is recruited by RAP1
+after it has bound to DNA. We are ignoring the rest of the Sir complex
+here.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(GenomicLayers)   <span class="co"># this is the first bit of code so we need to load the package </span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co"># RAP1  </span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>bf.RAP1<span class="fl">.3</span> <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.DNA_consensus</span>(<span class="st">&quot;bf.RAP1.3&quot;</span>, <span class="at">patternString=</span><span class="st">&quot;GGTGT&quot;</span>, </span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>                                               <span class="at">mod.layers =</span> <span class="st">&quot;Sir3p_potential&quot;</span>, <span class="at">mod.marks=</span><span class="dv">1</span>, <span class="at">stateWidth=</span><span class="dv">5</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>bf.RAP1<span class="fl">.4</span> <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.DNA_regexp</span>(<span class="st">&quot;bf.RAP1.4&quot;</span>, <span class="at">forRegExp=</span><span class="st">&quot;GGTGT(.{0,3})GGTGT&quot;</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>                                            <span class="at">revRegExp=</span><span class="st">&quot;ACACC(.{0,3})ACACC&quot;</span>, <span class="at">patternLength =</span> <span class="dv">10</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>                                            <span class="at">mod.layers =</span> <span class="st">&quot;Sir3p_potential&quot;</span>, <span class="at">mod.marks=</span><span class="dv">1</span>, <span class="at">stateWidth=</span><span class="dv">5</span>, )</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="co"># Sir3p - binds to seeding sites </span></span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>bf.Sir3p_S <span class="ot">&lt;-</span> <span class="fu">createBindingFactor.layer_region</span>(<span class="st">&quot;bf.Sir3p_S&quot;</span>, <span class="at">type=</span><span class="st">&quot;layer_region&quot;</span>, </span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>                                               <span class="at">patternLength =</span> <span class="dv">5</span>, <span class="at">patternString =</span> <span class="st">&quot;N&quot;</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>                                               <span class="at">profile.layers =</span> <span class="fu">c</span>(<span class="st">&quot;Sir3p_potential&quot;</span>),</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>                                               <span class="at">stateWidth=</span><span class="dv">5</span>, <span class="at">profile.marks =</span> <span class="fu">c</span>(<span class="dv">1</span>), </span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>                                               <span class="at">mod.layers =</span> <span class="st">&quot;bound.Sir3p&quot;</span>, <span class="at">mod.marks =</span> <span class="dv">1</span>)</span></code></pre></div>
+<div id="create-a-spreader-binding-factor" class="section level3">
+<h3>Create a spreader binding factor</h3>
+<p>We also need something to spread Sir3p along the chromosome. We will
+create a binding factor that makes changes either up- or downstream of
+its own binding site. The <em>offset.method</em> parameter of the
+createBindingFactor functions will accept a function as an argument. We
+can use this to have the binding factor draw a variable offset value
+from a distribution. Before creating such a binding factor, we need to
+create the function to be passed to <em>offset.method</em>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>upDownFuncRnorm <span class="ot">&lt;-</span> <span class="cf">function</span>(n, offset.mean, offset.sd)  {</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(n, <span class="at">mean=</span>offset.mean, <span class="at">sd=</span>offset.sd))</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  z <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>), <span class="fu">length</span>(y), <span class="at">replace=</span>T)  <span class="co"># random vector of 1,-1  to negate half the values</span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>  </span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">round</span>(y<span class="sc">*</span>z))</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>}</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co"># below is a simpler version that just returns randomly signed version of a fixed offset. This is not used in this vignette.</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>upDownFunc<span class="ot">&lt;-</span> <span class="cf">function</span>(x)  {</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sample</span>(<span class="fu">c</span>(x, <span class="sc">-</span>x), <span class="dv">1</span>))</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>}</span></code></pre></div>
+<p>Now we have the functions to aid in spreading, we can create the
+binding factor that will make use of it. It will recognise marks on
+layer bound.Sir3p and add further marks to the same layer either
+upstream or downstream of any hits. The distance is derived from a
+normal distribution with mean 147 and standard deviation of 30. Values
+are equally likely to positive or negative.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>bf.Sir3p.spread <span class="ot">&lt;-</span>  <span class="fu">createBindingFactor.layer_region</span>(<span class="st">&quot;bf.Sir3p.spread&quot;</span>, <span class="at">type=</span><span class="st">&quot;layer_region&quot;</span>, </span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>                                                     <span class="at">patternLength =</span> <span class="dv">5</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>                                                     <span class="at">profile.layers =</span> <span class="fu">c</span>(<span class="st">&quot;bound.Sir3p&quot;</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>                                                     <span class="at">stateWidth=</span><span class="dv">5</span>, <span class="at">profile.marks =</span> <span class="fu">c</span>(<span class="dv">1</span>), </span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>                                                     <span class="at">mod.layers =</span> <span class="st">&quot;bound.Sir3p&quot;</span>, <span class="at">mod.marks =</span> <span class="dv">1</span>, <span class="at">offset =</span> <span class="dv">100</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>                                                     <span class="at">offset.method=</span>upDownFuncRnorm, </span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>                                                     <span class="at">offset.params=</span><span class="fu">list</span>(<span class="at">offset.mean=</span><span class="dv">147</span>, <span class="at">offset.sd=</span><span class="dv">30</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="create-layerset-object" class="section level2">
+<h2>Create LayerSet object</h2>
+<p>Now that all the bindingFactors are specified, they require a target
+genome. This is handled as part of a <em>layerSet</em> object, which
+stores both the genome and a number of layers that track epigenetic
+states on the genome during the simulation.</p>
+<p>Firstly, we load the genome and subset it to the set of chromosomes
+we want to use. This could be any subset of chromosomes, or even just
+one. Here we will use all nuclear chromosomes as we are interested in a
+protein that binds at telomeres and interacts with chromatin.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(BSgenome.Scerevisiae.UCSC.sacCer3) </span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>genome <span class="ot">&lt;-</span> BSgenome.Scerevisiae.UCSC.sacCer3</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>sequences_to_keep <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">seqnames</span>(genome), <span class="st">&quot;chrM&quot;</span>)  </span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>genomeNuc <span class="ot">&lt;-</span> <span class="fu">keepBSgenomeSequences</span>(genome, sequences_to_keep)</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>genomeNuc    <span class="co"># this should now still be a useable BSgenome object but with no mitochondrial chromosome.</span></span></code></pre></div>
+<pre><code>## | BSgenome object for Yeast
+## | - organism: Saccharomyces cerevisiae
+## | - provider: UCSC
+## | - genome: sacCer3
+## | - release date: April 2011
+## | - 16 sequence(s):
+## |     chrI    chrII   chrIII  chrIV   chrV    chrVI   chrVII  chrVIII chrIX  
+## |     chrX    chrXI   chrXII  chrXIII chrXIV  chrXV   chrXVI                 
+## | 
+## | Tips: call &#39;seqnames()&#39; on the object to get all the sequence names, call
+## | &#39;seqinfo()&#39; to get the full sequence info, use the &#39;$&#39; or &#39;[[&#39; operator to
+## | access a given sequence, see &#39;?BSgenome&#39; for more information.</code></pre>
+<p>Once we have specified the genome subset, we need to decide names for
+layers we want to use. As we have already named the layers when we made
+the binding factors (“Sir3p_potential”, “bound.Sir3p”), we should use
+the same names here.</p>
+<div id="create-the-layerset-object-to-include-the-genome-and-all-the-layers-we-may-need" class="section level3">
+<h3>Create the layerSet object to include the genome and all the layers
+we may need</h3>
+<p>Layers needed:</p>
+<ul>
+<li>“Sir3p_potential”: RAP1 binding/recruitment - can act as recruiter
+for other repressive modifiers.</li>
+<li>“bound.Sir3p” : represents bound Sir complex. Can be recruited to
+“Sir3p_potential” or can be spread along the chromosome.</li>
+</ul>
+<p>Now set up a <em>LayerSet</em> on the genome. This is a list where
+the first element <em>LAYER.0</em> is the genome and GRanges list
+elements store position information for each layer. Two additional
+layers “H3K4me”,“H4K16ac” are specified here but not used in these
+simulations - they will be ignored as no binding factors have been
+specified to match or modify them.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>layerGenomeNuc <span class="ot">&lt;-</span> <span class="fu">createLayerSet.BSgenome</span>(<span class="at">genome=</span>genomeNuc, </span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>                      <span class="at">layer.names=</span><span class="fu">c</span>(<span class="st">&quot;Sir3p_potential&quot;</span>,  <span class="st">&quot;bound.Sir3p&quot;</span>, </span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>                        <span class="st">&quot;H3K4me&quot;</span>,<span class="st">&quot;H4K16ac&quot;</span>),  <span class="at">n.layers=</span><span class="dv">4</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="model-1" class="section level2">
+<h2>MODEL 1</h2>
+<p>The model is the combination of the layerSet (including the genome),
+all the binding factors, and a vector of abundance values which
+determine the number of sites across the genome that each bindingFactor
+can bind (and modify) during each iteration.</p>
+<p>Combine all bfs into a list to pass to runLayerBinding. Order DOES
+matter. Then specify a vector of abundances.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>bfSet<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">bf.RAP1.3=</span>bf.RAP1<span class="fl">.3</span>, </span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>                <span class="at">bf.Sir3p_S=</span>bf.Sir3p_S,</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>                <span class="at">bf.Sir3p.spread=</span>bf.Sir3p.spread                </span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>                </span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)   <span class="co"># binding factors must be in a list and named. Easiest to use each BFs name.</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co"># specify abundances of bfs.</span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>abs<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">structure</span>(<span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">20</span>,<span class="dv">1000</span>), <span class="at">names=</span><span class="fu">c</span>(<span class="fu">names</span>(bfSet<span class="fl">.1</span>)))   <span class="sc">*</span>  <span class="dv">40</span>  <span class="co"># multiply by 40 to scale up from chrIII to whole nuclear genome.</span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>abs<span class="fl">.1</span></span></code></pre></div>
+<pre><code>##       bf.RAP1.3      bf.Sir3p_S bf.Sir3p.spread 
+##            2000             800           40000</code></pre>
+<p>Before running the simulation, it can be helpful to pre-calculate the
+binding sites for those factors that match to DNA. These caches can be
+re-used across simulations and are also a good way to check the binding
+factors are finding DNA binding sites as expected. Alternatively, you
+can skip this step and runLayerBinding will create these hit caches
+during the first iteration.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="co"># take a copy of the subGenome object </span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>layerGenomeNuc<span class="fl">.1</span> <span class="ot">&lt;-</span> layerGenomeNuc</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a><span class="co"># cache the sequence specific parts of profiles</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>layerGenomeNuc<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">generateHitsCache</span>(<span class="at">layerList=</span>layerGenomeNuc<span class="fl">.1</span>, <span class="at">factorSet=</span>bfSet<span class="fl">.1</span>[<span class="fu">c</span>(<span class="st">&#39;bf.RAP1.3&#39;</span> )], <span class="at">cache.layers=</span><span class="st">&quot;LAYER.0&quot;</span>) </span></code></pre></div>
+<p>Finally we are ready to run the simulation. Here we run only for 10
+iterations but we recommend running for 100 or more iterations and
+storing the output every 10 iterations. The image below shows the build
+up of marks on the two layers very close to one telomere of chrIII. The
+simulation is running across the whole genome so it is possible to look
+at any chromosomal region.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">9</span>,<span class="dv">5</span>,<span class="dv">2</span>), <span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">2</span>))</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) {</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>  layerGenomeNuc<span class="fl">.1</span> <span class="ot">&lt;-</span> <span class="fu">runLayerBinding.BSgenome</span>(<span class="at">layerList=</span>layerGenomeNuc<span class="fl">.1</span>, </span>
+<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a>                                               <span class="at">factorSet=</span>bfSet<span class="fl">.1</span>, </span>
+<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a>                                               <span class="at">bf.abundances =</span> abs<span class="fl">.1</span>, </span>
+<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a>                                               <span class="at">verbose=</span><span class="cn">FALSE</span>, <span class="at">collect.stats=</span><span class="cn">TRUE</span>)   <span class="co"># set verbose = TRUE to see more information about the matching.</span></span>
+<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a>  </span>
+<span id="cb10-10"><a href="#cb10-10" tabindex="-1"></a>  <span class="co"># the code below is commented out but shows how we can store the full model state every &#39;saveFreq&#39; iterations.</span></span>
+<span id="cb10-11"><a href="#cb10-11" tabindex="-1"></a>  <span class="co">#if((i %% saveFreq) == 0) {   # export current model state.</span></span>
+<span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a>  <span class="co">#    tempFileOut &lt;- paste0(outFile, &quot;.iter.&quot;, i, &quot;.RData&quot;)</span></span>
+<span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a>  <span class="co">#   print(paste(&quot;Saving to &quot;, tempFileOut))</span></span>
+<span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a>  <span class="co">#  save(layerGenomeNuc.1, file=tempFileOut)  #  use this to save model state periodically.</span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a>    </span>
+<span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a>  <span class="co">#}</span></span>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a>  </span>
+<span id="cb10-18"><a href="#cb10-18" tabindex="-1"></a><span class="co"># here using an internal function to make a simple plot of some results near a telomere</span></span>
+<span id="cb10-19"><a href="#cb10-19" tabindex="-1"></a>    <span class="co"># because the layers here have long names.</span></span>
+<span id="cb10-20"><a href="#cb10-20" tabindex="-1"></a>  GenomicLayers<span class="sc">:::</span><span class="fu">plotLayers</span>(<span class="at">layerSet =</span> layerGenomeNuc<span class="fl">.1</span>, <span class="at">chrom=</span><span class="st">&quot;chrIII&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5000</span>), <span class="at">layerNames=</span><span class="fu">c</span>(<span class="st">&#39;Sir3p_potential&#39;</span>,<span class="st">&#39;bound.Sir3p&#39;</span>))</span>
+<span id="cb10-21"><a href="#cb10-21" tabindex="-1"></a>  </span>
+<span id="cb10-22"><a href="#cb10-22" tabindex="-1"></a>}</span></code></pre></div>
+<div class="float">
+<img src="data:image/png;base64,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" alt="Model 1: Build up of marks at the telomere of chrIII over 10 iterations" />
+<div class="figcaption">Model 1: Build up of marks at the telomere of
+chrIII over 10 iterations</div>
+</div>
+<div id="check-the-output-from-this-model" class="section level3">
+<h3>Check the output from this model</h3>
+<p>By default, runLayerBinding also generates a useful table of coverage
+after each iteration. This can be useful to plot trends as the
+simulation proceeds.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>layerGenomeNuc<span class="fl">.1</span><span class="sc">$</span>history</span></code></pre></div>
+<pre><code>##                   time              bf  hits target.coverage
+## 1  2025-01-07 19:16:50 bf.Sir3p.spread   800            4000
+## 2  2025-01-07 19:16:50 bf.Sir3p.spread  2255           11275
+## 3  2025-01-07 19:16:51 bf.Sir3p.spread  5276           26380
+## 4  2025-01-07 19:16:52 bf.Sir3p.spread 11906           59530
+## 5  2025-01-07 19:16:53 bf.Sir3p.spread 27717          138585
+## 6  2025-01-07 19:16:54 bf.Sir3p.spread 40000          200000
+## 7  2025-01-07 19:16:55 bf.Sir3p.spread 40000          200000
+## 8  2025-01-07 19:16:56 bf.Sir3p.spread 40000          200000
+## 9  2025-01-07 19:16:57 bf.Sir3p.spread 40000          200000
+## 10 2025-01-07 19:16:58 bf.Sir3p.spread 40000          200000
+##    Coverage.Sir3p_potential Coverage.bound.Sir3p Coverage.H3K4me
+## 1                     10000                 7960               0
+## 2                     18885                22187               0
+## 3                     26695                50149               0
+## 4                     33710               107421               0
+## 5                     39930               225291               0
+## 6                     45450               371962               0
+## 7                     50270               498513               0
+## 8                     54685               610571               0
+## 9                     58495               711283               0
+## 10                    62010               803546               0
+##    Coverage.H4K16ac nBlocks.Sir3p_potential nBlocks.bound.Sir3p nBlocks.H3K4me
+## 1                 0                    1999                1591              0
+## 2                 0                    3771                4373              0
+## 3                 0                    5319                9710              0
+## 4                 0                    6716               20074              0
+## 5                 0                    7941               39098              0
+## 6                 0                    9032               59072              0
+## 7                 0                    9988               73389              0
+## 8                 0                   10861               84159              0
+## 9                 0                   11613               92492              0
+## 10                0                   12305               99138              0
+##    nBlocks.H4K16ac
+## 1                0
+## 2                0
+## 3                0
+## 4                0
+## 5                0
+## 6                0
+## 7                0
+## 8                0
+## 9                0
+## 10               0</code></pre>
+</div>
+</div>
+<div id="model-2" class="section level2">
+<h2>MODEL 2</h2>
+<p>Model 2 is exactly as model 1 except that RAP1 is substituted for a
+version that requires two tandem motifs gapped by 0-3 bps. We need to
+re-define the list of bindingFactors, their abundances, and reset the
+simulation to starting conditions.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>bfSet<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">bf.RAP1.4=</span>bf.RAP1<span class="fl">.4</span>, </span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>                <span class="at">bf.Sir3p_S=</span>bf.Sir3p_S,</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>                <span class="at">bf.Sir3p.spread=</span>bf.Sir3p.spread                </span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>                </span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a>)   <span class="co"># binding factors must be in a list and named. Easiest to use each BFs name.</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a><span class="co"># specify abundances of bfs.</span></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>abs<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">structure</span>(<span class="fu">c</span>(<span class="dv">50</span>,<span class="dv">20</span>,<span class="dv">1000</span>), <span class="at">names=</span><span class="fu">c</span>(<span class="fu">names</span>(bfSet<span class="fl">.2</span>)))   <span class="sc">*</span>  <span class="dv">40</span>  <span class="co"># multiply by 40 to scale up from chrIII to whole nuclear genome.</span></span></code></pre></div>
+<p>Then build the cache again. Here we can re-use the unused
+layerGenomeNuc object we made earlier.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># take a copy of the subGenome object </span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>layerGenomeNuc<span class="fl">.2</span> <span class="ot">&lt;-</span> layerGenomeNuc</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a><span class="co"># cache the sequence specific parts of profiles</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>layerGenomeNuc<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">generateHitsCache</span>(<span class="at">layerList=</span>layerGenomeNuc<span class="fl">.2</span>, <span class="at">factorSet=</span>bfSet<span class="fl">.2</span>[<span class="fu">c</span>(<span class="st">&#39;bf.RAP1.4&#39;</span> )], <span class="at">cache.layers=</span><span class="st">&quot;LAYER.0&quot;</span>) </span></code></pre></div>
+<p>Now we can run model 2.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">9</span>,<span class="dv">5</span>,<span class="dv">2</span>), <span class="at">mfrow=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">2</span>))</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>) {</span>
+<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a>  layerGenomeNuc<span class="fl">.2</span> <span class="ot">&lt;-</span> <span class="fu">runLayerBinding.BSgenome</span>(<span class="at">layerList=</span>layerGenomeNuc<span class="fl">.2</span>, </span>
+<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>                                               <span class="at">factorSet=</span>bfSet<span class="fl">.2</span>, </span>
+<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a>                                               <span class="at">bf.abundances =</span> abs<span class="fl">.2</span>, </span>
+<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a>                                               <span class="at">verbose=</span><span class="cn">FALSE</span>, <span class="at">collect.stats=</span><span class="cn">TRUE</span>) </span>
+<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a>  </span>
+<span id="cb15-10"><a href="#cb15-10" tabindex="-1"></a>  <span class="co"># here using an internal function to make a simple plot of some results near a telomere</span></span>
+<span id="cb15-11"><a href="#cb15-11" tabindex="-1"></a>  <span class="co"># because the layers here have long names.</span></span>
+<span id="cb15-12"><a href="#cb15-12" tabindex="-1"></a>  GenomicLayers<span class="sc">:::</span><span class="fu">plotLayers</span>(<span class="at">layerSet =</span> layerGenomeNuc<span class="fl">.2</span>, <span class="at">chrom=</span><span class="st">&quot;chrIII&quot;</span>, <span class="at">xlim=</span><span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">5000</span>), <span class="at">layerNames=</span><span class="fu">c</span>(<span class="st">&#39;Sir3p_potential&#39;</span>,<span class="st">&#39;bound.Sir3p&#39;</span>))</span>
+<span id="cb15-13"><a href="#cb15-13" tabindex="-1"></a>  </span>
+<span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a>  </span>
+<span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a>}</span></code></pre></div>
+<div class="float">
+<img src="data:image/png;base64,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" alt="Model 2: Build up of marks at the telomere of chrIII over 10 iterations" />
+<div class="figcaption">Model 2: Build up of marks at the telomere of
+chrIII over 10 iterations</div>
+</div>
+<p>Hopefully you can see that for the chrIII telomere, there are fewer
+initial seeding sights and spreading is more important. You could try
+using the plotLayers function to look at the situation in other genomic
+regions.</p>
+</div>
+<div id="not-run" class="section level1">
+<h1>NOT run</h1>
+<p>GenomicLayers is even more useful if the simulation is run many times
+and then results are combined across runs. This can be used to generate
+scores for every bp of the genomes - i.e. in how many simulations did a
+particular nucleotide gain a particular mark. In practice, we use a high
+performance compute cluster to run many simulations quickly. We then use
+a package called plotGardener to show the coverage plots after many sets
+of results have been combined.</p>
+<p>To repeat a simulation many times, it is useful to put it into a
+script and feed in parameters such as the number of iterations and the
+frequency with which to save the results. For this, I recommend the
+<em>getopt</em> package. See below for how we use this. To make a
+general script of running one of the above models, use the getopt
+library</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="co"># Load the getopt library</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="fu">library</span>(getopt)</span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co"># Define command-line options</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>spec <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  <span class="st">&#39;verbose&#39;</span>, <span class="st">&#39;v&#39;</span>, <span class="dv">2</span>, <span class="st">&quot;integer&quot;</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>  <span class="st">&#39;help&#39;</span>   , <span class="st">&#39;h&#39;</span>, <span class="dv">0</span>, <span class="st">&quot;logical&quot;</span>,</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>  <span class="st">&#39;out.file&#39;</span> , <span class="st">&#39;o&#39;</span>, <span class="dv">2</span>, <span class="st">&quot;character&quot;</span>, </span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  <span class="st">&#39;iterations&#39;</span>, <span class="st">&#39;i&#39;</span>, <span class="dv">2</span>, <span class="st">&quot;integer&quot;</span>,</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  <span class="st">&#39;saveFreq&#39;</span>,  <span class="st">&#39;s&#39;</span>, <span class="dv">2</span>, <span class="st">&quot;integer&quot;</span></span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>), <span class="at">byrow=</span><span class="cn">TRUE</span>, <span class="at">ncol=</span><span class="dv">4</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a><span class="co"># Parse command-line options</span></span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>opt <span class="ot">&lt;-</span> <span class="fu">getopt</span>(spec)</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a><span class="co"># Set default values for options if they are not provided</span></span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="cf">if</span> ( <span class="fu">is.null</span>(opt<span class="sc">$</span>verbose)) { opt<span class="sc">$</span>verbose <span class="ot">&lt;-</span> <span class="cn">FALSE</span> }</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co"># Output file</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>outFile <span class="ot">&lt;-</span> opt<span class="sc">$</span>out.file</span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(opt<span class="sc">$</span>out.file)) { outFile <span class="ot">&lt;-</span> <span class="st">&quot;outputfile&quot;</span> }</span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>iters <span class="ot">&lt;-</span> opt<span class="sc">$</span>iterations</span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(opt<span class="sc">$</span>iterations)) { iters <span class="ot">&lt;-</span> <span class="dv">100</span> }</span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a></span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a>saveFreq <span class="ot">&lt;-</span> opt<span class="sc">$</span>saveFreq</span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">is.null</span>(opt<span class="sc">$</span>saveFreq)) { saveFreq <span class="ot">&lt;-</span> iters }</span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a><span class="co"># Print the values for verification</span></span>
+<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">&quot;Out file stem:&quot;</span>, opt<span class="sc">$</span>out.file))</span></code></pre></div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-lustig_tethered_1996" class="csl-entry">
+Lustig, A. J., C. Liu, C. Zhang, and J. P. Hanish. 1996. <span>“Tethered
+<span>Sir3p</span> Nucleates Silencing at Telomeres and Internal Loci in
+<span>Saccharomyces</span> Cerevisiae.”</span> <em>Molecular and
+Cellular Biology</em> 16 (5): 2483–95. <a href="https://doi.org/10.1128/MCB.16.5.2483">https://doi.org/10.1128/MCB.16.5.2483</a>.
+</div>
+<div id="ref-rusche_establishment_2003" class="csl-entry">
+Rusche, Laura N., Ann L. Kirchmaier, and Jasper Rine. 2003. <span>“The
+<span>Establishment</span>, <span>Inheritance</span>, and
+<span>Function</span> of <span>Silenced</span> <span>Chromatin</span> in
+<span>Saccharomyces</span> Cerevisiae.”</span> <em>Annual Review of
+Biochemistry</em> 72 (Volume 72, 2003): 481–516. <a href="https://doi.org/10.1146/annurev.biochem.72.121801.161547">https://doi.org/10.1146/annurev.biochem.72.121801.161547</a>.
+</div>
+<div id="ref-wahlin_saccharomyces_2000" class="csl-entry">
+Wahlin, Johan, and Marita Cohn. 2000. <span>“Saccharomyces Cerevisiae
+<span>RAP1</span> Binds to Telomeric Sequences with Spatial
+Flexibility.”</span> <em>Nucleic Acids Research</em> 28 (12): 2292–2301.
+<a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC102728/">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC102728/</a>.
+</div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
