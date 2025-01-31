@@ -30,7 +30,7 @@ bf.RAP1.3 <- createBindingFactor.DNA_consensus("bf.RAP1.3", patternString="GGTGT
 
 bf.RAP1.4 <- createBindingFactor.DNA_regexp("bf.RAP1.4", forRegExp="GGTGT(.{0,3})GGTGT",
                                             revRegExp="ACACC(.{0,3})ACACC", patternLength = 10,
-                                            mod.layers = "Sir3p_potential", mod.marks=1, stateWidth=5, )
+                                            mod.layers = "Sir3p_potential", mod.marks=1, stateWidth=5)
 
 # Sir3p - binds to seeding sites 
 bf.Sir3p_S <- createBindingFactor.layer_region("bf.Sir3p_S", type="layer_region", 
@@ -118,9 +118,7 @@ Combine all bfs into a list to pass to runLayerBinding. Order DOES matter. Then 
 ```{r bfList.1, echo=TRUE, message=F}
 bfSet.1 <- list(bf.RAP1.3=bf.RAP1.3, 
                 bf.Sir3p_S=bf.Sir3p_S,
-                bf.Sir3p.spread=bf.Sir3p.spread                
-                
-)   # binding factors must be in a list and named. Easiest to use each BFs name.
+                bf.Sir3p.spread=bf.Sir3p.spread )   # binding factors must be in a list and named. Easiest to use each BFs name.
 
 # specify abundances of bfs.
 abs.1 <- structure(c(50,20,1000), names=c(names(bfSet.1)))   *  40  # multiply by 40 to scale up from chrIII to whole nuclear genome.
