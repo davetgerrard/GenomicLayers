@@ -76,7 +76,8 @@ marks on others layers and \emph{may} (when used) set marks on other layers.
 simpleBF <- createBindingFactor.DNA_regexp("test", patternString="ACTGGGCTA")
 
 # this regular expression finds 4 CpGs with 0-4 bases between them
-CGI<- createBindingFactor.DNA_regexp("CGI", patternString="(CG.{0,4}){3}CG", 
+CGI<- createBindingFactor.DNA_regexp("CGI", forRegExp="(CG.{0,4}){3}CG", 
+                          revRegExp="(CG.{0,4}){3}CG", 
                           patternLength=20, mod.layers = "CpG_island",
                           mod.marks=1, stateWidth=20)
                           

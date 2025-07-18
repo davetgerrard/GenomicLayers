@@ -1,5 +1,5 @@
 
-calcConfMat.GR <- function(query, subject,   maxgap = -1L, minoverlap = 0L, genomeSize)  {
+confusionMatrix.GR <- function(predicted, reference,   maxgap = -1L, minoverlap = 0L, genomeSize)  {
   # created with Jeremy George (UG project student 2022-23)
   #require(GenomicRanges)
   # create a table suitable for a chi-square test
@@ -12,32 +12,32 @@ calcConfMat.GR <- function(query, subject,   maxgap = -1L, minoverlap = 0L, geno
   
   
   # remove strand/ In future we might use this but we need a set of non-overlapping strand-less ranges.
-  strand(query) <- '*'
-  strand(subject) <- '*'
+  strand(predicted) <- '*'
+  strand(reference) <- '*'
   # reduce each set to a non-overlapping set
-  query <- reduce(query)
-  subject <- reduce(subject)
+  predicted <- reduce(predicted)
+  reference <- reduce(reference)
   
   # count True-positives
-  TP <- sum(width(intersect(query, subject)))
+  TP <- sum(width(intersect(predicted, reference)))
   
   #count false-positives
-  FP <- (sum(width(query)))-TP
+  FP <- (sum(width(predicted)))-TP
   
   
   # count false-negative
-  FN <- (sum(width(subject)))-TP
+  FN <- (sum(width(reference)))-TP
   # count true-negatives
   TN <- genomeSize-(TP+FP+FN)
   
   # create a matrix in the correct format
   # confMatrix is
-  #         query
-  # subject TRUE FALSE
-  # TRUE     TP   FN
-  # FALSE    FP   TN
-  outMat <- matrix( c(TP, FN, FP, TN),ncol=2) 
-  dimnames(outMat) <- list(subject=c("TRUE", "FALSE"), query=c("TRUE", "FALSE"))
+  #         reference
+  # predicted TRUE FALSE
+  # TRUE      TP   FP
+  # FALSE     FN   TN
+  outMat <- matrix( c(TP, FP, FN, TN),ncol=2) 
+  dimnames(outMat) <- list(predicted=c("TRUE", "FALSE"), reference=c("TRUE", "FALSE"))
   
   # check for negative values . This can happen if genomeSize is wrong.
   stopifnot(!any(outMat < 0))   # should produce FALSE if all above 0 so use ! to make true. 

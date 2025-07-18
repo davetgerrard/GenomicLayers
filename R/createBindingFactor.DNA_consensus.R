@@ -39,7 +39,7 @@
 #' @examples
 #' DNA_A <- createBindingFactor.DNA_consensus(name="DNA_A",patternString = "CAT" )
 #'
-#' gc1-2 <- createBindingFactor.DNA_consensus(name="gc1-2",
+#' gc1_2 <- createBindingFactor.DNA_consensus(name="gc1-2",
 #'                           patternString="SSSSSSSSSSSSSSSS",
 #'                           max.mismatch= 2, 
 #'                           min.mismatch= 1,
