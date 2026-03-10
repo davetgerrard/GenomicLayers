@@ -1,5 +1,20 @@
 
-confusionMatrix.GR <- function(predicted, reference,   maxgap = -1L, minoverlap = 0L, genomeSize)  {
+
+## this version uses total size of overlaps (in bp). 
+cfFromGR.bases <- function(query, subject,   maxgap = -1L, minoverlap = 0L, genomeSize=0L, verbose=FALSE)  {
+ 
+  if(verbose)  print("Calculating confusion matrix using number of base-pairs")
+  
+  # check for consistent genomeSize
+    # GRanges object may have no seqinfo/seqlengths with sum == 0
+    q_len <- sum(seqlengths(query))
+    s_len <- sum(seqlengths(subject))
+    
+ stopifnot("subject and query must have same genomeSize or both be zero" = q_len == s_len)
+ 
+ if(genomeSize == 0)  genomeSize <- q_len
+ stopifnot("genomeSize or seqlengths of provided GR ranges must be greater than 0" = genomeSize > 0)
+      
   # created with Jeremy George (UG project student 2022-23)
   #require(GenomicRanges)
   # create a table suitable for a chi-square test
@@ -7,37 +22,38 @@ confusionMatrix.GR <- function(predicted, reference,   maxgap = -1L, minoverlap 
   #         that made it through filtering
   #maxgap  (not used, for future use)
   #minoverlap (not used, for future use)
-  #query first set of GRanges. If comparing predicted to true data, list the prediction as query
-  #subject Second set of GRanges. If comparingpredicted to true data, list the true data as subject
+  #query first set of GRanges. If comparing query to true data, list the prediction as query
+  #subject Second set of GRanges. If comparing query to true data, list the true data as subject
   
   
   # remove strand/ In future we might use this but we need a set of non-overlapping strand-less ranges.
-  strand(predicted) <- '*'
-  strand(reference) <- '*'
+  strand(query) <- '*'
+  strand(subject) <- '*'
   # reduce each set to a non-overlapping set
-  predicted <- reduce(predicted)
-  reference <- reduce(reference)
+  query <- reduce(query)
+  subject <- reduce(subject)
   
   # count True-positives
-  TP <- sum(width(intersect(predicted, reference)))
+  TP <- sum(width(intersect(query, subject)))
   
   #count false-positives
-  FP <- (sum(width(predicted)))-TP
-  
+  FP <- (sum(width(query)))-TP
   
   # count false-negative
-  FN <- (sum(width(reference)))-TP
+  FN <- (sum(width(subject)))-TP
   # count true-negatives
   TN <- genomeSize-(TP+FP+FN)
   
   # create a matrix in the correct format
   # confMatrix is
-  #         reference
-  # predicted TRUE FALSE
+  #         subject
+  # query TRUE FALSE
   # TRUE      TP   FP
   # FALSE     FN   TN
-  outMat <- matrix( c(TP, FP, FN, TN),ncol=2) 
-  dimnames(outMat) <- list(predicted=c("TRUE", "FALSE"), reference=c("TRUE", "FALSE"))
+  outMat <- matrix( c(TP, FP, FN, TN),ncol=2, byrow=T) 
+  dimnames(outMat) <- list(query=c("TRUE", "FALSE"), subject=c("TRUE", "FALSE"))
+  
+
   
   # check for negative values . This can happen if genomeSize is wrong.
   stopifnot(!any(outMat < 0))   # should produce FALSE if all above 0 so use ! to make true. 
@@ -64,12 +80,12 @@ confusionMatrix.GR <- function(predicted, reference,   maxgap = -1L, minoverlap 
 #                ranges=IRanges(c(1, 4), c(3, 9)),
 #                strand=c("-", "-"), score=c(6L, 2L), GC=c(0.4, 0.1))
 # 
-# calcConfMat.GR(query=gr, subject=gr1, genomeSize = 40)
-# calcConfMat.GR(query=gr1, subject=gr, genomeSize = 40)
-# calcConfMat.GR(query=gr1, subject=gr2, genomeSize = 30)   # no overlap
-# calcConfMat.GR(query=gr2, subject=gr3, genomeSize = 20)   # no overlap
-# calcConfMat.GR(query=gr1, subject=gr3, genomeSize = 20)  
-# calcConfMat.GR(query=gr3, subject=gr1, genomeSize = 20)  # check that results are reversed when query/subject reversed
+# cfFromGR.bases(query=gr, subject=gr1, genomeSize = 40)
+# cfFromGR.bases(query=gr1, subject=gr, genomeSize = 40)
+# cfFromGR.bases(query=gr1, subject=gr2, genomeSize = 30)   # no overlap
+# cfFromGR.bases(query=gr2, subject=gr3, genomeSize = 20)   # no overlap
+# cfFromGR.bases(query=gr1, subject=gr3, genomeSize = 20)  
+# cfFromGR.bases(query=gr3, subject=gr1, genomeSize = 20)  # check that results are reversed when query/subject reversed
 # 
 # # If using BSgenome, take genomeSize from sum of seqlengths(genome)
 # 
@@ -81,5 +97,5 @@ confusionMatrix.GR <- function(predicted, reference,   maxgap = -1L, minoverlap 
 #   return(confMatrix[1,1]/(confMatrix[1,1] + confMatrix[1,2]))
 # }
 # 
-# thisCf <- calcConfMat.GR(gr1, gr3, genomeSize = 20)  
+# thisCf <- cfFromGR.bases(gr1, gr3, genomeSize = 20)  
 # tprFromConfMat(thisCf)
