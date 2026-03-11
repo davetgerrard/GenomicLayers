@@ -1,5 +1,12 @@
 
 
+#' Plot the accumulation of coverage and blocks after a simulation
+#'
+#' @param modLayerSet A layerset produced by runLayerBinding()
+#'
+#' @returns a plot
+#' 
+#'
 plot.layerBindingHistory <- function(modLayerSet ) {
 
   coverage.cols <-  sort(grep("Coverage", names(modLayerSet$history), value=T))

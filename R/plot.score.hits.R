@@ -1,4 +1,13 @@
-# plot multiple score measures. Green for good, red for bad.
+#' [unfinsihed] plot multiple score measures. Green for good, red for bad.
+#'
+#' @param query 
+#' @param target 
+#' @param methods 
+#' @param colours 
+#'
+#' @returns a plot
+#' 
+#'
 plot.score.hits <- function(query, target, methods=c("acc", "tpr","tnr", "ppv", "npv", "fpr", "fnr"),
                             colours=structure(c("green", "green", "green", "green", "green", "red", "red"),
                                               names=c("acc", "tpr","tnr", "ppv", "npv", "fpr", "fnr")))  {

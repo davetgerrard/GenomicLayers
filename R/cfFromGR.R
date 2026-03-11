@@ -3,17 +3,17 @@
 #' Returns a confusion matrix 
 #' listing TP, FP, FN, TN. 
 #'
+#' @param method whether to count "features" [default] or all "bases"
 #' @param query a foreground set of regions (perhaps predictions) \code{"GRanges"}
-#' @param subject  a background or reference set of regions \code{"GRanges"}
-#' @param minPropOverlap a value between 0.0 and 1.0 specifying the proportion of each feature (or gap) in subject covered by query to be counted.
-#' @param
-#' @param
-#' @param
+#' @param subject   a background or reference set of regions \code{"GRanges"}
+#' @param minPropOverlap    a value between 0.0 and 1.0 specifying the proportion of each feature (or gap) in subject covered by query to be counted.
+#' @param maxgap    how much to extend the query by to count an overlap. 
+#' @param minoverlap    Number of bases of overlap to count in method="bases"
+#' @param genomeSize    0L used with method="bases" to provide total genomeSize
 #' @param verbose set to TRUE for more output
 #'
 #' @return \code{"matrix"}
 #' 
-#' @seealso 
 #'
 #' @import Biostrings
 #' 
