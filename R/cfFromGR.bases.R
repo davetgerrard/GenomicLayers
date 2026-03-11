@@ -1,5 +1,3 @@
-
-
 ## this version uses total size of overlaps (in bp). 
 cfFromGR.bases <- function(query, subject,   maxgap = -1L, minoverlap = 0L, genomeSize=0L, verbose=FALSE)  {
  
@@ -10,7 +8,7 @@ cfFromGR.bases <- function(query, subject,   maxgap = -1L, minoverlap = 0L, geno
     q_len <- sum(seqlengths(query))
     s_len <- sum(seqlengths(subject))
     
- stopifnot("subject and query must have same genomeSize or both be zero" = q_len == s_len)
+ stopifnot("subject and query must have same genomeSize" = q_len == s_len)
  
  if(genomeSize == 0)  genomeSize <- q_len
  stopifnot("genomeSize or seqlengths of provided GR ranges must be greater than 0" = genomeSize > 0)
