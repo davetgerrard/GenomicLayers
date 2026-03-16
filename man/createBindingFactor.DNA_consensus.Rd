@@ -26,7 +26,7 @@ createBindingFactor.DNA_consensus(
   max.mismatch = 0,
   min.mismatch = 0,
   with.indels = FALSE,
-  fixed = TRUE,
+  fixed = "subject",
   algorithm = "auto"
 )
 }
@@ -71,7 +71,7 @@ createBindingFactor.DNA_consensus(
 
 \item{with.indels}{FALSE  see \code{\link{vmatchPattern}}}
 
-\item{fixed}{TRUE  see \code{\link{vmatchPattern}}}
+\item{fixed}{"subject"  By default, degenerate bases are only degenerate in the query (not the subject/reference). see \code{\link{vmatchPattern}} for other options}
 
 \item{algorithm}{"auto"  see \code{\link{vmatchPattern}}}
 

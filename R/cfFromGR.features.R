@@ -11,9 +11,12 @@
 #'
 #' @return \code{"matrix"}
 #' 
-#' @seealso \code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_regexp}} 
+#' @seealso \code{\link{cfFromGR}} 
 #'
 #' @import Biostrings
+#' @import IRanges
+#' 
+#' @export
 #' 
 #' @examples
 #' library(GenomicRanges)
@@ -96,13 +99,13 @@ cfFromGR.features <- function(query, subject, minPropOverlap=0.5, verbose=FALSE)
     (compInt <- intersect(gap_sub, query))   # calculate the intesection ranges. Need this to know the width. 
     # we want to know how many of the query ranges are covered 
     
-    ov <- findOverlaps(compInt, gap_sub)    # get indices for the original regions that DO have overlaps. (should be sames as overlapsAny())
+    ov <- findOverlaps(compInt, gap_sub)    # get indices for the original gaps that DO have overlaps. (should be sames as overlapsAny())
     
-    # need to sum the overlapping sections for each of the original subjects.
+    # need to sum the overlapping sections for each of the original gaps
     bySubject <- by(compInt, INDICES=subjectHits(ov), FUN=function(x) sum(width(x)))
-    hitInd <- as.integer(names(bySubject))  # the indices in the original subject GR
+    hitInd <- as.integer(names(bySubject))  # the indices in the gaps GR
     hitSpans <-  as.integer(bySubject)    # the summed intersection lengths. 
-    FP_count <- length(which(hitSpans > width(gap_sub)[hitInd] * (1 - minPropOverlap)))
+    FP_count <- length(which(hitSpans > width(gap_sub)[hitInd] * minPropOverlap))
     
     
     # create index of original features that have an overlap that is sufficiently long.

@@ -72,5 +72,5 @@ cfFromGR.features(gr_regGaps, gr_halfChrom , minPropOverlap = 0.001)   # will ca
 
 }
 \seealso{
-\code{\link{runLayerBinding}} \code{\link{createBindingFactor.DNA_regexp}}
+\code{\link{cfFromGR}}
 }
