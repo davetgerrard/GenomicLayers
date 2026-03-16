@@ -26,7 +26,7 @@
 #' @param max.mismatch  0   see \code{\link{vmatchPattern}}
 #' @param min.mismatch  0   see \code{\link{vmatchPattern}}
 #' @param with.indels  FALSE  see \code{\link{vmatchPattern}}
-#' @param fixed  TRUE  see \code{\link{vmatchPattern}}
+#' @param fixed  "subject"  By default, degenerate bases are only degenerate in the query (not the subject/reference). see \code{\link{vmatchPattern}} for other options
 #' @param algorithm  "auto"  see \code{\link{vmatchPattern}}
 #' @param verbose set to TRUE for more output
 #'
@@ -56,7 +56,7 @@ createBindingFactor.DNA_consensus <- function(name,  type="DNA_consensus", patte
                                           offset=0, offset.method=NULL, offset.params=NULL,
                                       test.layer0.binding=FALSE, test.mismatch.rate=.1 , max.pattern.tries=1000, 
                                       min.DM.length=2, min.DR.length=10, verbose=FALSE,max.mismatch=0, min.mismatch=0,
-                                      with.indels=FALSE, fixed=TRUE,
+                                      with.indels=FALSE, fixed="subject",
                                       algorithm="auto") {
 
   # check input  
