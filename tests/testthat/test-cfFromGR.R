@@ -39,6 +39,27 @@ gr_noSeqinfo <- GRanges(seqnames=seqnames(test_Si), ranges=IRanges(start=rep(1, 
 test_that("Missing seqinfo in features method throws an error.", {  # this test could be faster if limited to one chromosome.
     expect_error(cfFromGR(query = gr_noSeqinfo, subject = gr_noSeqinfo))
 })
+
+
+# #TODO:  deduce a proper test from the below code. Note the 0.2 result. 
+# testSI <- Seqinfo(seqnames="chr1",
+#                   seqlengths=c(3000),
+#                   isCircular=c(FALSE),
+#                   genome="test_genome")
+# testSubj_GR <- GRanges(seqnames= "chr1", ranges=IRanges(start=1000, width=1000),  seqinfo=testSI)
+# testQ_GR <- GRanges(seqnames= "chr1", ranges=IRanges(start=c(300, 600, 1300, 1600, 2300, 2600), width=100),  seqinfo=testSI)
+# 
+# # there is one feature and two gaps. The queries cover a combined 200bp within each 1000 gap or feature. 
+# cfFromGR(query=testQ_GR, subject=testSubj_GR)  # default minoverlap
+# cfFromGR(query=testQ_GR, subject=testSubj_GR, minPropOverlap = 0.1) # calls all gaps and regions as positive. [CORRECT]
+# cfFromGR(query=testQ_GR, subject=testSubj_GR, minPropOverlap = 0.19) # calls the one region but also both gaps. [CORRECT]
+# cfFromGR.features(query=testQ_GR, subject=testSubj_GR, minPropOverlap = 0.2)  # calls one gap...  [FALSE]
+# cfFromGR(query=testQ_GR, subject=testSubj_GR, minPropOverlap = 0.21 )  # Fails to call anything (correct here with minPropoOverlap). [CORRECT]
+# cfFromGR(query=testQ_GR, subject=testSubj_GR, minPropOverlap = 0.3) # Fails to call anything (correct here with minPropoOverlap). [CORRECT]
+# 
+
+
+
 # 
 # 
 # cfFromGR(query = gr_halfChrom, subject = gr_reg) # approx equal in each class

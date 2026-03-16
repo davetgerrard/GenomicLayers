@@ -76,7 +76,7 @@ cfFromGR.features <- function(query, subject, minPropOverlap=0.5, verbose=FALSE)
     
     gap_sub <- gaps(subject, ignore.strand=T )
     
-    compInt <- intersect(subject, query)   # calculate the intesection ranges. Need this to know the width. 
+    compInt <- intersect(subject, query)   # calculate the intersection ranges. Need this to know the width. 
     # we want to know how many of the query ranges are covered 
     
     ov <- findOverlaps(compInt, subject)    # get indices for the original regions that DO have overlaps. (should be sames as overlapsAny())
@@ -86,7 +86,7 @@ cfFromGR.features <- function(query, subject, minPropOverlap=0.5, verbose=FALSE)
     bySubject <- by(compInt, INDICES=subjectHits(ov), FUN=function(x) sum(width(x)))
     hitInd <- as.integer(names(bySubject))  # the indices in the original subject GR
     hitSpans <-  as.integer(bySubject)    # the summed intersection lengths. 
-    TP_count <- length(which(hitSpans > width(subject)[hitInd] * minPropOverlap))
+    TP_count <- length(which(hitSpans >= width(subject)[hitInd] * minPropOverlap))
     
     # create index of original features that have an overlap that is sufficiently long. 
     #true_hits <- width(compInt[queryHits(ov)])  >=  width(subject[subjectHits(ov)]) *minPropOverlap
@@ -96,7 +96,7 @@ cfFromGR.features <- function(query, subject, minPropOverlap=0.5, verbose=FALSE)
     
     # now repeat above using gaps between features. 
     ### Does this need to use " 1 - minPropOverlap"?
-    (compInt <- intersect(gap_sub, query))   # calculate the intesection ranges. Need this to know the width. 
+    (compInt <- intersect(gap_sub, query))   # calculate the intersection ranges. Need this to know the width. 
     # we want to know how many of the query ranges are covered 
     
     ov <- findOverlaps(compInt, gap_sub)    # get indices for the original gaps that DO have overlaps. (should be sames as overlapsAny())
@@ -105,7 +105,7 @@ cfFromGR.features <- function(query, subject, minPropOverlap=0.5, verbose=FALSE)
     bySubject <- by(compInt, INDICES=subjectHits(ov), FUN=function(x) sum(width(x)))
     hitInd <- as.integer(names(bySubject))  # the indices in the gaps GR
     hitSpans <-  as.integer(bySubject)    # the summed intersection lengths. 
-    FP_count <- length(which(hitSpans > width(gap_sub)[hitInd] * minPropOverlap))
+    FP_count <- length(which(hitSpans >= width(gap_sub)[hitInd] * minPropOverlap))
     
     
     # create index of original features that have an overlap that is sufficiently long.
