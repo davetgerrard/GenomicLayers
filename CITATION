@@ -1,0 +1,11 @@
+citEntry(entry="article",
+         title = "GenomicLayers: sequence-based simulation of epi-genomes",
+         author = personList( as.person("Dave T Gerrard" )),
+         year = 2025,
+         journal = "BMC Bioinformatics",
+         volume = "26",
+         issue = "1",
+         doi = "10.1186/s12859-025-06224-y",
+         url = "https://link.springer.com/article/10.1186/s12859-025-06224-y",
+         textVersion = 
+         "Gerrard DT (2025) GenomicLayers: sequence-based simulation of epi-genomes. BMC Bioinformatics 26(1): 205. doi:10.1186/s12859-025-06224-y" )
