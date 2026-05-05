@@ -55,6 +55,9 @@ runLayerBinding.BSgenome <- function(layerList, factorSet, iterations=1, bf.abun
                                      target.layer=2, cache.layers="LAYER.0", verbose=FALSE, ...)  {
   if(verbose) print(paste(Sys.time(), "runLayerBinding pos 1", sep=" "))
   #bindingOrder <- sample(names(factorSet), size=iterations,prob=bindingFactorFreqs, replace=T)
+  # check for factorset names and that they are unique.
+  stopifnot("factorSet list MUST have names" = !is.null(names(factorSet)))               # factorSet must have names
+  stopifnot("factorSet names MUST be unique" = length(unique(names(factorSet))) == length(factorSet))   # all names MUST be unique
   
   bindingOrder <- names(factorSet)  # JUST USE EACH FACTOR ONCE, IN ORDER GIVEN
   if(length(bf.abundances)==1) {   # if a single value is given, assign it to all binding factors. If only one bf, does nothing.

@@ -38,6 +38,8 @@ testFactor4 <- createBindingFactor.layer_region("testFactor4", patternLength=5,
 
 testFS <- list(testFactor2=testFactor2, testFactor3=testFactor3, testFactor4=testFactor4)
 
+testFS_noNames <- list(testFactor2, testFactor3, testFactor4)
+testFS_dupNames <- list(testFactor2=testFactor2, testFactor2=testFactor3, testFactor4=testFactor4)
 
 # also need for modifyLayerByBindingFactor.Views to work on BSgenome and hits
 
@@ -54,5 +56,6 @@ modTest <- runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS, verb
 
 test_that("Mods dependent on early binding have been applied", {
   expect_true(length(modTest$layerSet[["LAYER.2"]])  > 0 )
-  
+  expect_error(runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS_noNames, verbose=TRUE, bf.abundances=30))
+  expect_error(runLayerBinding.BSgenome(layerList=scLayerSet, factorSet=testFS_dupNames, verbose=TRUE, bf.abundances=30))
 })
